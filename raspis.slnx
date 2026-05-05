@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="raspis/raspis.vcxproj" Id="543f2a55-1625-4195-9825-b74fe549bb41" />
+</Solution>

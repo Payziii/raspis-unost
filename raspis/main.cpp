@@ -28,95 +28,70 @@ constexpr int SLOTS_PER_DAY = 7;
 // не используются и не добавляются.
 // УП в расписании показывается как 2 соседние пары:
 // утренний блок — пары 1-2, дневной блок — пары 3-4.
-// Дополнительно ниже преподаватель блокируется на реальное время УП
-// по расписанию звонков: например, во вторник-пятницу дневное УП
-// 13:00-17:00 блокирует пары 3, 4 и 5 у этого преподавателя.
+// Дополнительно преподаватель блокируется на реальное время УП
+// по расписанию звонков.
 constexpr int UP_MORNING_MODEL_START_SLOT = 0;
 constexpr int UP_AFTERNOON_MODEL_START_SLOT = 2;
 
-constexpr int GROUPS = 2;
+constexpr int GROUPS = 11;
 constexpr int PARTS_PER_GROUP = 2;
-constexpr int TEACHERS = 8;
+constexpr int TEACHERS = 41;
+
+constexpr int G_ISP_3304 = 0;
+constexpr int G_ISP_3305P = 1;
+constexpr int G_TAKHCS_2201 = 2;
+constexpr int G_MCM_201 = 3;
+constexpr int G_TEO_2501 = 4;
+constexpr int G_SP_2601 = 5;
+constexpr int G_SP_2602P = 6;
+constexpr int G_TORD_2706 = 7;
+constexpr int G_TORD_2707P = 8;
+constexpr int G_TM_2415 = 9;
+constexpr int G_TM_2416P = 10;
 
 constexpr double SOLVER_TIME_LIMIT_SECONDS = 500.0;
-
-// CP-SAT держит отдельные структуры поиска на каждый worker.
-// 4 обычно заметно экономнее по ОЗУ, чем 8-10. Если памяти мало, поставь 2.
 constexpr int SOLVER_WORKERS = 4;
 constexpr double SOLVER_MAX_MEMORY_MB = 8072.0;
+constexpr bool STOP_AFTER_FIRST_SOLUTION = true;
 
-// true = остановиться на первом найденном допустимом расписании.
-// Полезно, если нужно сначала просто получить решение.
-constexpr bool STOP_AFTER_FIRST_SOLUTION = false;
-
-// У студентов: минимум 2 пары в учебный день, максимум 5 пар в день.
-// Ограничение считается отдельно для каждой подгруппы.
 constexpr int MIN_STUDENT_PAIRS_PER_STUDY_DAY = 2;
 constexpr int MAX_STUDENT_PAIRS_PER_DAY = 5;
-
-// каждая группа должна учиться минимум N дней в каждую доступную учебную неделю.
-// Если в неделе доступен только 1 день, требуется 1 день.
-// По умолчанию это мягкая цель, а не причина INFEASIBLE.
 constexpr int MIN_STUDENT_STUDY_DAYS_PER_WEEK = 2;
 constexpr bool HARD_MIN_STUDY_DAYS_PER_WEEK = false;
 constexpr int GROUP_WEEK_MISSING_DAY_WEIGHT = 2000;
 
-// Растягивание предметов без жёсткого требования "каждый предмет в каждой
-// трети семестра". Вместо этого доступные дни группы режутся на корзины
-// примерно по две учебные недели. Предмет должен появляться во многих корзинах,
-// но лимит на часы в корзине адаптируется к общей нагрузке предмета.
 constexpr int SUBJECT_SPREAD_BUCKET_AVAILABLE_DAYS = 12;
 constexpr int MIN_SUBJECT_SPREAD_TOTAL_SLOTS = 4;
-constexpr int SUBJECT_BUCKET_EXTRA_SLOTS = 2;
-constexpr int SUBJECT_BUCKET_MIN_CAPACITY = 2;
+constexpr int SUBJECT_BUCKET_EXTRA_SLOTS = 4;
+constexpr int SUBJECT_BUCKET_MIN_CAPACITY = 1;
 constexpr int SUBJECT_MISSING_BUCKET_WEIGHT = 1200;
 constexpr int SUBJECT_BUCKET_OVERLOAD_WEIGHT = 120;
 constexpr int SUBJECT_MISSING_SEGMENT_WEIGHT = 1500;
 
-// Для УП и других блоковых занятий одно появление = минимум 2 пары подряд.
-// Для обычных предметов одно появление может быть 1 парой.
 constexpr int NORMAL_SUBJECT_ACTIVE_BUCKET_UNIT = 2;
 constexpr int BLOCK_SUBJECT_ACTIVE_BUCKET_UNIT = 4;
 
-// Жёсткое запрещение окон у студентов часто делает модель противоречивой.
-// По умолчанию выключено: сначала получаем расписание, потом при необходимости усиливаем качество.
 constexpr bool HARD_NO_STUDENT_WINDOWS = true;
-
-// Жёстко запрещать окна у преподавателей не советую:
-// модель может стать слишком жёсткой.
 constexpr bool HARD_NO_TEACHER_WINDOWS = false;
-
-// Мягкая оптимизация качества расписания.
-// Включена, потому что растягивание по неделям и предметам теперь мягкое.
 constexpr bool USE_QUALITY_OBJECTIVE = true;
-
-// Минимум 2 пары в день для преподавателей — НЕ требование задачи.
-// Если включить, модель легко становится противоречивой на малых нагрузках.
 constexpr bool HARD_MIN_2_TEACHER_PAIRS_PER_DAY = false;
-
-// Требование "все лабораторные только после всех теорий" часто делает
-// расписание слишком жёстким и мешает растягивать предметы.
-// false означает более лёгкий вариант: в первой двухнедельной корзине
-// предмета ставится теория и запрещаются ЛПЗ; дальше теория и ЛПЗ могут
-// чередоваться, чтобы предмет не исчезал сразу после января.
 constexpr bool STRICT_ALL_THEORY_BEFORE_LABS = false;
 constexpr int MIN_INITIAL_THEORY_SLOTS_BEFORE_LABS = 1;
-
-// Чтобы экономить память, окна преподавателей по умолчанию не оптимизируются.
 constexpr bool OPTIMIZE_TEACHER_WINDOWS = false;
-
-// Чем больше вес, тем сильнее решатель старается убрать окна преподавателей.
 constexpr int TEACHER_WINDOW_WEIGHT = 1;
-
-// Штраф за каждый день, где у конкретной подгруппы ровно 5 пар.
-// Это не запрещает 5 пар, но делает такие дни нежелательными.
 constexpr int STUDENT_FIVE_PAIR_DAY_WEIGHT = 100;
-
-// Сдвиг занятий студентов к началу дня.
 constexpr int STUDENT_LATE_SLOT_WEIGHT = 1;
-
-// Сдвиг занятий преподавателей к началу дня.
 constexpr int TEACHER_LATE_SLOT_WEIGHT = 0;
+
+constexpr bool LIMIT_VISIBLE_GROUP_PAIRS_PER_DAY = false;
+constexpr bool FORCE_BOTH_SUBGROUPS_SAME_STUDY_DAYS = false;
+constexpr bool ENFORCE_THEORY_BEFORE_LABS = false;
+constexpr bool ENFORCE_DAY_CAMPUS_RULES = false;
+
+// Главная разгрузка поиска: УП ставим жадно до CP-SAT и фиксируем старты.
+// Это убирает тысячи симметричных переменных выбора УП и резко ускоряет поиск.
+constexpr bool FIX_UP_STARTS_GREEDY = true;
+
 
 // Индексы преподавателей
 constexpr int T_NOVOSELOVA = 0;
@@ -127,21 +102,126 @@ constexpr int T_SERYANINA = 4;
 constexpr int T_GOBOV = 5;
 constexpr int T_SAMTSOVA = 6;
 constexpr int T_GARBUZOV = 7;
+constexpr int T_TSIMFER = 8;
+constexpr int T_SINELNIKOVA = 9;
+constexpr int T_NIFONTOVA = 10;
+constexpr int T_AZARYAN = 11;
+constexpr int T_KALCHEVSKAYA = 12;
+constexpr int T_SEMENOVA = 13;
+constexpr int T_DINMUKHAMETOV = 14;
+constexpr int T_ALSHAEVA = 15;
+constexpr int T_KROPOTOVA = 16;
+constexpr int T_SOBOLEVA = 17;
+constexpr int T_ELAGINA = 18;
+constexpr int T_POPOVA = 19;
+constexpr int T_GALUZIN = 20;
+constexpr int T_KOSTAREVA = 21;
+constexpr int T_SADRIEVA = 22;
+constexpr int T_PISMAK = 23;
+constexpr int T_KOSHELEV = 24;
+constexpr int T_SHABUROV = 25;
+constexpr int T_ERMOLINA = 26;
+constexpr int T_ABRAMCHUK = 27;
+constexpr int T_SIVILKAEV = 28;
+constexpr int T_AKHMETOV = 29;
+constexpr int T_PODCHINENNOV = 30;
+constexpr int T_GORIN = 31;
+constexpr int T_VERHNEV = 32;
+constexpr int T_LIMONOVA = 33;
+constexpr int T_OTRAK = 34;
+constexpr int T_SALAMATINA = 35;
+constexpr int T_SAMTSOV = 36;
+constexpr int T_TIMEROV = 37;
+constexpr int T_SIMAKOV = 38;
+constexpr int T_VALDIYANOV = 39;
+constexpr int T_KLABUKOV = 40;
 
 const std::array<std::string, GROUPS> GROUP_NAME = {
     "ИСП-3304",
-    "ИСП-3305п"
+    "ИСП-3305п",
+    "ТАКХС-Пф-2201",
+    "МЦМ-Пф-201",
+    "ТЭО-Пф-2501",
+    "СП-Пф-2601",
+    "СП-Пф-2602п",
+    "ТОРД-2706",
+    "ТОРД-2707п",
+    "ТМ-2415",
+    "ТМ-2416п"
+};
+
+const std::array<std::string, GROUPS> GROUP_FILE_NAME = {
+    "ISP-3304",
+    "ISP-3305p",
+    "TAKHCS-Pf-2201",
+    "MCM-Pf-201",
+    "TEO-Pf-2501",
+    "SP-Pf-2601",
+    "SP-Pf-2602p",
+    "TORD-2706",
+    "TORD-2707p",
+    "TM-2415",
+    "TM-2416p"
+};
+
+// Для диагностики можно временно отключать группы, не меняя остальной код.
+// Например, сначала оставить true только у ИСП, потом добавлять новые группы по одной.
+const std::array<bool, GROUPS> GROUP_ENABLED = {
+    true,  // ИСП-3304
+    true,  // ИСП-3305п
+    true,  // ТАКХС-Пф-2201
+    true,  // МЦМ-Пф-201
+    true,  // ТЭО-Пф-2501
+    true,  // СП-Пф-2601
+    true,  // СП-Пф-2602п
+    true,  // ТОРД-2706
+    true,  // ТОРД-2707п
+    true,  // ТМ-2415
+    true   // ТМ-2416п
 };
 
 const std::array<std::string, TEACHERS> TEACHER_NAME = {
-    "Новосёлова",
-    "Давыдова",
-    "Нуров",
-    "Потапова",
+    "Новосёлова Светлана Юрьевна",
+    "Давыдова Валентина Алексеевна",
+    "Нуров Мирзо Нуралиевич",
+    "Потапова Регина Александровна",
     "Серянина",
     "Гобов",
     "Самцова",
-    "Гарбузов"
+    "Гарбузов Андрей Евгеньевич",
+    "Цимфер Татьяна Ивановна",
+    "Синельникова Елена Владимировна",
+    "Нифонтова Ирина Геннадьевна",
+    "Азарян Карине Айказовна",
+    "Кальчевская Наталья Владимировна",
+    "Семенова Лилиана Ивановна",
+    "Динмухаметов Владислав Дуферович",
+    "Альшаева Алина Павловна",
+    "Кропотова Анастасия Андреевна",
+    "Соболева Любовь Анатольевна",
+    "Елагина Ольга Александровна",
+    "Попова Татьяна Вильевна",
+    "Галузин Антон Илюсович",
+    "Костарева Наталья Викторовна",
+    "Садриева Татьяна Геннадьевна",
+    "Письмак Владимир Николаевич",
+    "Кошелев Дмитрий Александрович",
+    "Шабуров Анатолий Анатольевич",
+    "Ермолина Ирина Павловна",
+    "Абрамчук Раида Филимазовна",
+    "Сивилькаев Вадим Михайлович",
+    "Ахметов Артур Фанависович",
+    "Подчиненнов Александр Юрьевич",
+    "Горин Максим Валерьевич",
+    "Верхнев Николай Александрович",
+    "Лимонова Евгения Николаевна",
+    "Отрак Елена Сергеевна",
+    "Саламатина Вера Викторовна",
+    "Самцов Андрей Евгеньевич",
+    "Тимеров Валерий Вагизович",
+    "Симаков Семен Данилович",
+    "Вальдиянов Ян Мансурович",
+    "Клабуков Василий Витальевич"
 };
 
 const std::array<std::string, 7> WEEKDAY_NAME = {
@@ -184,13 +264,13 @@ struct Date {
 struct Lesson {
     int id;
     int group;
-    int subgroup;       // -1 = вся группа, иначе 0/1 или 2/3
+    int subgroup;
     int teacher;
     int total_slots;
     std::string name;
-    int subject_id;     // для связки теория-лабы
+    int subject_id;
     bool is_lab;
-    bool is_block;      // true = УП, одно появление = 2 пары нагрузки, время берётся из фиксированных смен УП
+    bool is_block;
     std::set<Campus> allowed_campuses;
 };
 
@@ -223,7 +303,6 @@ bool LessonAffectsPart(const Lesson& lesson, int group, int part) {
 
 // ====================== Даты ======================
 
-// Возвращает: 1=ПН, 2=ВТ, ..., 6=СБ, 7=ВС
 int DayOfWeek(const Date& d) {
     int m = d.month;
     int y = d.year;
@@ -239,10 +318,6 @@ int DayOfWeek(const Date& d) {
     int h = (d.day + (13 * (m + 1)) / 5 + K + K / 4 + J / 4 - 2 * J) % 7;
     if (h < 0) h += 7;
 
-    // Zeller:
-    // h=0 СБ, h=1 ВС, h=2 ПН, ..., h=6 ПТ
-    // нужно:
-    // 1 ПН, ..., 6 СБ, 7 ВС
     return ((h + 5) % 7) + 1;
 }
 
@@ -260,13 +335,11 @@ bool IntervalsOverlap(const TimeInterval& a, const TimeInterval& b) {
 }
 
 TimeInterval PairSlotInterval(int day_of_week, int slot) {
-    // Интервалы именно для пар 1-7. Поднятие флага и 0 урок не моделируются.
     if (slot < 0 || slot >= SLOTS_PER_DAY) {
         return { 0, 0 };
     }
 
     if (day_of_week == 1) {
-        // Понедельник
         static const TimeInterval monday[SLOTS_PER_DAY] = {
             { MakeMinute(9, 15),  MakeMinute(10, 40) },
             { MakeMinute(10, 50), MakeMinute(12, 15) },
@@ -281,7 +354,6 @@ TimeInterval PairSlotInterval(int day_of_week, int slot) {
     }
 
     if (day_of_week >= 2 && day_of_week <= 5) {
-        // Вторник-пятница
         static const TimeInterval weekday[SLOTS_PER_DAY] = {
             { MakeMinute(8, 30),  MakeMinute(9, 55) },
             { MakeMinute(10, 5),  MakeMinute(11, 30) },
@@ -296,7 +368,6 @@ TimeInterval PairSlotInterval(int day_of_week, int slot) {
     }
 
     if (day_of_week == 6) {
-        // Суббота
         static const TimeInterval saturday[SLOTS_PER_DAY] = {
             { MakeMinute(8, 30),  MakeMinute(9, 45) },
             { MakeMinute(9, 55),  MakeMinute(11, 10) },
@@ -383,7 +454,6 @@ std::vector<int> TeacherBlockedSlotsForUpStart(
     return blocked_slots;
 }
 
-
 std::string MinuteToString(int minute_of_day) {
     std::ostringstream ss;
     ss << std::setfill('0')
@@ -413,7 +483,6 @@ std::string UpIntervalLabelForStartSlot(const Date& d, int start_slot) {
     return "УП " + shift_name + " " +
         IntervalToString(UpIntervalForStartSlot(d, start_slot));
 }
-
 
 int DaysInMonth(int month, int year) {
     static const int days[] = {
@@ -641,8 +710,6 @@ void AddMin2IfPositive(CpModelBuilder& model, const LinearExpr& day_sum) {
     model.AddGreaterOrEqual(day_sum, rhs);
 }
 
-// Жёсткое устранение окон:
-// если есть занятие слева и справа, то все слоты между ними тоже должны быть заняты.
 void AddNoWindowsHard(
     CpModelBuilder& model,
     const std::vector<std::vector<BoolVar>>& busy_entities,
@@ -668,9 +735,6 @@ void AddNoWindowsHard(
     }
 }
 
-// Мягкие переменные окон для минимизации.
-// gap=1, если в этот слот есть окно: до него есть занятия, после него есть занятия,
-// а сам слот пустой.
 std::vector<BoolVar> CreateWindowPenaltyVars(
     CpModelBuilder& model,
     const std::vector<std::vector<BoolVar>>& busy_entities,
@@ -698,16 +762,9 @@ std::vector<BoolVar> CreateWindowPenaltyVars(
                 BoolVar after = MakePositiveIndicator(model, after_sum);
                 BoolVar gap = model.NewBoolVar();
 
-                // gap => before
                 model.AddImplication(gap, before);
-
-                // gap => after
                 model.AddImplication(gap, after);
-
-                // gap => текущий слот пустой
                 model.AddImplication(gap, busy[base + s].Not());
-
-                // before && after && !busy => gap
                 model.AddBoolOr({
                     before.Not(),
                     after.Not(),
@@ -731,11 +788,6 @@ void AddSubjectSpreadPenalties(
     const std::map<int, std::vector<std::pair<Date, Date>>>& unavailable,
     LinearExpr& objective
 ) {
-    // Мягче и устойчивее, чем жёсткое деление на 3 части семестра:
-    // 1) доступные дни группы режутся на корзины примерно по 2 учебные недели;
-    // 2) предмет штрафуется, если встречается в слишком малом числе корзин;
-    // 3) избыток часов предмета в одной корзине штрафуется, но не запрещается.
-    // Если часов мало, предмет естественно получается примерно "раз в пару недель".
     for (int g = 0; g < GROUPS; g++) {
         std::vector<std::vector<int>> buckets =
             BuildAvailableDayBuckets(g, all_days, unavailable);
@@ -780,8 +832,6 @@ void AddSubjectSpreadPenalties(
                     }
                 }
 
-                // Чисто общегрупповые предметы дали бы полностью одинаковые
-                // штрафы для обеих подгрупп. Оставляем только один набор.
                 if (all_lessons_are_whole_group && p > 0) {
                     continue;
                 }
@@ -817,7 +867,6 @@ void AddSubjectSpreadPenalties(
 
                     bucket_has.push_back(MakePositiveIndicator(model, bucket_sum));
 
-                    // overload >= bucket_sum - soft_max_per_bucket
                     IntVar overload = model.NewIntVar(Domain(0, total));
                     LinearExpr overload_guard;
                     overload_guard += overload;
@@ -838,7 +887,6 @@ void AddSubjectSpreadPenalties(
                 model.AddGreaterOrEqual(active_with_missing, target_active_buckets);
                 objective += missing_buckets * SUBJECT_MISSING_BUCKET_WEIGHT;
 
-                // Дополнительная мягкая страховка от "закрыли предмет в январе".
                 if (bucket_count >= 3 && target_active_buckets >= 2) {
                     LinearExpr segment_has[3];
 
@@ -1014,8 +1062,6 @@ int CountUpDayRuleViolations(
                     }
                 }
 
-                // Если УП есть, то день этой подгруппы должен состоять
-                // ровно из одного двухпарного УП-блока и больше ни из чего.
                 if (up_slots > 0 && (up_slots != 2 || part_slots != 2)) {
                     violations++;
                 }
@@ -1312,7 +1358,6 @@ std::string BuildTeacherSlotText(
     int campus = IntValue(response, teacher_day_campus[teacher][day]);
     TimeInterval pair_interval = PairSlotInterval(DayOfWeek(all_days[day]), slot);
 
-    // Обычные пары выводятся по x[l][t].
     for (int l = 0; l < static_cast<int>(lessons.size()); l++) {
         if (lessons[l].teacher != teacher) continue;
         if (lessons[l].is_block) continue;
@@ -1329,9 +1374,6 @@ std::string BuildTeacherSlotText(
         }
     }
 
-    // УП в преподавательском расписании показывается во всех парах,
-    // которые пересекаются с реальным временем УП. Так преподаватель не выглядит
-    // свободным, например, на 5 паре, если дневное УП идёт до 17:00/17:30.
     for (const auto& blk : blocks) {
         const Lesson& lesson = lessons[blk.lesson_id];
 
@@ -1623,18 +1665,211 @@ void WriteTeachersTxt(
     }
 }
 
+
+// ====================== Жадная фиксация УП ======================
+
+std::vector<int> PartsAffectedByLesson(const Lesson& lesson) {
+    std::vector<int> parts;
+
+    if (lesson.subgroup == -1) {
+        for (int p = 0; p < PARTS_PER_GROUP; p++) {
+            parts.push_back(p);
+        }
+        return parts;
+    }
+
+    int base_subgroup = lesson.group * PARTS_PER_GROUP;
+    int part = lesson.subgroup - base_subgroup;
+
+    if (part >= 0 && part < PARTS_PER_GROUP) {
+        parts.push_back(part);
+    }
+
+    return parts;
+}
+
+std::vector<std::vector<int>> SelectGreedyUpStarts(
+    const std::vector<Lesson>& lessons,
+    const std::vector<BlockInfo>& blocks,
+    const std::vector<Date>& all_days,
+    int num_days,
+    bool& ok
+) {
+    ok = true;
+
+    std::vector<std::vector<int>> selected(blocks.size());
+    std::vector<std::set<int>> selected_lookup(blocks.size());
+
+    std::vector<std::vector<std::vector<bool>>> part_has_up_day(
+        GROUPS,
+        std::vector<std::vector<bool>>(
+            PARTS_PER_GROUP,
+            std::vector<bool>(num_days, false)
+        )
+    );
+
+    std::vector<std::vector<std::vector<TimeInterval>>> teacher_up_intervals(
+        TEACHERS,
+        std::vector<std::vector<TimeInterval>>(num_days)
+    );
+
+    std::vector<std::vector<int>> teacher_day_up_count(
+        TEACHERS,
+        std::vector<int>(num_days, 0)
+    );
+
+    std::vector<std::vector<int>> group_day_up_count(
+        GROUPS,
+        std::vector<int>(num_days, 0)
+    );
+
+    std::vector<int> global_day_up_count(num_days, 0);
+
+    std::vector<int> order(blocks.size());
+    for (int i = 0; i < static_cast<int>(blocks.size()); i++) {
+        order[i] = i;
+    }
+
+    std::sort(order.begin(), order.end(), [&](int a, int b) {
+        const Lesson& la = lessons[blocks[a].lesson_id];
+        const Lesson& lb = lessons[blocks[b].lesson_id];
+
+        int ra = la.total_slots / 2;
+        int rb = lb.total_slots / 2;
+
+        if (ra != rb) return ra > rb;
+        if (la.teacher != lb.teacher) return la.teacher < lb.teacher;
+        if (la.group != lb.group) return la.group < lb.group;
+        return la.id < lb.id;
+        });
+
+    for (int block_index : order) {
+        const BlockInfo& blk = blocks[block_index];
+        const Lesson& lesson = lessons[blk.lesson_id];
+        int required_starts = lesson.total_slots / 2;
+        std::vector<int> affected_parts = PartsAffectedByLesson(lesson);
+
+        for (int need = 0; need < required_starts; need++) {
+            int best_i = -1;
+            int best_score = 0;
+
+            for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
+                if (selected_lookup[block_index].count(i) != 0) {
+                    continue;
+                }
+
+                int start_t = blk.possible_starts[i];
+                int day = start_t / SLOTS_PER_DAY;
+                int start_slot = start_t % SLOTS_PER_DAY;
+
+                bool can = true;
+
+                for (int part : affected_parts) {
+                    if (part_has_up_day[lesson.group][part][day]) {
+                        can = false;
+                        break;
+                    }
+                }
+
+                if (!can) {
+                    continue;
+                }
+
+                TimeInterval interval = UpIntervalForStartSlot(all_days[day], start_slot);
+
+                for (const TimeInterval& other : teacher_up_intervals[lesson.teacher][day]) {
+                    if (IntervalsOverlap(interval, other)) {
+                        can = false;
+                        break;
+                    }
+                }
+
+                if (!can) {
+                    continue;
+                }
+
+                // Чем меньше счёт, тем лучше.
+                // 1) не перегружаем один день конкретного преподавателя УП;
+                // 2) не сваливаем все УП одной группы в один день;
+                // 3) распределяем УП по семестру;
+                // 4) слегка предпочитаем утро, чтобы дневные блоки оставались резервом.
+                int score = 0;
+                score += teacher_day_up_count[lesson.teacher][day] * 100000;
+                score += group_day_up_count[lesson.group][day] * 10000;
+                score += global_day_up_count[day] * 100;
+                score += start_slot == UP_AFTERNOON_MODEL_START_SLOT ? 10 : 0;
+
+                // Мягкое равномерное распределение по календарю.
+                // Разные блоки одного предмета стараемся разводить, но без жёсткого запрета.
+                int bucket = day / 6;
+                int same_bucket = 0;
+                for (int already_i : selected[block_index]) {
+                    int already_day = blk.possible_starts[already_i] / SLOTS_PER_DAY;
+                    if (already_day / 6 == bucket) {
+                        same_bucket++;
+                    }
+                }
+                score += same_bucket * 1000;
+
+                if (best_i < 0 || score < best_score) {
+                    best_i = i;
+                    best_score = score;
+                }
+            }
+
+            if (best_i < 0) {
+                std::cerr << "Не удалось жадно поставить УП: "
+                    << GROUP_NAME[lesson.group] << ", "
+                    << lesson.name << ", "
+                    << SubgroupName(lesson.subgroup) << ", преподаватель "
+                    << TEACHER_NAME[lesson.teacher] << ", нужно блоков "
+                    << required_starts << ", поставлено "
+                    << selected[block_index].size() << "\n";
+                ok = false;
+                continue;
+            }
+
+            selected[block_index].push_back(best_i);
+            selected_lookup[block_index].insert(best_i);
+
+            int start_t = blk.possible_starts[best_i];
+            int day = start_t / SLOTS_PER_DAY;
+            int start_slot = start_t % SLOTS_PER_DAY;
+            TimeInterval interval = UpIntervalForStartSlot(all_days[day], start_slot);
+
+            for (int part : affected_parts) {
+                part_has_up_day[lesson.group][part][day] = true;
+            }
+
+            teacher_up_intervals[lesson.teacher][day].push_back(interval);
+            teacher_day_up_count[lesson.teacher][day]++;
+            group_day_up_count[lesson.group][day]++;
+            global_day_up_count[day]++;
+        }
+    }
+
+    int fixed_blocks = 0;
+    for (const auto& item : selected) {
+        fixed_blocks += static_cast<int>(item.size());
+    }
+
+    std::cout << "Жадно зафиксировано УП-блоков: " << fixed_blocks << "\n";
+
+    return selected;
+}
+
 // ====================== Основная программа ======================
 
 int main() {
     std::setlocale(LC_ALL, "ru_RU.UTF-8");
 
     Date start_date = { 2026, 1, 12 };
-    Date end_date = { 2026, 6, 19 };
+    Date end_date = { 2026, 5, 30 };
 
     std::map<int, std::vector<std::pair<Date, Date>>> unavailable;
-    unavailable[0] = { {{2026, 4, 30}, {2026, 6, 19}} }; // ИСП-3304 ПП
-    unavailable[1] = { {{2026, 4, 30}, {2026, 6, 19}} }; // ИСП-3304 ПП
-    //unavailable[1] = { {{2026, 3, 20}, {2026, 3, 30}} }; // ИСП-3305п сборы
+    unavailable[G_ISP_3304] = { {{2026, 4, 30}, {2026, 6, 19}} };
+    unavailable[G_ISP_3305P] = { {{2026, 4, 30}, {2026, 6, 19}} };
+    // unavailable[G_ISP_3305P] = { {{2026, 3, 20}, {2026, 3, 30}} }; // сборы
 
     auto all_days = GenerateSchoolDays(start_date, end_date);
 
@@ -1656,6 +1891,10 @@ int main() {
         bool is_lab,
         bool is_block,
         std::set<Campus> camps) {
+            if (!GROUP_ENABLED[group]) {
+                return;
+            }
+
             lessons.push_back({
                 id++,
                 group,
@@ -1670,10 +1909,55 @@ int main() {
                 });
         };
 
+    const std::set<Campus> ANY = { LESNAYA, KRIVOUSOVA };
+    const std::set<Campus> LES = { LESNAYA };
+
+    auto addHours = [&](int group,
+        int sub,
+        int teacher,
+        int hours,
+        const std::string& name,
+        int subject_id,
+        bool is_lab,
+        bool is_up,
+        std::set<Campus> camps) {
+            int slots = 0;
+            bool is_block = false;
+
+            if (is_up) {
+                // В таблице УП дано в академических часах.
+                // Один фактический блок УП длится 6 академических часов
+                // и в расписании показывается как 2 соседние пары.
+                // Поэтому 18 часов УП = 3 блока = 6 отображаемых пар.
+                if (hours % 6 != 0) {
+                    std::cerr << "Некорректные часы УП: ожидается кратность 6: "
+                        << GROUP_NAME[group] << ", " << name
+                        << ", часов=" << hours << "\n";
+                }
+
+                int up_blocks = hours / 6;
+                slots = up_blocks * 2;
+                is_block = true;
+            }
+            else {
+                if (hours % 2 != 0) {
+                    std::cerr << "Предупреждение: нечётное количество часов, деление на 2 отбросит остаток: "
+                        << GROUP_NAME[group] << ", " << name
+                        << ", часов=" << hours << "\n";
+                }
+
+                slots = hours / 2;
+            }
+
+            add(group, sub, teacher, slots, name, subject_id, is_lab, is_block, camps);
+        };
+
+    // ====================== Старые группы ИСП ======================
+
     // Иностранный язык — только Лесная
     int engId = subj++;
 
-    for (int g = 0; g < GROUPS; g++) {
+    for (int g = G_ISP_3304; g <= G_ISP_3305P; g++) {
         int bs = g * PARTS_PER_GROUP;
 
         add(g, bs, T_NOVOSELOVA, 13, "Ин. язык", engId, false, false, { LESNAYA });
@@ -1681,23 +1965,23 @@ int main() {
     }
 
     // Физкультура
-    for (int g = 0; g < GROUPS; g++) {
+    for (int g = G_ISP_3304; g <= G_ISP_3305P; g++) {
         add(g, -1, T_NUROV, 14, "Физическая культура", -1, false, false, { LESNAYA, KRIVOUSOVA });
     }
 
     // БЖД
-    for (int g = 0; g < GROUPS; g++) {
+    for (int g = G_ISP_3304; g <= G_ISP_3305P; g++) {
         add(g, -1, T_POTAPOVA, 17, "БЖД", -1, false, false, { LESNAYA, KRIVOUSOVA });
     }
 
     // Экономика
-    add(0, -1, T_SERYANINA, 12, "Экономика", -1, false, false, { LESNAYA, KRIVOUSOVA });
-    add(1, -1, T_GARBUZOV, 12, "Экономика", -1, false, false, { LESNAYA, KRIVOUSOVA });
+    add(G_ISP_3304, -1, T_SERYANINA, 12, "Экономика", -1, false, false, { LESNAYA, KRIVOUSOVA });
+    add(G_ISP_3305P, -1, T_GARBUZOV, 12, "Экономика", -1, false, false, { LESNAYA, KRIVOUSOVA });
 
     // МДК.01.01 Разработка программных модулей
     int pmId = subj++;
 
-    for (int g = 0; g < GROUPS; g++) {
+    for (int g = G_ISP_3304; g <= G_ISP_3305P; g++) {
         int bs = g * PARTS_PER_GROUP;
 
         add(g, -1, T_GARBUZOV, 8, "МДК.01.01 теория", pmId, false, false, { LESNAYA, KRIVOUSOVA });
@@ -1709,15 +1993,13 @@ int main() {
     // МДК.04.01 Технология разработки и защиты БД
     int dbId = subj++;
 
-    for (int g = 0; g < GROUPS; g++) {
+    for (int g = G_ISP_3304; g <= G_ISP_3305P; g++) {
         int bs = g * PARTS_PER_GROUP;
 
         add(g, -1, T_SAMTSOVA, 36, "МДК.04.01 теория", dbId, false, false, { LESNAYA, KRIVOUSOVA });
         add(g, bs, T_GOBOV, 35, "МДК.04.01 ЛПЗ", dbId, true, false, { LESNAYA, KRIVOUSOVA });
         add(g, bs + 1, T_GOBOV, 35, "МДК.04.01 ЛПЗ", dbId, true, false, { LESNAYA, KRIVOUSOVA });
 
-        // Один агрегированный предмет на 36 пар, который ниже раскладывается
-        // на 18 стартов по 2 соседние пары.
         add(g, bs, T_SAMTSOVA, 36, "УП.04", -1, false, true, { LESNAYA, KRIVOUSOVA });
         add(g, bs + 1, T_SAMTSOVA, 36, "УП.04", -1, false, true, { LESNAYA, KRIVOUSOVA });
     }
@@ -1725,16 +2007,491 @@ int main() {
     // ВМДК.05.01 Управление и автоматизация БД
     int autoId = subj++;
 
-    for (int g = 0; g < GROUPS; g++) {
+    for (int g = G_ISP_3304; g <= G_ISP_3305P; g++) {
         int bs = g * PARTS_PER_GROUP;
 
         add(g, -1, T_GARBUZOV, 16, "ВМДК.05.01 теория", autoId, false, false, { LESNAYA, KRIVOUSOVA });
         add(g, bs, T_GOBOV, 19, "ВМДК.05.01 ЛПЗ", autoId, true, false, { LESNAYA, KRIVOUSOVA });
         add(g, bs + 1, T_GOBOV, 19, "ВМДК.05.01 ЛПЗ", autoId, true, false, { LESNAYA, KRIVOUSOVA });
 
-        // 9 двойных блоков УП.05 = 18 пар на подгруппу.
         add(g, bs, T_GOBOV, 18, "УП.05", -1, false, true, { LESNAYA, KRIVOUSOVA });
         add(g, bs + 1, T_GOBOV, 18, "УП.05", -1, false, true, { LESNAYA, KRIVOUSOVA });
+    }
+
+    // ====================== Группы 2 курса ======================
+
+    {
+        int g = G_TAKHCS_2201;
+        int bs = g * PARTS_PER_GROUP;
+        int sid = -1;
+
+        addHours(g, -1, T_TSIMFER, 44, "История", -1, false, false, ANY);
+        addHours(g, bs, T_SINELNIKOVA, 40, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, bs + 1, T_SINELNIKOVA, 40, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_NUROV, 42, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_NIFONTOVA, 28, "Математика", -1, false, false, ANY);
+        addHours(g, bs, T_AZARYAN, 46, "Информационные технологии в профессиональной деятельности / Адаптивные информационные и коммуникационные технологии", -1, false, false, ANY);
+        addHours(g, bs + 1, T_AZARYAN, 46, "Информационные технологии в профессиональной деятельности / Адаптивные информационные и коммуникационные технологии", -1, false, false, ANY);
+        addHours(g, -1, T_KALCHEVSKAYA, 60, "Органическая химия", -1, false, false, ANY);
+        addHours(g, -1, T_SEMENOVA, 56, "Аналитическая химия", -1, false, false, ANY);
+        addHours(g, -1, T_KALCHEVSKAYA, 56, "Физическая и коллоидная химия", -1, false, false, ANY);
+        addHours(g, -1, T_DINMUKHAMETOV, 40, "Электротехника и электроника", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_KALCHEVSKAYA, 6, "МДК.01.01 Основы аналитической химии и физико-химических методов анализа", sid, false, false, ANY);
+        addHours(g, bs, T_KALCHEVSKAYA, 54, "ЛПЗ МДК.01.01 Основы аналитической химии и физико-химических методов анализа", sid, true, false, ANY);
+        addHours(g, bs + 1, T_KALCHEVSKAYA, 54, "ЛПЗ МДК.01.01 Основы аналитической химии и физико-химических методов анализа", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SEMENOVA, 2, "МДК.02.01 Основы качественного и количественного анализа природных и промышленных материалов", sid, false, false, ANY);
+        addHours(g, bs, T_SEMENOVA, 72, "ЛПЗ МДК.02.01 Основы качественного и количественного анализа природных и промышленных материалов", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SEMENOVA, 72, "ЛПЗ МДК.02.01 Основы качественного и количественного анализа природных и промышленных материалов", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_KALCHEVSKAYA, 24, "ВМДК.04.02 Химический анализ сырья, материалов и готовой продукции", sid, false, false, ANY);
+        addHours(g, bs, T_KALCHEVSKAYA, 30, "ЛПЗ ВМДК.04.02 Химический анализ сырья, материалов и готовой продукции", sid, true, false, ANY);
+        addHours(g, bs + 1, T_KALCHEVSKAYA, 30, "ЛПЗ ВМДК.04.02 Химический анализ сырья, материалов и готовой продукции", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_KALCHEVSKAYA, 70, "ВМДК.04.03 Основы приготовления проб и растворов различной концентрации", sid, false, false, ANY);
+        addHours(g, bs, T_KALCHEVSKAYA, 46, "ЛПЗ ВМДК.04.03 Основы приготовления проб и растворов различной концентрации", sid, true, false, ANY);
+        addHours(g, bs + 1, T_KALCHEVSKAYA, 46, "ЛПЗ ВМДК.04.03 Основы приготовления проб и растворов различной концентрации", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_ALSHAEVA, 24, "ВМДК.04.04 Основы экологического контроля производства и технологического процесса", sid, false, false, ANY);
+        addHours(g, bs, T_ALSHAEVA, 16, "ЛПЗ ВМДК.04.04 Основы экологического контроля производства и технологического процесса", sid, true, false, ANY);
+        addHours(g, bs + 1, T_ALSHAEVA, 16, "ЛПЗ ВМДК.04.04 Основы экологического контроля производства и технологического процесса", sid, true, false, ANY);
+
+        addHours(g, bs, T_KALCHEVSKAYA, 72, "УП.04", -1, false, true, ANY);
+        addHours(g, bs + 1, T_KALCHEVSKAYA, 72, "УП.04", -1, false, true, ANY);
+    }
+
+    {
+        int g = G_MCM_201;
+        int bs = g * PARTS_PER_GROUP;
+        int sid = -1;
+
+        addHours(g, -1, T_KROPOTOVA, 18, "География", -1, false, false, ANY);
+        addHours(g, -1, T_SEMENOVA, 18, "Химия", -1, false, false, ANY);
+        addHours(g, -1, T_TSIMFER, 36, "История России", -1, false, false, ANY);
+        addHours(g, bs, T_DAVYDOVA, 44, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, bs + 1, T_DAVYDOVA, 44, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_NUROV, 62, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_ELAGINA, 36, "Основы финансовой грамотности", -1, false, false, ANY);
+        addHours(g, -1, T_POPOVA, 40, "Основы металлургического производства", -1, false, false, ANY);
+        addHours(g, bs, T_GALUZIN, 38, "Информационные технологии в профессиональной деятельности", -1, false, false, ANY);
+        addHours(g, bs + 1, T_GALUZIN, 38, "Информационные технологии в профессиональной деятельности", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_GARBUZOV, 10, "Компас 3D теория", sid, false, false, ANY);
+        addHours(g, bs, T_GARBUZOV, 26, "ЛПЗ Компас 3D", sid, true, false, ANY);
+        addHours(g, bs + 1, T_GARBUZOV, 26, "ЛПЗ Компас 3D", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_POPOVA, 24, "Пылеулавливание и очистка промышленных газов", sid, false, false, ANY);
+        addHours(g, bs, T_POPOVA, 12, "ЛПЗ Пылеулавливание и очистка промышленных газов", sid, true, false, ANY);
+        addHours(g, bs + 1, T_POPOVA, 12, "ЛПЗ Пылеулавливание и очистка промышленных газов", sid, true, false, ANY);
+
+        addHours(g, -1, T_KOSTAREVA, 36, "Экологические основы природопользования", -1, false, false, ANY);
+        addHours(g, -1, T_DINMUKHAMETOV, 36, "Электрооборудование металлургических цехов", -1, false, false, ANY);
+        addHours(g, -1, T_ALSHAEVA, 36, "Физическая химия", -1, false, false, ANY);
+        addHours(g, -1, T_SADRIEVA, 54, "Метрология и стандартизация", -1, false, false, ANY);
+        addHours(g, -1, T_DINMUKHAMETOV, 36, "Электротехника и электроника", -1, false, false, ANY);
+        addHours(g, -1, T_POPOVA, 48, "МДК.02.01 Металлургия цветных металлов", -1, false, false, ANY);
+        addHours(g, -1, T_POPOVA, 60, "МДК.02.02 Технология производства цветных металлов и сплавов", -1, false, false, ANY);
+
+        addHours(g, bs, T_POPOVA, 36, "УП.02", -1, false, true, ANY);
+        addHours(g, bs + 1, T_POPOVA, 36, "УП.02", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_POPOVA, 44, "ВМДК.03.02 Технология производства цветных металлов и сплавов по типам производств", sid, false, false, ANY);
+        addHours(g, bs, T_POPOVA, 12, "ЛПЗ ВМДК.03.02 Технология производства цветных металлов и сплавов по типам производств", sid, true, false, ANY);
+        addHours(g, bs + 1, T_POPOVA, 12, "ЛПЗ ВМДК.03.02 Технология производства цветных металлов и сплавов по типам производств", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_PISMAK, 32, "ВМДК.03.03 Анодная медь", sid, false, false, ANY);
+        addHours(g, bs, T_PISMAK, 10, "ЛПЗ ВМДК.03.03 Анодная медь", sid, true, false, ANY);
+        addHours(g, bs + 1, T_PISMAK, 10, "ЛПЗ ВМДК.03.03 Анодная медь", sid, true, false, ANY);
+
+        addHours(g, bs, T_PISMAK, 36, "УП.03", -1, false, true, ANY);
+        addHours(g, bs + 1, T_PISMAK, 36, "УП.03", -1, false, true, ANY);
+    }
+
+    {
+        int g = G_TEO_2501;
+        int bs = g * PARTS_PER_GROUP;
+        int sid = -1;
+
+        addHours(g, -1, T_TSIMFER, 48, "История России", -1, false, false, ANY);
+        addHours(g, bs, T_SINELNIKOVA, 40, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, bs + 1, T_SINELNIKOVA, 40, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_POTAPOVA, 44, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_KOSHELEV, 40, "Инженерная графика", -1, false, false, ANY);
+        addHours(g, -1, T_DINMUKHAMETOV, 72, "Электротехника и электроника", -1, false, false, ANY);
+        addHours(g, -1, T_DINMUKHAMETOV, 60, "Электрические машины и электропривод", -1, false, false, ANY);
+        addHours(g, bs, T_AZARYAN, 66, "Информационные технологии в профессиональной деятельности", -1, false, false, ANY);
+        addHours(g, bs + 1, T_AZARYAN, 66, "Информационные технологии в профессиональной деятельности", -1, false, false, ANY);
+        addHours(g, -1, T_DINMUKHAMETOV, 72, "Электроснабжение", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SHABUROV, 18, "МДК.01.01 Технология ремонта, монтажа и наладки электрического и электромеханического оборудования", sid, false, false, ANY);
+        addHours(g, bs, T_SHABUROV, 20, "ЛПЗ МДК.01.01 Технология ремонта, монтажа и наладки электрического и электромеханического оборудования", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SHABUROV, 20, "ЛПЗ МДК.01.01 Технология ремонта, монтажа и наладки электрического и электромеханического оборудования", sid, true, false, ANY);
+
+        addHours(g, bs, T_KOSHELEV, 36, "УП.01", -1, false, true, ANY);
+        addHours(g, bs + 1, T_KOSHELEV, 36, "УП.01", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SHABUROV, 20, "МДК.03.01 Основы энергоснабжения объектов отрасли", sid, false, false, ANY);
+        addHours(g, bs, T_SHABUROV, 32, "ЛПЗ МДК.03.01 Основы энергоснабжения объектов отрасли", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SHABUROV, 32, "ЛПЗ МДК.03.01 Основы энергоснабжения объектов отрасли", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SHABUROV, 40, "МДК.04.01 Выполнение монтажных работ, монтажное оборудование и контрольно-измерительные приборы", sid, false, false, ANY);
+        addHours(g, bs, T_SHABUROV, 62, "ЛПЗ МДК.04.01 Выполнение монтажных работ, монтажное оборудование и контрольно-измерительные приборы", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SHABUROV, 62, "ЛПЗ МДК.04.01 Выполнение монтажных работ, монтажное оборудование и контрольно-измерительные приборы", sid, true, false, ANY);
+
+        addHours(g, bs, T_KOSHELEV, 36, "УП.04", -1, false, true, ANY);
+        addHours(g, bs + 1, T_KOSHELEV, 36, "УП.04", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SHABUROV, 20, "ВМДК.05.01 Организация работ по ремонту и обслуживанию электрооборудования", sid, false, false, ANY);
+        addHours(g, bs, T_SHABUROV, 30, "ЛПЗ ВМДК.05.01 Организация работ по ремонту и обслуживанию электрооборудования", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SHABUROV, 30, "ЛПЗ ВМДК.05.01 Организация работ по ремонту и обслуживанию электрооборудования", sid, true, false, ANY);
+
+        addHours(g, bs, T_SHABUROV, 72, "УП.05", -1, false, true, ANY);
+        addHours(g, bs + 1, T_SHABUROV, 72, "УП.05", -1, false, true, ANY);
+    }
+
+    {
+        int g = G_SP_2601;
+        int bs = g * PARTS_PER_GROUP;
+        int sid = -1;
+
+        addHours(g, -1, T_KROPOTOVA, 18, "География", -1, false, false, ANY);
+        addHours(g, -1, T_SEMENOVA, 18, "Химия", -1, false, false, ANY);
+        addHours(g, -1, T_TSIMFER, 36, "История России", -1, false, false, ANY);
+        addHours(g, bs, T_ERMOLINA, 40, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, bs + 1, T_ERMOLINA, 40, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_NUROV, 46, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_ELAGINA, 36, "Основы финансовой грамотности", -1, false, false, ANY);
+        addHours(g, -1, T_ABRAMCHUK, 56, "Техническая механика", -1, false, false, ANY);
+        addHours(g, -1, T_SIVILKAEV, 60, "Технологические процессы в машиностроении", -1, false, false, ANY);
+        addHours(g, -1, T_AKHMETOV, 18, "Технология конструкционных материалов", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_PODCHINENNOV, 6, "Компас 3D", sid, false, false, ANY);
+        addHours(g, bs, T_PODCHINENNOV, 30, "ЛПЗ Компас 3D", sid, true, false, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 30, "ЛПЗ Компас 3D", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 16, "МДК.01.01 Технология сварочных работ", sid, false, false, ANY);
+        addHours(g, bs, T_GORIN, 30, "ЛПЗ МДК.01.01 Технология сварочных работ", sid, true, false, ANY);
+        addHours(g, bs + 1, T_GORIN, 30, "ЛПЗ МДК.01.01 Технология сварочных работ", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 20, "МДК.01.02 Основное оборудование для производства сварных конструкций", sid, false, false, ANY);
+        addHours(g, bs, T_AKHMETOV, 26, "ЛПЗ МДК.01.02 Основное оборудование для производства сварных конструкций", sid, true, false, ANY);
+        addHours(g, bs + 1, T_AKHMETOV, 26, "ЛПЗ МДК.01.02 Основное оборудование для производства сварных конструкций", sid, true, false, ANY);
+
+        addHours(g, bs, T_GORIN, 18, "УП.01", -1, false, true, ANY);
+        addHours(g, bs + 1, T_GORIN, 18, "УП.01", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 20, "МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций", sid, false, false, ANY);
+        addHours(g, bs, T_AKHMETOV, 26, "ЛПЗ МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций", sid, true, false, ANY);
+        addHours(g, bs + 1, T_AKHMETOV, 26, "ЛПЗ МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций", sid, true, false, ANY);
+
+        addHours(g, bs, T_VERHNEV, 36, "УП.03", -1, false, true, ANY);
+        addHours(g, bs + 1, T_VERHNEV, 36, "УП.03", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_LIMONOVA, 26, "МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах", sid, false, false, ANY);
+        addHours(g, bs, T_LIMONOVA, 20, "ЛПЗ МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах", sid, true, false, ANY);
+        addHours(g, bs + 1, T_LIMONOVA, 20, "ЛПЗ МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах", sid, true, false, ANY);
+
+        addHours(g, bs, T_PODCHINENNOV, 18, "УП.05", -1, false, true, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 18, "УП.05", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 40, "МДК.06.01 Технология выполнения газовой сварки и резки", sid, false, false, ANY);
+        addHours(g, bs, T_PODCHINENNOV, 52, "ЛПЗ МДК.06.01 Технология выполнения газовой сварки и резки", sid, true, false, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 52, "ЛПЗ МДК.06.01 Технология выполнения газовой сварки и резки", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 20, "МДК.06.02 Технология ручной дуговой сварки", sid, false, false, ANY);
+        addHours(g, bs, T_PODCHINENNOV, 60, "ЛПЗ МДК.06.02 Технология ручной дуговой сварки", sid, true, false, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 60, "ЛПЗ МДК.06.02 Технология ручной дуговой сварки", sid, true, false, ANY);
+
+        addHours(g, bs, T_PODCHINENNOV, 36, "УП.06", -1, false, true, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 36, "УП.06", -1, false, true, ANY);
+    }
+
+    {
+        int g = G_SP_2602P;
+        int sid = -1;
+
+        addHours(g, -1, T_KROPOTOVA, 18, "География", -1, false, false, ANY);
+        addHours(g, -1, T_SEMENOVA, 18, "Химия", -1, false, false, ANY);
+        addHours(g, -1, T_TSIMFER, 36, "История России", -1, false, false, ANY);
+        addHours(g, -1, T_ERMOLINA, 40, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_NUROV, 46, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_ELAGINA, 36, "Основы финансовой грамотности", -1, false, false, ANY);
+        addHours(g, -1, T_ABRAMCHUK, 56, "Техническая механика", -1, false, false, ANY);
+        addHours(g, -1, T_SIVILKAEV, 60, "Технологические процессы в машиностроении", -1, false, false, ANY);
+        addHours(g, -1, T_AKHMETOV, 18, "Технология конструкционных материалов", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_PODCHINENNOV, 6, "Компас 3D", sid, false, false, ANY);
+        addHours(g, -1, T_PODCHINENNOV, 30, "ЛПЗ Компас 3D", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 16, "МДК.01.01 Технология сварочных работ", sid, false, false, ANY);
+        addHours(g, -1, T_GORIN, 30, "ЛПЗ МДК.01.01 Технология сварочных работ", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 20, "МДК.01.02 Основное оборудование для производства сварных конструкций", sid, false, false, ANY);
+        addHours(g, -1, T_AKHMETOV, 26, "ЛПЗ МДК.01.02 Основное оборудование для производства сварных конструкций", sid, true, false, ANY);
+
+        addHours(g, -1, T_GORIN, 18, "УП.01", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 20, "МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций", sid, false, false, ANY);
+        addHours(g, -1, T_AKHMETOV, 26, "ЛПЗ МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций", sid, true, false, ANY);
+
+        addHours(g, -1, T_AKHMETOV, 36, "УП.03", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_LIMONOVA, 26, "МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах", sid, false, false, ANY);
+        addHours(g, -1, T_LIMONOVA, 20, "ЛПЗ МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах", sid, true, false, ANY);
+
+        addHours(g, -1, T_PODCHINENNOV, 18, "УП.05", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 40, "МДК.06.01 Технология выполнения газовой сварки и резки", sid, false, false, ANY);
+        addHours(g, -1, T_PODCHINENNOV, 52, "ЛПЗ МДК.06.01 Технология выполнения газовой сварки и резки", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AKHMETOV, 20, "МДК.06.02 Технология ручной дуговой сварки", sid, false, false, ANY);
+        addHours(g, -1, T_PODCHINENNOV, 60, "ЛПЗ МДК.06.02 Технология ручной дуговой сварки", sid, true, false, ANY);
+
+        addHours(g, -1, T_PODCHINENNOV, 36, "УП.06", -1, false, true, ANY);
+    }
+
+    {
+        int g = G_TORD_2706;
+        int bs = g * PARTS_PER_GROUP;
+        int sid = -1;
+
+        addHours(g, -1, T_KROPOTOVA, 14, "География", -1, false, false, ANY);
+        addHours(g, -1, T_SOBOLEVA, 20, "Химия", -1, false, false, ANY);
+        addHours(g, bs, T_NOVOSELOVA, 46, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, bs + 1, T_NOVOSELOVA, 46, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_POTAPOVA, 46, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_ABRAMCHUK, 20, "Математика", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_OTRAK, 2, "Информатика теория", sid, false, false, ANY);
+        addHours(g, bs, T_OTRAK, 18, "Информатика", sid, true, false, ANY);
+        addHours(g, bs + 1, T_OTRAK, 18, "Информатика", sid, true, false, ANY);
+
+        addHours(g, -1, T_SALAMATINA, 56, "Инженерная графика", -1, false, false, ANY);
+        addHours(g, -1, T_ABRAMCHUK, 106, "Техническая механика", -1, false, false, ANY);
+        addHours(g, -1, T_DINMUKHAMETOV, 58, "Электротехника и электроника", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_KOSHELEV, 4, "Компас 3D", sid, false, false, ANY);
+        addHours(g, bs, T_KOSHELEV, 34, "ЛПЗ Компас 3D", sid, true, false, ANY);
+        addHours(g, bs + 1, T_KOSHELEV, 34, "ЛПЗ Компас 3D", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_ABRAMCHUK, 30, "МДК.01.01 Устройство автомобилей", sid, false, false, ANY);
+        addHours(g, bs, T_PODCHINENNOV, 16, "ЛПЗ МДК.01.01 Устройство автомобилей", sid, true, false, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 16, "ЛПЗ МДК.01.01 Устройство автомобилей", sid, true, false, ANY);
+
+        addHours(g, bs, T_SAMTSOV, 36, "УП.01", -1, false, true, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 36, "УП.01", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SAMTSOV, 40, "ВМДК.04.01 Слесарное дело и технические измерения", sid, false, false, ANY);
+        addHours(g, bs, T_SAMTSOV, 46, "ЛПЗ ВМДК.04.01 Слесарное дело и технические измерения", sid, true, false, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 46, "ЛПЗ ВМДК.04.01 Слесарное дело и технические измерения", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_TIMEROV, 22, "ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля", sid, false, false, ANY);
+        addHours(g, bs, T_TIMEROV, 24, "ЛПЗ ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля", sid, true, false, ANY);
+        addHours(g, bs + 1, T_TIMEROV, 24, "ЛПЗ ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля", sid, true, false, ANY);
+
+        addHours(g, bs, T_SAMTSOV, 72, "УП.04", -1, false, true, ANY);
+        addHours(g, bs + 1, T_TIMEROV, 72, "УП.04", -1, false, true, ANY);
+
+        addHours(g, -1, T_TIMEROV, 84, "ВМДК.05.01 Основы законодательства в сфере дорожного движения", -1, false, false, ANY);
+        addHours(g, -1, T_TIMEROV, 46, "ВМДК.05.02 Основы управления транспортными средствами", -1, false, false, ANY);
+    }
+
+    {
+        int g = G_TORD_2707P;
+        int bs = g * PARTS_PER_GROUP;
+        int sid = -1;
+
+        addHours(g, -1, T_KROPOTOVA, 14, "География", -1, false, false, ANY);
+        addHours(g, -1, T_SEMENOVA, 20, "Химия", -1, false, false, ANY);
+        addHours(g, bs, T_NOVOSELOVA, 46, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, bs + 1, T_DAVYDOVA, 46, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_POTAPOVA, 46, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_ABRAMCHUK, 20, "Математика", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_OTRAK, 2, "Информатика теория", sid, false, false, ANY);
+        addHours(g, bs, T_OTRAK, 18, "Информатика", sid, true, false, ANY);
+        addHours(g, bs + 1, T_OTRAK, 18, "Информатика", sid, true, false, ANY);
+
+        addHours(g, -1, T_SALAMATINA, 56, "Инженерная графика", -1, false, false, ANY);
+        addHours(g, -1, T_ABRAMCHUK, 106, "Техническая механика", -1, false, false, ANY);
+        addHours(g, -1, T_DINMUKHAMETOV, 58, "Электротехника и электроника", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_KOSHELEV, 4, "Компас 3D", sid, false, false, ANY);
+        addHours(g, bs, T_KOSHELEV, 34, "ЛПЗ Компас 3D", sid, true, false, ANY);
+        addHours(g, bs + 1, T_KOSHELEV, 34, "ЛПЗ Компас 3D", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_ABRAMCHUK, 30, "МДК.01.01 Устройство автомобилей", sid, false, false, ANY);
+        addHours(g, bs, T_PODCHINENNOV, 16, "ЛПЗ МДК.01.01 Устройство автомобилей", sid, true, false, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 16, "ЛПЗ МДК.01.01 Устройство автомобилей", sid, true, false, ANY);
+
+        addHours(g, bs, T_SAMTSOV, 36, "УП.01", -1, false, true, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 36, "УП.01", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SAMTSOV, 40, "ВМДК.04.01 Слесарное дело и технические измерения", sid, false, false, ANY);
+        addHours(g, bs, T_SAMTSOV, 46, "ЛПЗ ВМДК.04.01 Слесарное дело и технические измерения", sid, true, false, ANY);
+        addHours(g, bs + 1, T_PODCHINENNOV, 46, "ЛПЗ ВМДК.04.01 Слесарное дело и технические измерения", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_TIMEROV, 22, "ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля", sid, false, false, ANY);
+        addHours(g, bs, T_TIMEROV, 24, "ЛПЗ ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля", sid, true, false, ANY);
+        addHours(g, bs + 1, T_TIMEROV, 24, "ЛПЗ ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля", sid, true, false, ANY);
+
+        addHours(g, bs, T_SAMTSOV, 72, "УП.04", -1, false, true, ANY);
+        addHours(g, bs + 1, T_TIMEROV, 72, "УП.04", -1, false, true, ANY);
+
+        addHours(g, -1, T_TIMEROV, 72, "ВМДК.05.01 Основы законодательства в сфере дорожного движения", -1, false, false, ANY);
+        addHours(g, -1, T_TIMEROV, 46, "ВМДК.05.02 Основы управления транспортными средствами", -1, false, false, ANY);
+    }
+
+    {
+        int g = G_TM_2415;
+        int bs = g * PARTS_PER_GROUP;
+        int sid = -1;
+
+        addHours(g, -1, T_KROPOTOVA, 14, "География", -1, false, false, ANY);
+        addHours(g, -1, T_SOBOLEVA, 20, "Химия", -1, false, false, ANY);
+        addHours(g, -1, T_TSIMFER, 54, "История России", -1, false, false, ANY);
+        addHours(g, bs, T_ERMOLINA, 34, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, bs + 1, T_ERMOLINA, 34, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_NUROV, 46, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_KOSTAREVA, 36, "Основы бережливого производства", -1, false, false, ANY);
+        addHours(g, -1, T_SALAMATINA, 30, "Техническая механика", -1, false, false, ANY);
+        addHours(g, -1, T_SADRIEVA, 54, "Метрология, стандартизация и сертификация", -1, false, false, ANY);
+        addHours(g, -1, T_SALAMATINA, 42, "Процессы формообразования и инструменты", -1, false, false, ANY);
+        addHours(g, -1, T_SALAMATINA, 34, "Технология машиностроения", -1, false, false, ANY);
+        addHours(g, -1, T_KOSTAREVA, 36, "Охрана труда", -1, false, false, ANY);
+        addHours(g, -1, T_NIFONTOVA, 36, "Математика в профессиональной деятельности", -1, false, false, ANY);
+        addHours(g, -1, T_SALAMATINA, 36, "Технологическая оснастка", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SIMAKOV, 24, "Компас 3D", sid, false, false, ANY);
+        addHours(g, bs, T_SIMAKOV, 36, "ЛПЗ Компас 3D", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SIMAKOV, 36, "ЛПЗ Компас 3D", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AZARYAN, 14, "Информационные технологии в профессиональной деятельности", sid, false, false, ANY);
+        addHours(g, bs, T_AZARYAN, 22, "ЛПЗ Информационные технологии в профессиональной деятельности", sid, true, false, ANY);
+        addHours(g, bs + 1, T_AZARYAN, 22, "ЛПЗ Информационные технологии в профессиональной деятельности", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_VALDIYANOV, 22, "МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования", sid, false, false, ANY);
+        addHours(g, bs, T_VALDIYANOV, 16, "ЛПЗ МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования", sid, true, false, ANY);
+        addHours(g, bs + 1, T_VALDIYANOV, 16, "ЛПЗ МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SALAMATINA, 18, "МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин", sid, false, false, ANY);
+        addHours(g, bs, T_SALAMATINA, 12, "ЛПЗ МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SALAMATINA, 12, "ЛПЗ МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин", sid, true, false, ANY);
+
+        addHours(g, bs, T_SIVILKAEV, 18, "УП.01", -1, false, true, ANY);
+        addHours(g, bs + 1, T_SIVILKAEV, 18, "УП.01", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_VALDIYANOV, 18, "МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин", sid, false, false, ANY);
+        addHours(g, bs, T_VALDIYANOV, 32, "ЛПЗ МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин", sid, true, false, ANY);
+        addHours(g, bs + 1, T_VALDIYANOV, 32, "ЛПЗ МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SALAMATINA, 38, "ВМДК.07.01 Технология обработки на металлорежущих станках", sid, false, false, ANY);
+        addHours(g, bs, T_KLABUKOV, 32, "ЛПЗ ВМДК.07.01 Технология обработки на металлорежущих станках", sid, true, false, ANY);
+        addHours(g, bs + 1, T_KLABUKOV, 32, "ЛПЗ ВМДК.07.01 Технология обработки на металлорежущих станках", sid, true, false, ANY);
+
+        addHours(g, bs, T_KLABUKOV, 54, "УП.07", -1, false, true, ANY);
+        addHours(g, bs + 1, T_KLABUKOV, 54, "УП.07", -1, false, true, ANY);
+    }
+
+    {
+        int g = G_TM_2416P;
+        int bs = g * PARTS_PER_GROUP;
+        int sid = -1;
+
+        addHours(g, -1, T_KROPOTOVA, 14, "География", -1, false, false, ANY);
+        addHours(g, -1, T_SOBOLEVA, 20, "Химия", -1, false, false, ANY);
+        addHours(g, -1, T_TSIMFER, 54, "История России", -1, false, false, ANY);
+        addHours(g, bs, T_ERMOLINA, 34, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, bs + 1, T_ERMOLINA, 34, "Иностранный язык в профессиональной деятельности", -1, false, false, LES);
+        addHours(g, -1, T_NUROV, 46, "Физическая культура", -1, false, false, ANY);
+        addHours(g, -1, T_KOSTAREVA, 36, "Основы бережливого производства", -1, false, false, ANY);
+        addHours(g, -1, T_SALAMATINA, 30, "Техническая механика", -1, false, false, ANY);
+        addHours(g, -1, T_SADRIEVA, 54, "Метрология, стандартизация и сертификация", -1, false, false, ANY);
+        addHours(g, -1, T_SALAMATINA, 42, "Процессы формообразования и инструменты", -1, false, false, ANY);
+        addHours(g, -1, T_SALAMATINA, 34, "Технология машиностроения", -1, false, false, ANY);
+        addHours(g, -1, T_KOSTAREVA, 36, "Охрана труда", -1, false, false, ANY);
+        addHours(g, -1, T_NIFONTOVA, 36, "Математика в профессиональной деятельности", -1, false, false, ANY);
+        addHours(g, -1, T_SALAMATINA, 36, "Технологическая оснастка", -1, false, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SIMAKOV, 24, "Компас 3D", sid, false, false, ANY);
+        addHours(g, bs, T_SIMAKOV, 36, "ЛПЗ Компас 3D", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SIMAKOV, 36, "ЛПЗ Компас 3D", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_AZARYAN, 14, "Информационные технологии в профессиональной деятельности", sid, false, false, ANY);
+        addHours(g, bs, T_AZARYAN, 22, "ЛПЗ Информационные технологии в профессиональной деятельности", sid, true, false, ANY);
+        addHours(g, bs + 1, T_AZARYAN, 22, "ЛПЗ Информационные технологии в профессиональной деятельности", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_VALDIYANOV, 22, "МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования", sid, false, false, ANY);
+        addHours(g, bs, T_VALDIYANOV, 16, "ЛПЗ МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования", sid, true, false, ANY);
+        addHours(g, bs + 1, T_VALDIYANOV, 16, "ЛПЗ МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SALAMATINA, 18, "МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин", sid, false, false, ANY);
+        addHours(g, bs, T_SALAMATINA, 12, "ЛПЗ МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SALAMATINA, 12, "ЛПЗ МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин", sid, true, false, ANY);
+
+        addHours(g, bs, T_SIVILKAEV, 18, "УП.01", -1, false, true, ANY);
+        addHours(g, bs + 1, T_SIVILKAEV, 18, "УП.01", -1, false, true, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_VALDIYANOV, 18, "МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин", sid, false, false, ANY);
+        addHours(g, bs, T_VALDIYANOV, 32, "ЛПЗ МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин", sid, true, false, ANY);
+        addHours(g, bs + 1, T_VALDIYANOV, 32, "ЛПЗ МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин", sid, true, false, ANY);
+
+        sid = subj++;
+        addHours(g, -1, T_SALAMATINA, 38, "ВМДК.07.01 Технология обработки на металлорежущих станках", sid, false, false, ANY);
+        addHours(g, bs, T_SIMAKOV, 32, "ЛПЗ ВМДК.07.01 Технология обработки на металлорежущих станках", sid, true, false, ANY);
+        addHours(g, bs + 1, T_SIMAKOV, 32, "ЛПЗ ВМДК.07.01 Технология обработки на металлорежущих станках", sid, true, false, ANY);
+
+        addHours(g, bs, T_SIMAKOV, 54, "УП.07", -1, false, true, ANY);
+        addHours(g, bs + 1, T_SIMAKOV, 54, "УП.07", -1, false, true, ANY);
     }
 
     int num_lessons = static_cast<int>(lessons.size());
@@ -1751,7 +2508,6 @@ int main() {
     CpModelBuilder model;
     LinearExpr objective;
 
-    // x[l][t] = 1, если занятие l стоит в глобальном слоте t
     std::vector<std::vector<BoolVar>> x(
         num_lessons,
         std::vector<BoolVar>(total_slots)
@@ -1795,6 +2551,25 @@ int main() {
         blocks.push_back(bi);
     }
 
+    std::vector<std::vector<int>> fixed_up_start_indices;
+    bool fixed_up_ok = true;
+
+    if (FIX_UP_STARTS_GREEDY) {
+        fixed_up_start_indices = SelectGreedyUpStarts(
+            lessons,
+            blocks,
+            all_days,
+            num_days,
+            fixed_up_ok
+        );
+
+        if (!fixed_up_ok) {
+            std::cerr << "\nЖадная фиксация УП не смогла расставить все блоки. "
+                << "Это уже конкретная проблема по УП/преподавателям, а не лимит решателя.\n";
+            return 1;
+        }
+    }
+
     // Обычные уроки: точное число слотов
     for (int l = 0; l < num_lessons; l++) {
         if (lessons[l].is_block) continue;
@@ -1808,12 +2583,10 @@ int main() {
         model.AddEquality(sum, lessons[l].total_slots);
     }
 
-    // Блоки УП: агрегированный предмет раскладывается на нужное число
-    // стартов, каждый старт занимает 2 соседние пары. Например 36 пар УП.04
-    // превращаются в 18 двойных блоков, но без 18 одинаковых Lesson-строк.
     int total_block_start_vars = 0;
 
-    for (auto& blk : blocks) {
+    for (int block_index = 0; block_index < static_cast<int>(blocks.size()); block_index++) {
+        auto& blk = blocks[block_index];
         int l = blk.lesson_id;
 
         int required_starts = lessons[l].total_slots / 2;
@@ -1836,6 +2609,17 @@ int main() {
         }
 
         model.AddEquality(start_sum, required_starts);
+
+        if (FIX_UP_STARTS_GREEDY) {
+            std::set<int> fixed_indices(
+                fixed_up_start_indices[block_index].begin(),
+                fixed_up_start_indices[block_index].end()
+            );
+
+            for (int i = 0; i < static_cast<int>(blk.start_vars.size()); i++) {
+                model.AddEquality(blk.start_vars[i], fixed_indices.count(i) ? 1 : 0);
+            }
+        }
 
         std::vector<std::vector<BoolVar>> covers(total_slots);
 
@@ -1918,14 +2702,11 @@ int main() {
                 }
             }
 
-            // В одном слоте не может быть двух занятий всей группы.
             model.AddLessOrEqual(whole_sum, 1);
 
-            // Каждая подгруппа не может иметь два занятия одновременно.
             for (int p = 0; p < PARTS_PER_GROUP; p++) {
                 model.AddLessOrEqual(sub_sum[p], 1);
 
-                // Занятие всей группы конфликтует с занятием любой подгруппы.
                 LinearExpr whole_plus_part;
                 whole_plus_part += whole_sum;
                 whole_plus_part += sub_sum[p];
@@ -1933,7 +2714,6 @@ int main() {
                 model.AddLessOrEqual(whole_plus_part, 1);
             }
 
-            // group_busy = есть хотя бы одно занятие у группы в этом слоте.
             LinearExpr group_slot_sum;
             group_slot_sum += whole_sum;
 
@@ -1943,8 +2723,6 @@ int main() {
 
             group_busy[g][t] = MakePositiveIndicator(model, group_slot_sum);
 
-            // part_busy = есть занятие у конкретной подгруппы.
-            // Занятие всей группы считается занятием для обеих подгрупп.
             for (int p = 0; p < PARTS_PER_GROUP; p++) {
                 LinearExpr part_slot_sum;
                 part_slot_sum += whole_sum;
@@ -1955,7 +2733,6 @@ int main() {
         }
     }
 
-    // Список студенческих сущностей: каждая подгруппа отдельно.
     std::vector<std::vector<BoolVar>> student_entities;
 
     for (int g = 0; g < GROUPS; g++) {
@@ -1965,15 +2742,7 @@ int main() {
     }
 
     // ====================== УП = отдельный день подгруппы ======================
-    //
-    // Если у подгруппы в день есть УП, то:
-    // 1) в этот день у этой подгруппы может быть только один УП-блок;
-    // 2) день этой подгруппы состоит ровно из 2 пар этого УП;
-    // 3) никаких других УП, ЛПЗ, теорий, физкультуры, БЖД и т.п.
-    //    в этот день у этой подгруппы быть не может.
-    //
-    // part_busy уже учитывает и занятия подгруппы, и занятия всей группы.
-    // Поэтому общегрупповая пара тоже запрещается в УП-день этой подгруппы.
+
     for (int g = 0; g < GROUPS; g++) {
         for (int p = 0; p < PARTS_PER_GROUP; p++) {
             for (int d = 0; d < num_days; d++) {
@@ -2005,8 +2774,6 @@ int main() {
                     up_start_sum += v;
                 }
 
-                // Запрещает два УП-блока в один день одной подгруппе:
-                // УП.04 + УП.05, два блока УП.04, два блока УП.05 и т.п.
                 model.AddLessOrEqual(up_start_sum, 1);
 
                 LinearExpr part_day_sum;
@@ -2022,8 +2789,6 @@ int main() {
                 required_up_slots += up_start_sum;
                 required_up_slots += up_start_sum;
 
-                // Если УП есть, день подгруппы должен состоять ровно из 2 пар:
-                // эти 2 пары — сам УП-блок, больше ничего.
                 model.AddEquality(part_day_sum, required_up_slots)
                     .OnlyEnforceIf(has_up);
             }
@@ -2047,26 +2812,13 @@ int main() {
                 }
             }
 
-            // Преподаватель не может вести больше одной пары одновременно.
             model.AddLessOrEqual(sum, 1);
-
             teacher_busy[teacher][t] = MakePositiveIndicator(model, sum);
         }
     }
 
     // ====================== Блокировка преподавателя на время УП ======================
-    //
-    // УП в учебной нагрузке учитывается как 2 пары, но фактически занимает
-    // отдельный временной интервал:
-    //   ПН:    09:00-13:00 или 13:30-17:30
-    //   ВТ-ПТ: 08:30-12:30 или 13:00-17:00
-    //   СБ:    08:30-12:00 или 12:30-16:30
-    //
-    // Поэтому преподавателю, который ведёт УП, запрещены обычные пары,
-    // пересекающиеся с реальным временем УП. Другие УП этого же преподавателя
-    // запрещаются только если их реальные интервалы пересекаются. Так утреннее
-    // и дневное УП в один день не конфликтуют друг с другом, если по времени
-    // они действительно не пересекаются.
+
     for (const auto& blk : blocks) {
         int l = blk.lesson_id;
         int teacher = lessons[l].teacher;
@@ -2171,9 +2923,9 @@ int main() {
                 visible_group_day_sum += group_busy[g][t];
             }
 
-            // В расписании группы за день должно быть не больше 5 занятых номеров пар.
-            // Это дополнительно защищает вывод от дней, где подгруппы разнесены на 6-7 пар.
-            model.AddLessOrEqual(visible_group_day_sum, MAX_STUDENT_PAIRS_PER_DAY);
+            if (LIMIT_VISIBLE_GROUP_PAIRS_PER_DAY) {
+                model.AddLessOrEqual(visible_group_day_sum, MAX_STUDENT_PAIRS_PER_DAY);
+            }
         }
     }
 
@@ -2190,7 +2942,6 @@ int main() {
                 BoolVar has = MakePositiveIndicator(model, day_sum);
                 student_day_has[g][p][d] = has;
 
-                // Если подгруппа учится в этот день, то минимум 2 пары.
                 AddMinIfPositive(
                     model,
                     day_sum,
@@ -2198,10 +2949,8 @@ int main() {
                     MIN_STUDENT_PAIRS_PER_STUDY_DAY
                 );
 
-                // У конкретного студента / подгруппы не может быть больше 5 пар в день.
                 model.AddLessOrEqual(day_sum, MAX_STUDENT_PAIRS_PER_DAY);
 
-                // Индикатор дня с 5 парами. Используется в целевой функции качества.
                 BoolVar is_five_pair_day = model.NewBoolVar();
                 model.AddEquality(day_sum, MAX_STUDENT_PAIRS_PER_DAY)
                     .OnlyEnforceIf(is_five_pair_day);
@@ -2212,11 +2961,11 @@ int main() {
         }
     }
 
-    // Если в конкретный день учится одна подгруппа, обязана учиться и другая.
-    // То есть не будет дней, когда часть студентов группы вообще не учится.
-    for (int g = 0; g < GROUPS; g++) {
-        for (int d = 0; d < num_days; d++) {
-            model.AddEquality(student_day_has[g][0][d], student_day_has[g][1][d]);
+    if (FORCE_BOTH_SUBGROUPS_SAME_STUDY_DAYS) {
+        for (int g = 0; g < GROUPS; g++) {
+            for (int d = 0; d < num_days; d++) {
+                model.AddEquality(student_day_has[g][0][d], student_day_has[g][1][d]);
+            }
         }
     }
 
@@ -2309,95 +3058,90 @@ int main() {
 
     // ====================== ЛПЗ только после теории ======================
 
-    std::map<std::pair<int, int>, std::vector<int>> theory_of;
-    std::map<std::pair<int, int>, std::vector<int>> lab_of;
+    if (ENFORCE_THEORY_BEFORE_LABS) {
+        std::map<std::pair<int, int>, std::vector<int>> theory_of;
+        std::map<std::pair<int, int>, std::vector<int>> lab_of;
 
-    for (int l = 0; l < num_lessons; l++) {
-        if (lessons[l].subject_id < 0) continue;
+        for (int l = 0; l < num_lessons; l++) {
+            if (lessons[l].subject_id < 0) continue;
 
-        auto key = std::make_pair(lessons[l].group, lessons[l].subject_id);
+            auto key = std::make_pair(lessons[l].group, lessons[l].subject_id);
 
-        if (lessons[l].is_lab) {
-            lab_of[key].push_back(l);
+            if (lessons[l].is_lab) {
+                lab_of[key].push_back(l);
+            }
+            else {
+                theory_of[key].push_back(l);
+            }
         }
-        else {
-            theory_of[key].push_back(l);
-        }
-    }
 
-    for (const auto& item : lab_of) {
-        const auto& key = item.first;
-        const auto& labs = item.second;
+        for (const auto& item : lab_of) {
+            const auto& key = item.first;
+            const auto& labs = item.second;
 
-        auto it = theory_of.find(key);
-        if (it == theory_of.end()) continue;
+            auto it = theory_of.find(key);
+            if (it == theory_of.end()) continue;
 
-        const auto& theories = it->second;
-        if (theories.empty()) continue;
+            const auto& theories = it->second;
+            if (theories.empty()) continue;
 
-        if (STRICT_ALL_THEORY_BEFORE_LABS) {
-            // Строгий режим: все теоретические занятия предмета раньше всех ЛПЗ.
-            // Оставлен как переключатель, но по умолчанию выключен.
-            IntVar last_theory = model.NewIntVar(Domain(0, total_slots - 1));
+            if (STRICT_ALL_THEORY_BEFORE_LABS) {
+                IntVar last_theory = model.NewIntVar(Domain(0, total_slots - 1));
 
-            for (int l_th : theories) {
-                for (int t = 0; t < total_slots; t++) {
-                    model.AddGreaterOrEqual(last_theory, t).OnlyEnforceIf(x[l_th][t]);
+                for (int l_th : theories) {
+                    for (int t = 0; t < total_slots; t++) {
+                        model.AddGreaterOrEqual(last_theory, t).OnlyEnforceIf(x[l_th][t]);
+                    }
                 }
-            }
 
-            for (int l_lab : labs) {
-                for (int t = 0; t < total_slots; t++) {
-                    model.AddLessThan(last_theory, t).OnlyEnforceIf(x[l_lab][t]);
-                }
-            }
-        }
-        else {
-            // Быстрый режим: в первой доступной двухнедельной корзине предмета
-            // должна быть теория, а ЛПЗ в этой корзине запрещены. Это сохраняет
-            // смысл "сначала теория", но не заставляет закрывать всю теорию
-            // перед первой лабораторной.
-            int group = key.first;
-            std::vector<std::vector<int>> buckets =
-                BuildAvailableDayBuckets(group, all_days, unavailable);
-
-            if (buckets.empty()) {
-                continue;
-            }
-
-            LinearExpr initial_theory_sum;
-            LinearExpr initial_lab_sum;
-
-            for (int l_th : theories) {
-                for (int d : buckets.front()) {
-                    for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                        int t = d * SLOTS_PER_DAY + s;
-                        initial_theory_sum += x[l_th][t];
+                for (int l_lab : labs) {
+                    for (int t = 0; t < total_slots; t++) {
+                        model.AddLessThan(last_theory, t).OnlyEnforceIf(x[l_lab][t]);
                     }
                 }
             }
+            else {
+                int group = key.first;
+                std::vector<std::vector<int>> buckets =
+                    BuildAvailableDayBuckets(group, all_days, unavailable);
 
-            for (int l_lab : labs) {
-                for (int d : buckets.front()) {
-                    for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                        int t = d * SLOTS_PER_DAY + s;
-                        initial_lab_sum += x[l_lab][t];
+                if (buckets.empty()) {
+                    continue;
+                }
+
+                LinearExpr initial_theory_sum;
+                LinearExpr initial_lab_sum;
+
+                for (int l_th : theories) {
+                    for (int d : buckets.front()) {
+                        for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                            int t = d * SLOTS_PER_DAY + s;
+                            initial_theory_sum += x[l_th][t];
+                        }
                     }
                 }
-            }
 
-            model.AddGreaterOrEqual(
-                initial_theory_sum,
-                MIN_INITIAL_THEORY_SLOTS_BEFORE_LABS
-            );
-            model.AddEquality(initial_lab_sum, 0);
+                for (int l_lab : labs) {
+                    for (int d : buckets.front()) {
+                        for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                            int t = d * SLOTS_PER_DAY + s;
+                            initial_lab_sum += x[l_lab][t];
+                        }
+                    }
+                }
+
+                model.AddGreaterOrEqual(
+                    initial_theory_sum,
+                    MIN_INITIAL_THEORY_SLOTS_BEFORE_LABS
+                );
+                model.AddEquality(initial_lab_sum, 0);
+            }
         }
+
     }
 
     // ====================== Кампусы ======================
 
-    // Кампус теперь задаётся не на каждый слот, а на весь день.
-    // Это проще и корректнее: у группы и преподавателя один кампус в течение дня.
     std::vector<std::vector<IntVar>> group_day_campus(
         GROUPS,
         std::vector<IntVar>(num_days)
@@ -2420,28 +3164,27 @@ int main() {
         }
     }
 
-    for (int l = 0; l < num_lessons; l++) {
-        int group = lessons[l].group;
-        int teacher = lessons[l].teacher;
+    if (ENFORCE_DAY_CAMPUS_RULES) {
+        for (int l = 0; l < num_lessons; l++) {
+            int group = lessons[l].group;
+            int teacher = lessons[l].teacher;
 
-        for (int d = 0; d < num_days; d++) {
-            for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                int t = d * SLOTS_PER_DAY + s;
+            for (int d = 0; d < num_days; d++) {
+                for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                    int t = d * SLOTS_PER_DAY + s;
 
-                // Если занятие стоит, группа и преподаватель в этот день
-                // находятся в одном кампусе.
-                model.AddEquality(group_day_campus[group][d], teacher_day_campus[teacher][d])
-                    .OnlyEnforceIf(x[l][t]);
-
-                // Если занятие разрешено только в одном кампусе, фиксируем кампус дня.
-                if (lessons[l].allowed_campuses.size() == 1) {
-                    int campus = static_cast<int>(*lessons[l].allowed_campuses.begin());
-
-                    model.AddEquality(group_day_campus[group][d], campus)
+                    model.AddEquality(group_day_campus[group][d], teacher_day_campus[teacher][d])
                         .OnlyEnforceIf(x[l][t]);
 
-                    model.AddEquality(teacher_day_campus[teacher][d], campus)
-                        .OnlyEnforceIf(x[l][t]);
+                    if (lessons[l].allowed_campuses.size() == 1) {
+                        int campus = static_cast<int>(*lessons[l].allowed_campuses.begin());
+
+                        model.AddEquality(group_day_campus[group][d], campus)
+                            .OnlyEnforceIf(x[l][t]);
+
+                        model.AddEquality(teacher_day_campus[teacher][d], campus)
+                            .OnlyEnforceIf(x[l][t]);
+                    }
                 }
             }
         }
@@ -2450,12 +3193,10 @@ int main() {
     // ====================== Целевая функция качества ======================
 
     if (USE_QUALITY_OBJECTIVE) {
-        // Дни по 5 пар разрешены, но штрафуются.
         for (const auto& v : student_five_pair_day_vars) {
             objective += v * STUDENT_FIVE_PAIR_DAY_WEIGHT;
         }
 
-        // Мягко убираем окна у преподавателей только если явно включено.
         if (!HARD_NO_TEACHER_WINDOWS && OPTIMIZE_TEACHER_WINDOWS) {
             std::vector<BoolVar> teacher_gaps =
                 CreateWindowPenaltyVars(model, teacher_busy, num_days);
@@ -2465,7 +3206,6 @@ int main() {
             }
         }
 
-        // Сдвигаем занятия студентов к началу дня.
         if (STUDENT_LATE_SLOT_WEIGHT > 0) {
             for (const auto& busy : student_entities) {
                 for (int d = 0; d < num_days; d++) {
@@ -2478,7 +3218,6 @@ int main() {
             }
         }
 
-        // Сдвигаем занятия преподавателей к началу дня.
         if (TEACHER_LATE_SLOT_WEIGHT > 0) {
             for (int teacher = 0; teacher < TEACHERS; teacher++) {
                 for (int d = 0; d < num_days; d++) {
@@ -2504,6 +3243,14 @@ int main() {
     std::cout << "Переменных: " << model_proto.variables_size() << "\n";
     std::cout << "Ограничений: " << model_proto.constraints_size() << "\n";
     std::cout << "Размер proto: " << (model_proto.ByteSizeLong() / (1024.0 * 1024.0)) << " МБ\n";
+    std::cout << "\n========== Режим жёсткости ==========" << "\n";
+    std::cout << "USE_QUALITY_OBJECTIVE=" << USE_QUALITY_OBJECTIVE << "\n";
+    std::cout << "STOP_AFTER_FIRST_SOLUTION=" << STOP_AFTER_FIRST_SOLUTION << "\n";
+    std::cout << "HARD_NO_STUDENT_WINDOWS=" << HARD_NO_STUDENT_WINDOWS << "\n";
+    std::cout << "LIMIT_VISIBLE_GROUP_PAIRS_PER_DAY=" << LIMIT_VISIBLE_GROUP_PAIRS_PER_DAY << "\n";
+    std::cout << "FORCE_BOTH_SUBGROUPS_SAME_STUDY_DAYS=" << FORCE_BOTH_SUBGROUPS_SAME_STUDY_DAYS << "\n";
+    std::cout << "ENFORCE_THEORY_BEFORE_LABS=" << ENFORCE_THEORY_BEFORE_LABS << "\n";
+    std::cout << "ENFORCE_DAY_CAMPUS_RULES=" << ENFORCE_DAY_CAMPUS_RULES << "\n";
 
     SatParameters params;
     params.set_num_search_workers(SOLVER_WORKERS);
@@ -2517,7 +3264,6 @@ int main() {
         params.set_stop_after_first_solution(true);
     }
 
-    // Для отладки можно включить подробный лог:
     // params.set_log_search_progress(true);
 
     operations_research::sat::Model sat_model;
@@ -2575,27 +3321,18 @@ int main() {
             group_day_campus
         );
 
-        WriteGroupScheduleTxt(
-            "raspisanie_ISP-3304.txt",
-            response,
-            all_days,
-            lessons,
-            x,
-            group_busy,
-            group_day_campus,
-            0
-        );
-
-        WriteGroupScheduleTxt(
-            "raspisanie_ISP-3305p.txt",
-            response,
-            all_days,
-            lessons,
-            x,
-            group_busy,
-            group_day_campus,
-            1
-        );
+        for (int g = 0; g < GROUPS; g++) {
+            WriteGroupScheduleTxt(
+                "raspisanie_" + GROUP_FILE_NAME[g] + ".txt",
+                response,
+                all_days,
+                lessons,
+                x,
+                group_busy,
+                group_day_campus,
+                g
+            );
+        }
 
         WriteGroupsCsv(
             "raspisanie_groups.csv",
@@ -2620,8 +3357,11 @@ int main() {
 
         std::cout << "\nФайлы созданы:\n";
         std::cout << "  raspisanie_all.txt\n";
-        std::cout << "  raspisanie_ISP-3304.txt\n";
-        std::cout << "  raspisanie_ISP-3305p.txt\n";
+
+        for (int g = 0; g < GROUPS; g++) {
+            std::cout << "  raspisanie_" << GROUP_FILE_NAME[g] << ".txt\n";
+        }
+
         std::cout << "  raspisanie_groups.csv\n";
         std::cout << "  raspisanie_teachers.txt\n";
 

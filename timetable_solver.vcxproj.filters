@@ -16,6 +16,8 @@
     <ClCompile Include="src\lessons_data.cpp"><Filter>Source Files</Filter></ClCompile>
     <ClCompile Include="src\scheduler.cpp"><Filter>Source Files</Filter></ClCompile>
     <ClCompile Include="src\http_server.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\json_utils.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\data_store.cpp"><Filter>Source Files</Filter></ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\config.h"><Filter>Header Files</Filter></ClInclude>
@@ -28,5 +30,7 @@
     <ClInclude Include="include\lessons_data.h"><Filter>Header Files</Filter></ClInclude>
     <ClInclude Include="include\scheduler.h"><Filter>Header Files</Filter></ClInclude>
     <ClInclude Include="include\http_server.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\json_utils.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\data_store.h"><Filter>Header Files</Filter></ClInclude>
   </ItemGroup>
 </Project>

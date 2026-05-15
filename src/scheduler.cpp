@@ -16,6 +16,7 @@
 #include "ortools/sat/sat_parameters.pb.h"
 
 #include "config.h"
+#include "data_store.h"
 #include "date_utils.h"
 #include "diagnostics.h"
 #include "lessons_data.h"
@@ -48,20 +49,22 @@ struct UpStartRef {
 };
 
 GenerationResult GenerateSchedule(const std::string& output_dir) {
-    Date start_date = {2026, 1, 12};
-    Date end_date = {2026, 6, 19};
+    ScheduleInputData input_data;
+    std::string input_error;
+    if (!LoadScheduleInputData(input_data, input_error)) {
+        return {false, "INPUT_ERROR", "Не удалось загрузить data/timetable_data.json: " + input_error, output_dir};
+    }
 
-    std::map<int, std::vector<std::pair<Date, Date>>> unavailable;
-    unavailable[0] = {{{2026, 4, 30}, {2026, 6, 19}}}; // ИСП-3304 ПП
-    unavailable[1] = {{{2026, 4, 30}, {2026, 6, 19}}}; // ИСП-3305п ПП
-    // unavailable[1] = {{{2026, 3, 20}, {2026, 3, 30}}}; // ИСП-3305п сборы
+    Date start_date = input_data.start_date;
+    Date end_date = input_data.end_date;
+    std::map<int, std::vector<std::pair<Date, Date>>> unavailable = input_data.unavailable;
 
     auto all_days = GenerateSchoolDays(start_date, end_date);
 
     int num_days = static_cast<int>(all_days.size());
     int total_slots = num_days * SLOTS_PER_DAY;
 
-    std::vector<Lesson> lessons = CreateLessons();
+    std::vector<Lesson> lessons = input_data.lessons;
     int num_lessons = static_cast<int>(lessons.size());
 
     if (!ValidateInputLessons(lessons)) {
@@ -801,27 +804,18 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
             group_day_campus
         );
 
-        WriteGroupScheduleTxt(
-            (groups_dir / "raspisanie_ISP-3304.txt").string(),
-            response,
-            all_days,
-            lessons,
-            x,
-            group_busy,
-            group_day_campus,
-            0
-        );
-
-        WriteGroupScheduleTxt(
-            (groups_dir / "raspisanie_ISP-3305p.txt").string(),
-            response,
-            all_days,
-            lessons,
-            x,
-            group_busy,
-            group_day_campus,
-            1
-        );
+        for (int g = 0; g < GROUPS; g++) {
+            WriteGroupScheduleTxt(
+                (groups_dir / ("raspisanie_group_" + std::to_string(g) + ".txt")).string(),
+                response,
+                all_days,
+                lessons,
+                x,
+                group_busy,
+                group_day_campus,
+                g
+            );
+        }
 
         WriteGroupsCsv(
             (out_dir / "raspisanie_groups.csv").string(),
@@ -854,33 +848,23 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
             group_day_campus
         );
 
-        WriteGroupJson(
-            (groups_dir / "group_0.json").string(),
-            response,
-            all_days,
-            lessons,
-            x,
-            group_busy,
-            group_day_campus,
-            0
-        );
-
-        WriteGroupJson(
-            (groups_dir / "group_1.json").string(),
-            response,
-            all_days,
-            lessons,
-            x,
-            group_busy,
-            group_day_campus,
-            1
-        );
+        for (int g = 0; g < GROUPS; g++) {
+            WriteGroupJson(
+                (groups_dir / ("group_" + std::to_string(g) + ".json")).string(),
+                response,
+                all_days,
+                lessons,
+                x,
+                group_busy,
+                group_day_campus,
+                g
+            );
+        }
 
         std::cout << "\nФайлы созданы:\n";
         std::cout << "  " << (std::filesystem::path(output_dir) / "raspisanie_all.txt").string() << "\n";
         std::cout << "  " << (std::filesystem::path(output_dir) / "schedule_all.json").string() << "\n";
-        std::cout << "  " << (std::filesystem::path(output_dir) / "groups" / "group_0.json").string() << "\n";
-        std::cout << "  " << (std::filesystem::path(output_dir) / "groups" / "group_1.json").string() << "\n";
+        std::cout << "  " << (std::filesystem::path(output_dir) / "groups" / "group_*.json").string() << "\n";
         std::cout << "  " << (std::filesystem::path(output_dir) / "raspisanie_groups.csv").string() << "\n";
         std::cout << "  " << (std::filesystem::path(output_dir) / "raspisanie_teachers.txt").string() << "\n";
 

@@ -20,6 +20,8 @@ add_executable(timetable_solver
     src/lessons_data.cpp
     src/scheduler.cpp
     src/http_server.cpp
+    src/json_utils.cpp
+    src/data_store.cpp
 )
 
 target_include_directories(timetable_solver PRIVATE include)

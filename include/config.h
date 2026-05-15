@@ -1,7 +1,7 @@
 #pragma once
 
-#include <array>
 #include <string>
+#include <vector>
 
 namespace timetable {
 
@@ -10,9 +10,16 @@ constexpr int SLOTS_PER_DAY = 7;
 constexpr int UP_MORNING_MODEL_START_SLOT = 0;
 constexpr int UP_AFTERNOON_MODEL_START_SLOT = 2;
 
-constexpr int GROUPS = 2;
 constexpr int PARTS_PER_GROUP = 2;
-constexpr int TEACHERS = 8;
+
+int GroupCount();
+int TeacherCount();
+const std::string& GroupName(int index);
+const std::string& TeacherName(int index);
+void SetRuntimeNames(const std::vector<std::string>& groups, const std::vector<std::string>& teachers);
+
+#define GROUPS (timetable::GroupCount())
+#define TEACHERS (timetable::TeacherCount())
 
 constexpr double SOLVER_TIME_LIMIT_SECONDS = 500.0;
 constexpr int SOLVER_WORKERS = 4;
@@ -61,8 +68,8 @@ constexpr int T_GOBOV = 5;
 constexpr int T_SAMTSOVA = 6;
 constexpr int T_GARBUZOV = 7;
 
-extern const std::array<std::string, GROUPS> GROUP_NAME;
-extern const std::array<std::string, TEACHERS> TEACHER_NAME;
-extern const std::array<std::string, 7> WEEKDAY_NAME;
+extern std::vector<std::string> GROUP_NAME;
+extern std::vector<std::string> TEACHER_NAME;
+extern const std::vector<std::string> WEEKDAY_NAME;
 
 }  // namespace timetable

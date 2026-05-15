@@ -1,0 +1,634 @@
+{
+  "settings": {
+    "start_date": "2026-01-12",
+    "end_date": "2026-06-19"
+  },
+  "groups": [
+    {
+      "id": 0,
+      "name": "ИСП-3304",
+      "parts": 2
+    },
+    {
+      "id": 1,
+      "name": "ИСП-3305п",
+      "parts": 2
+    }
+  ],
+  "teachers": [
+    {
+      "id": 0,
+      "name": "Новосёлова"
+    },
+    {
+      "id": 1,
+      "name": "Давыдова"
+    },
+    {
+      "id": 2,
+      "name": "Нуров"
+    },
+    {
+      "id": 3,
+      "name": "Потапова"
+    },
+    {
+      "id": 4,
+      "name": "Серянина"
+    },
+    {
+      "id": 5,
+      "name": "Гобов"
+    },
+    {
+      "id": 6,
+      "name": "Самцова"
+    },
+    {
+      "id": 7,
+      "name": "Гарбузов"
+    }
+  ],
+  "unavailable": [
+    {
+      "id": 0,
+      "group": 0,
+      "from": "2026-04-30",
+      "to": "2026-06-19"
+    },
+    {
+      "id": 1,
+      "group": 1,
+      "from": "2026-04-30",
+      "to": "2026-06-19"
+    }
+  ],
+  "lessons": [
+    {
+      "id": 0,
+      "group": 0,
+      "subgroup": 0,
+      "teacher": 0,
+      "total_slots": 13,
+      "name": "Ин. язык",
+      "subject_id": 0,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0
+      ]
+    },
+    {
+      "id": 1,
+      "group": 0,
+      "subgroup": 1,
+      "teacher": 1,
+      "total_slots": 13,
+      "name": "Ин. язык",
+      "subject_id": 0,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0
+      ]
+    },
+    {
+      "id": 2,
+      "group": 1,
+      "subgroup": 2,
+      "teacher": 0,
+      "total_slots": 13,
+      "name": "Ин. язык",
+      "subject_id": 0,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0
+      ]
+    },
+    {
+      "id": 3,
+      "group": 1,
+      "subgroup": 3,
+      "teacher": 1,
+      "total_slots": 13,
+      "name": "Ин. язык",
+      "subject_id": 0,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0
+      ]
+    },
+    {
+      "id": 4,
+      "group": 0,
+      "subgroup": -1,
+      "teacher": 2,
+      "total_slots": 14,
+      "name": "Физическая культура",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 5,
+      "group": 1,
+      "subgroup": -1,
+      "teacher": 2,
+      "total_slots": 14,
+      "name": "Физическая культура",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 6,
+      "group": 0,
+      "subgroup": -1,
+      "teacher": 3,
+      "total_slots": 17,
+      "name": "БЖД",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 7,
+      "group": 1,
+      "subgroup": -1,
+      "teacher": 3,
+      "total_slots": 17,
+      "name": "БЖД",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 8,
+      "group": 0,
+      "subgroup": -1,
+      "teacher": 4,
+      "total_slots": 12,
+      "name": "Экономика",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 9,
+      "group": 1,
+      "subgroup": -1,
+      "teacher": 7,
+      "total_slots": 12,
+      "name": "Экономика",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 10,
+      "group": 0,
+      "subgroup": -1,
+      "teacher": 7,
+      "total_slots": 8,
+      "name": "МДК.01.01 теория",
+      "subject_id": 1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 11,
+      "group": 0,
+      "subgroup": 0,
+      "teacher": 7,
+      "total_slots": 23,
+      "name": "МДК.01.01 ЛПЗ",
+      "subject_id": 1,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 12,
+      "group": 0,
+      "subgroup": 1,
+      "teacher": 7,
+      "total_slots": 23,
+      "name": "МДК.01.01 ЛПЗ",
+      "subject_id": 1,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 13,
+      "group": 0,
+      "subgroup": -1,
+      "teacher": 7,
+      "total_slots": 15,
+      "name": "МДК.01.01 КП",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 14,
+      "group": 1,
+      "subgroup": -1,
+      "teacher": 7,
+      "total_slots": 8,
+      "name": "МДК.01.01 теория",
+      "subject_id": 1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 15,
+      "group": 1,
+      "subgroup": 2,
+      "teacher": 7,
+      "total_slots": 23,
+      "name": "МДК.01.01 ЛПЗ",
+      "subject_id": 1,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 16,
+      "group": 1,
+      "subgroup": 3,
+      "teacher": 7,
+      "total_slots": 23,
+      "name": "МДК.01.01 ЛПЗ",
+      "subject_id": 1,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 17,
+      "group": 1,
+      "subgroup": -1,
+      "teacher": 7,
+      "total_slots": 15,
+      "name": "МДК.01.01 КП",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 18,
+      "group": 0,
+      "subgroup": -1,
+      "teacher": 6,
+      "total_slots": 36,
+      "name": "МДК.04.01 теория",
+      "subject_id": 2,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 19,
+      "group": 0,
+      "subgroup": 0,
+      "teacher": 5,
+      "total_slots": 35,
+      "name": "МДК.04.01 ЛПЗ",
+      "subject_id": 2,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 20,
+      "group": 0,
+      "subgroup": 1,
+      "teacher": 5,
+      "total_slots": 35,
+      "name": "МДК.04.01 ЛПЗ",
+      "subject_id": 2,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 21,
+      "group": 0,
+      "subgroup": 0,
+      "teacher": 6,
+      "total_slots": 36,
+      "name": "УП.04",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": true,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 22,
+      "group": 0,
+      "subgroup": 1,
+      "teacher": 6,
+      "total_slots": 36,
+      "name": "УП.04",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": true,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 23,
+      "group": 1,
+      "subgroup": -1,
+      "teacher": 6,
+      "total_slots": 36,
+      "name": "МДК.04.01 теория",
+      "subject_id": 2,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 24,
+      "group": 1,
+      "subgroup": 2,
+      "teacher": 5,
+      "total_slots": 35,
+      "name": "МДК.04.01 ЛПЗ",
+      "subject_id": 2,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 25,
+      "group": 1,
+      "subgroup": 3,
+      "teacher": 5,
+      "total_slots": 35,
+      "name": "МДК.04.01 ЛПЗ",
+      "subject_id": 2,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 26,
+      "group": 1,
+      "subgroup": 2,
+      "teacher": 6,
+      "total_slots": 36,
+      "name": "УП.04",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": true,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 27,
+      "group": 1,
+      "subgroup": 3,
+      "teacher": 6,
+      "total_slots": 36,
+      "name": "УП.04",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": true,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 28,
+      "group": 0,
+      "subgroup": -1,
+      "teacher": 7,
+      "total_slots": 16,
+      "name": "ВМДК.05.01 теория",
+      "subject_id": 3,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 29,
+      "group": 0,
+      "subgroup": 0,
+      "teacher": 5,
+      "total_slots": 19,
+      "name": "ВМДК.05.01 ЛПЗ",
+      "subject_id": 3,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 30,
+      "group": 0,
+      "subgroup": 1,
+      "teacher": 5,
+      "total_slots": 19,
+      "name": "ВМДК.05.01 ЛПЗ",
+      "subject_id": 3,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 31,
+      "group": 0,
+      "subgroup": 0,
+      "teacher": 5,
+      "total_slots": 18,
+      "name": "УП.05",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": true,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 32,
+      "group": 0,
+      "subgroup": 1,
+      "teacher": 5,
+      "total_slots": 18,
+      "name": "УП.05",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": true,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 33,
+      "group": 1,
+      "subgroup": -1,
+      "teacher": 7,
+      "total_slots": 16,
+      "name": "ВМДК.05.01 теория",
+      "subject_id": 3,
+      "is_lab": false,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 34,
+      "group": 1,
+      "subgroup": 2,
+      "teacher": 5,
+      "total_slots": 19,
+      "name": "ВМДК.05.01 ЛПЗ",
+      "subject_id": 3,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 35,
+      "group": 1,
+      "subgroup": 3,
+      "teacher": 5,
+      "total_slots": 19,
+      "name": "ВМДК.05.01 ЛПЗ",
+      "subject_id": 3,
+      "is_lab": true,
+      "is_block": false,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 36,
+      "group": 1,
+      "subgroup": 2,
+      "teacher": 5,
+      "total_slots": 18,
+      "name": "УП.05",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": true,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": 37,
+      "group": 1,
+      "subgroup": 3,
+      "teacher": 5,
+      "total_slots": 18,
+      "name": "УП.05",
+      "subject_id": -1,
+      "is_lab": false,
+      "is_block": true,
+      "allowed_campuses": [
+        0,
+        1
+      ]
+    }
+  ]
+}

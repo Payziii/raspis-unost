@@ -1,9 +1,11 @@
 #include "scheduler.h"
 
 #include <algorithm>
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <set>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -45,7 +47,7 @@ struct UpStartRef {
     TimeInterval interval;
 };
 
-int RunScheduler() {
+GenerationResult GenerateSchedule(const std::string& output_dir) {
     Date start_date = {2026, 1, 12};
     Date end_date = {2026, 6, 19};
 
@@ -64,8 +66,11 @@ int RunScheduler() {
 
     if (!ValidateInputLessons(lessons)) {
         std::cerr << "\nВходные данные содержат ошибки. Модель не построена.\n";
-        return 1;
+        return {false, "INPUT_ERROR", "Входные данные содержат ошибки. Модель не построена.", output_dir};
     }
+
+    std::filesystem::create_directories(output_dir);
+    std::filesystem::create_directories(std::filesystem::path(output_dir) / "groups");
 
     PrintInputDiagnostics(lessons, all_days, unavailable, start_date);
 
@@ -140,7 +145,7 @@ int RunScheduler() {
                       << ", доступно стартов " << blk.possible_starts.size()
                       << ", требуется " << required_starts
                       << "\n";
-            return 1;
+            return {false, "INPUT_ERROR", "Недостаточно возможных стартов для блока", output_dir};
         }
 
         LinearExpr start_sum;
@@ -783,8 +788,11 @@ int RunScheduler() {
             std::cout << "Best bound: " << response.best_objective_bound() << "\n";
         }
 
+        const std::filesystem::path out_dir(output_dir);
+        const std::filesystem::path groups_dir = out_dir / "groups";
+
         WriteAllGroupsTxt(
-            "raspisanie_all.txt",
+            (out_dir / "raspisanie_all.txt").string(),
             response,
             all_days,
             lessons,
@@ -794,7 +802,7 @@ int RunScheduler() {
         );
 
         WriteGroupScheduleTxt(
-            "raspisanie_ISP-3304.txt",
+            (groups_dir / "raspisanie_ISP-3304.txt").string(),
             response,
             all_days,
             lessons,
@@ -805,7 +813,7 @@ int RunScheduler() {
         );
 
         WriteGroupScheduleTxt(
-            "raspisanie_ISP-3305p.txt",
+            (groups_dir / "raspisanie_ISP-3305p.txt").string(),
             response,
             all_days,
             lessons,
@@ -816,7 +824,7 @@ int RunScheduler() {
         );
 
         WriteGroupsCsv(
-            "raspisanie_groups.csv",
+            (out_dir / "raspisanie_groups.csv").string(),
             response,
             all_days,
             lessons,
@@ -826,7 +834,7 @@ int RunScheduler() {
         );
 
         WriteTeachersTxt(
-            "raspisanie_teachers.txt",
+            (out_dir / "raspisanie_teachers.txt").string(),
             response,
             all_days,
             lessons,
@@ -836,12 +844,47 @@ int RunScheduler() {
             teacher_day_campus
         );
 
+        WriteAllGroupsJson(
+            (out_dir / "schedule_all.json").string(),
+            response,
+            all_days,
+            lessons,
+            x,
+            group_busy,
+            group_day_campus
+        );
+
+        WriteGroupJson(
+            (groups_dir / "group_0.json").string(),
+            response,
+            all_days,
+            lessons,
+            x,
+            group_busy,
+            group_day_campus,
+            0
+        );
+
+        WriteGroupJson(
+            (groups_dir / "group_1.json").string(),
+            response,
+            all_days,
+            lessons,
+            x,
+            group_busy,
+            group_day_campus,
+            1
+        );
+
         std::cout << "\nФайлы созданы:\n";
-        std::cout << "  raspisanie_all.txt\n";
-        std::cout << "  raspisanie_ISP-3304.txt\n";
-        std::cout << "  raspisanie_ISP-3305p.txt\n";
-        std::cout << "  raspisanie_groups.csv\n";
-        std::cout << "  raspisanie_teachers.txt\n";
+        std::cout << "  " << (std::filesystem::path(output_dir) / "raspisanie_all.txt").string() << "\n";
+        std::cout << "  " << (std::filesystem::path(output_dir) / "schedule_all.json").string() << "\n";
+        std::cout << "  " << (std::filesystem::path(output_dir) / "groups" / "group_0.json").string() << "\n";
+        std::cout << "  " << (std::filesystem::path(output_dir) / "groups" / "group_1.json").string() << "\n";
+        std::cout << "  " << (std::filesystem::path(output_dir) / "raspisanie_groups.csv").string() << "\n";
+        std::cout << "  " << (std::filesystem::path(output_dir) / "raspisanie_teachers.txt").string() << "\n";
+
+        return {true, CpSolverStatus_Name(response.status()), "Расписание найдено", output_dir};
 
     } else if (response.status() == CpSolverStatus::INFEASIBLE) {
         std::cout << "\nМодель противоречива.\n";
@@ -854,6 +897,7 @@ int RunScheduler() {
         std::cout << "  6) STRICT_ALL_THEORY_BEFORE_LABS оставить false\n";
         std::cout << "  7) если УП-дни слишком жёсткие, проверь правило "
                   << "student_day_has[g][0][d] == student_day_has[g][1][d]\n";
+        return {false, CpSolverStatus_Name(response.status()), "Модель противоречива", output_dir};
     } else if (response.status() == CpSolverStatus::UNKNOWN) {
         std::cout << "\nРешатель не успел найти или доказать решение за лимит времени.\n";
         std::cout << "Что можно сделать:\n";
@@ -861,15 +905,23 @@ int RunScheduler() {
         std::cout << "  2) уменьшить SOLVER_WORKERS до 2, если не хватает ОЗУ\n";
         std::cout << "  3) увеличить SUBJECT_BUCKET_EXTRA_SLOTS до 3 или 4\n";
         std::cout << "  4) временно поставить HARD_NO_STUDENT_WINDOWS = false\n";
+        return {false, CpSolverStatus_Name(response.status()), "Решатель не успел найти или доказать решение за лимит времени", output_dir};
     } else if (response.status() == CpSolverStatus::MODEL_INVALID) {
         std::cout << "\nМодель некорректна. Проверь CpSolverResponseStats выше.\n";
+        return {false, CpSolverStatus_Name(response.status()), "Модель некорректна", output_dir};
     } else {
         std::cout << "\nРешение не найдено. Статус: "
                   << CpSolverStatus_Name(response.status())
                   << "\n";
+        return {false, CpSolverStatus_Name(response.status()), "Решение не найдено", output_dir};
     }
 
-    return 0;
+    return {false, "UNKNOWN", "Решение не найдено", output_dir};
+}
+
+int RunScheduler() {
+    GenerationResult result = GenerateSchedule("output/latest");
+    return result.success ? 0 : 1;
 }
 
 }  // namespace timetable

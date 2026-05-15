@@ -54,7 +54,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\or-tools\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ortools.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ortools.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -74,7 +74,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\or-tools\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ortools_full.lib;utf8_validity.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ortools_full.lib;utf8_validity.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -88,6 +88,7 @@
     <ClCompile Include="src\output_writers.cpp" />
     <ClCompile Include="src\lessons_data.cpp" />
     <ClCompile Include="src\scheduler.cpp" />
+    <ClCompile Include="src\http_server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\config.h" />
@@ -99,6 +100,7 @@
     <ClInclude Include="include\output_writers.h" />
     <ClInclude Include="include\lessons_data.h" />
     <ClInclude Include="include\scheduler.h" />
+    <ClInclude Include="include\http_server.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

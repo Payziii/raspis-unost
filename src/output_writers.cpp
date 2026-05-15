@@ -1,6 +1,7 @@
 #include "output_writers.h"
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 
@@ -379,6 +380,143 @@ void WriteTeachersTxt(
             out << "\n";
         }
     }
+}
+
+
+namespace {
+
+std::string JsonEscape(const std::string& s) {
+    std::ostringstream out;
+    for (unsigned char ch : s) {
+        switch (ch) {
+        case '"': out << "\\\""; break;
+        case '\\': out << "\\\\"; break;
+        case '\b': out << "\\b"; break;
+        case '\f': out << "\\f"; break;
+        case '\n': out << "\\n"; break;
+        case '\r': out << "\\r"; break;
+        case '\t': out << "\\t"; break;
+        default:
+            if (ch < 0x20) {
+                out << "\\u" << std::hex << std::setw(4) << std::setfill('0') << static_cast<int>(ch);
+            } else {
+                out << static_cast<char>(ch);
+            }
+        }
+    }
+    return out.str();
+}
+
+void WriteGroupJsonBody(
+    std::ofstream& out,
+    const CpSolverResponse& response,
+    const std::vector<Date>& all_days,
+    const std::vector<Lesson>& lessons,
+    const std::vector<std::vector<BoolVar>>& x,
+    const std::vector<std::vector<BoolVar>>& group_busy,
+    const std::vector<std::vector<IntVar>>& group_day_campus,
+    int group
+) {
+    out << "{\n";
+    out << "  \"group_index\": " << group << ",\n";
+    out << "  \"group_name\": \"" << JsonEscape(GROUP_NAME[group]) << "\",\n";
+    out << "  \"days\": [\n";
+
+    bool first_day = true;
+    for (int d = 0; d < static_cast<int>(all_days.size()); d++) {
+        if (!HasGroupDay(response, group_busy, group, d)) {
+            continue;
+        }
+
+        const Date& dt = all_days[d];
+        if (!first_day) {
+            out << ",\n";
+        }
+        first_day = false;
+
+        out << "    {\n";
+        out << "      \"date\": \"" << JsonEscape(DateToString(dt)) << "\",\n";
+        out << "      \"weekday\": \"" << JsonEscape(WEEKDAY_NAME[DayOfWeek(dt) - 1]) << "\",\n";
+        out << "      \"slots\": [\n";
+
+        for (int s = 0; s < SLOTS_PER_DAY; s++) {
+            std::string text = BuildGroupSlotText(
+                response,
+                all_days,
+                lessons,
+                x,
+                group_day_campus,
+                group,
+                d,
+                s
+            );
+
+            out << "        {\"slot\": " << (s + 1)
+                << ", \"time\": \"" << JsonEscape(PairSlotLabel(dt, s))
+                << "\", \"text\": \"" << JsonEscape(text) << "\"}";
+
+            if (s + 1 < SLOTS_PER_DAY) {
+                out << ",";
+            }
+            out << "\n";
+        }
+
+        out << "      ]\n";
+        out << "    }";
+    }
+
+    out << "\n  ]\n";
+    out << "}";
+}
+
+}  // namespace
+
+void WriteGroupJson(
+    const std::string& file_name,
+    const CpSolverResponse& response,
+    const std::vector<Date>& all_days,
+    const std::vector<Lesson>& lessons,
+    const std::vector<std::vector<BoolVar>>& x,
+    const std::vector<std::vector<BoolVar>>& group_busy,
+    const std::vector<std::vector<IntVar>>& group_day_campus,
+    int group
+) {
+    std::ofstream out(file_name, std::ios::binary);
+    if (!out) {
+        std::cerr << "Не удалось открыть файл: " << file_name << "\n";
+        return;
+    }
+
+    WriteGroupJsonBody(out, response, all_days, lessons, x, group_busy, group_day_campus, group);
+}
+
+void WriteAllGroupsJson(
+    const std::string& file_name,
+    const CpSolverResponse& response,
+    const std::vector<Date>& all_days,
+    const std::vector<Lesson>& lessons,
+    const std::vector<std::vector<BoolVar>>& x,
+    const std::vector<std::vector<BoolVar>>& group_busy,
+    const std::vector<std::vector<IntVar>>& group_day_campus
+) {
+    std::ofstream out(file_name, std::ios::binary);
+    if (!out) {
+        std::cerr << "Не удалось открыть файл: " << file_name << "\n";
+        return;
+    }
+
+    out << "{\n";
+    out << "  \"groups\": [\n";
+    for (int g = 0; g < GROUPS; g++) {
+        out << "    ";
+        WriteGroupJsonBody(out, response, all_days, lessons, x, group_busy, group_day_campus, g);
+        if (g + 1 < GROUPS) {
+            out << ",";
+        }
+        out << "\n";
+    }
+    out << "  ]\n";
+    out << "}\n";
 }
 
 }  // namespace timetable

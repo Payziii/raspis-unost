@@ -19,8 +19,13 @@ add_executable(timetable_solver
     src/output_writers.cpp
     src/lessons_data.cpp
     src/scheduler.cpp
+    src/http_server.cpp
 )
 
 target_include_directories(timetable_solver PRIVATE include)
 
 target_link_libraries(timetable_solver PRIVATE ortools::ortools)
+
+if (WIN32)
+    target_link_libraries(timetable_solver PRIVATE ws2_32)
+endif()

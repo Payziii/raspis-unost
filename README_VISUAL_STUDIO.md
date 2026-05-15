@@ -1,21 +1,26 @@
-# Запуск в Visual Studio
+# Visual Studio
 
-Вариант 1, рекомендуется: открой `timetable_solver.sln`.
+Открывай `timetable_solver.sln`.
 
-Вариант 2: `File -> Open -> Folder` и выбери папку с `CMakeLists.txt`.
+Проект настроен под:
 
-Если открываешь `.sln/.vcxproj`, проект ожидает переменную окружения `ORTOOLS_ROOT`, например:
+- Platform Toolset: `v145`
+- Platform: `x64`
+- C++ standard: C++20
+- OR-Tools include: `C:\or-tools\include`
+- OR-Tools lib: `C:\or-tools\lib`
 
-```bat
-setx ORTOOLS_ROOT C:\ortools
-```
+Debug|x64 линкует:
 
-Внутри `C:\ortools` должны быть папки `include` и `lib`.
+- `ortools.lib`
 
-Если OR-Tools уже был настроен в старом проекте, можно просто перенести его настройки:
+Release|x64 линкует:
 
-- C/C++ -> General -> Additional Include Directories
-- Linker -> General -> Additional Library Directories
-- Linker -> Input -> Additional Dependencies
+- `ortools_full.lib`
+- `utf8_validity.lib`
 
-Главная причина сообщения `Сборка: успешно выполнено — 0, со сбоем — 0, в актуальном состоянии — 1` обычно такая: Visual Studio открыла не тот проект/target или исходники не добавлены в проект. В `.vcxproj` из этого архива все `.cpp` уже явно подключены.
+Если у тебя в `C:\or-tools\lib` другие имена библиотек, поменяй их в:
+
+`Project Properties -> Linker -> Input -> Additional Dependencies`.
+
+Собирать нужно именно `x64`, не `Win32`.

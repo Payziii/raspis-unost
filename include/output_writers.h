@@ -89,4 +89,25 @@ void WriteTeachersTxt(
     const std::vector<std::vector<operations_research::sat::IntVar>>& teacher_day_campus
 );
 
+void WriteAllGroupsJson(
+    const std::string& file_name,
+    const operations_research::sat::CpSolverResponse& response,
+    const std::vector<Date>& all_days,
+    const std::vector<Lesson>& lessons,
+    const std::vector<std::vector<operations_research::sat::BoolVar>>& x,
+    const std::vector<std::vector<operations_research::sat::BoolVar>>& group_busy,
+    const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus
+);
+
+void WriteGroupJson(
+    const std::string& file_name,
+    const operations_research::sat::CpSolverResponse& response,
+    const std::vector<Date>& all_days,
+    const std::vector<Lesson>& lessons,
+    const std::vector<std::vector<operations_research::sat::BoolVar>>& x,
+    const std::vector<std::vector<operations_research::sat::BoolVar>>& group_busy,
+    const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus,
+    int group
+);
+
 }  // namespace timetable

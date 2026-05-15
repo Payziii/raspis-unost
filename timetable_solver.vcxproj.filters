@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files"><UniqueIdentifier>{11111111-1111-1111-1111-111111111111}</UniqueIdentifier><Extensions>cpp;c;cc;cxx</Extensions></Filter>
+    <Filter Include="Header Files"><UniqueIdentifier>{22222222-2222-2222-2222-222222222222}</UniqueIdentifier><Extensions>h;hpp;hxx</Extensions></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\config.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\types.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\date_utils.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\format_utils.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\model_utils.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\diagnostics.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\output_writers.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\lessons_data.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\scheduler.cpp"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\config.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\types.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\date_utils.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\format_utils.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\model_utils.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\diagnostics.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\output_writers.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\lessons_data.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\scheduler.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+</Project>

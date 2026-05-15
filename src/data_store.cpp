@@ -8,6 +8,7 @@
 
 #include "config.h"
 #include "format_utils.h"
+#include "date_utils.h"
 
 namespace timetable {
 namespace {
@@ -64,6 +65,74 @@ JsonValue UnavailableJson(int id, int group, const std::string& from, const std:
     v.At("from") = JsonValue::MakeString(from);
     v.At("to") = JsonValue::MakeString(to);
     return v;
+}
+
+
+JsonValue UnavailableJsonWithText(int id, int group, const std::vector<std::string>& dates, const std::string& text, bool all_groups) {
+    JsonValue v = JsonValue::MakeObject();
+    v.At("id") = JsonValue::MakeNumber(id);
+    v.At("all_groups") = JsonValue::MakeBool(all_groups);
+    if (!all_groups) {
+        v.At("group") = JsonValue::MakeNumber(group);
+    }
+    JsonValue dates_json = JsonValue::MakeArray();
+    for (const std::string& date : dates) {
+        dates_json.array_value.push_back(JsonValue::MakeString(date));
+    }
+    v.At("dates") = dates_json;
+    v.At("text") = JsonValue::MakeString(text);
+    return v;
+}
+
+std::vector<int> TargetGroupsForUnavailable(const JsonValue& item, const std::vector<GroupData>& groups) {
+    std::vector<int> result;
+    if (JsonBool(item, "all_groups", false)) {
+        for (const GroupData& group : groups) {
+            result.push_back(group.id);
+        }
+        return result;
+    }
+
+    int group = JsonInt(item, "group", -1);
+    if (group >= 0) {
+        result.push_back(group);
+    }
+    return result;
+}
+
+std::vector<Date> DatesFromUnavailableItem(const JsonValue& item) {
+    std::vector<Date> dates;
+
+    Date single;
+    if (ParseDateIso(JsonString(item, "date", ""), single)) {
+        dates.push_back(single);
+    }
+
+    const JsonValue& dates_json = item.At("dates");
+    if (dates_json.IsArray()) {
+        for (const JsonValue& value : dates_json.array_value) {
+            if (!value.IsString()) continue;
+            Date date;
+            if (ParseDateIso(value.string_value, date)) {
+                dates.push_back(date);
+            }
+        }
+    }
+
+    std::sort(dates.begin(), dates.end());
+    dates.erase(std::unique(dates.begin(), dates.end()), dates.end());
+    return dates;
+}
+
+void AddTextForRange(std::map<Date, std::string>& texts, const Date& from, const Date& to, const std::string& text) {
+    if (text.empty()) return;
+    Date cur = from;
+    while (cur <= to) {
+        if (DayOfWeek(cur) != 7) {
+            texts[cur] = text;
+        }
+        cur = NextDay(cur);
+    }
 }
 
 std::vector<std::string> NamesFromGroups(const std::vector<GroupData>& groups) {
@@ -124,7 +193,9 @@ JsonValue DefaultDataJson() {
 
     JsonValue unavailable = JsonValue::MakeArray();
     unavailable.array_value.push_back(UnavailableJson(0, 0, "2026-04-30", "2026-06-19"));
+    unavailable.array_value.back().At("text") = JsonValue::MakeString("Производственная практика");
     unavailable.array_value.push_back(UnavailableJson(1, 1, "2026-04-30", "2026-06-19"));
+    unavailable.array_value.back().At("text") = JsonValue::MakeString("Производственная практика");
     root.At("unavailable") = unavailable;
 
     JsonValue lessons = JsonValue::MakeArray();
@@ -277,15 +348,56 @@ bool LoadScheduleInputData(ScheduleInputData& data, std::string& error) {
     }
 
     data.unavailable.clear();
+    data.unavailable_day_texts.clear();
+    data.special_days.clear();
     const JsonValue& unavailable = root.At("unavailable");
     if (unavailable.IsArray()) {
         for (const JsonValue& item : unavailable.array_value) {
             if (!item.IsObject()) continue;
-            int group = JsonInt(item, "group", -1);
+
+            std::vector<int> target_groups = TargetGroupsForUnavailable(item, data.groups);
+            std::string text = JsonString(item, "text", "");
+            std::vector<Date> exact_dates = DatesFromUnavailableItem(item);
+
+            SpecialDayData special_day;
+            special_day.id = JsonInt(item, "id", static_cast<int>(data.special_days.size()));
+            special_day.all_groups = JsonBool(item, "all_groups", false);
+            special_day.group = JsonInt(item, "group", -1);
+            special_day.text = text;
+            special_day.dates = exact_dates;
+
             Date from;
             Date to;
-            if (group >= 0 && ParseDateIso(JsonString(item, "from", ""), from) && ParseDateIso(JsonString(item, "to", ""), to)) {
-                data.unavailable[group].push_back({from, to});
+            bool has_range = ParseDateIso(JsonString(item, "from", ""), from) &&
+                             ParseDateIso(JsonString(item, "to", ""), to);
+
+            for (int group : target_groups) {
+                for (const Date& date : exact_dates) {
+                    data.unavailable[group].push_back({date, date});
+                    if (!text.empty()) {
+                        data.unavailable_day_texts[group][date] = text;
+                    }
+                }
+
+                if (has_range) {
+                    data.unavailable[group].push_back({from, to});
+                    AddTextForRange(data.unavailable_day_texts[group], from, to, text);
+                }
+            }
+
+            if (!exact_dates.empty() || has_range) {
+                if (has_range) {
+                    Date cur = from;
+                    while (cur <= to) {
+                        if (DayOfWeek(cur) != 7) {
+                            special_day.dates.push_back(cur);
+                        }
+                        cur = NextDay(cur);
+                    }
+                    std::sort(special_day.dates.begin(), special_day.dates.end());
+                    special_day.dates.erase(std::unique(special_day.dates.begin(), special_day.dates.end()), special_day.dates.end());
+                }
+                data.special_days.push_back(special_day);
             }
         }
     }

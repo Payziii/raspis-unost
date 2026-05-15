@@ -21,6 +21,14 @@ struct TeacherData {
     std::string name;
 };
 
+struct SpecialDayData {
+    int id = 0;
+    bool all_groups = false;
+    int group = -1;
+    std::vector<Date> dates;
+    std::string text;
+};
+
 struct ScheduleInputData {
     Date start_date{2026, 1, 12};
     Date end_date{2026, 6, 19};
@@ -28,6 +36,8 @@ struct ScheduleInputData {
     std::vector<TeacherData> teachers;
     std::vector<Lesson> lessons;
     std::map<int, std::vector<std::pair<Date, Date>>> unavailable;
+    std::map<int, std::map<Date, std::string>> unavailable_day_texts;
+    std::vector<SpecialDayData> special_days;
 };
 
 std::string DataFilePath();

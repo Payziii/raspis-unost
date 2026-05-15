@@ -171,6 +171,62 @@ bool HasTeacherDay(
     return false;
 }
 
+namespace {
+
+std::string SpecialDayText(
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
+    int group,
+    const Date& date
+) {
+    auto group_it = unavailable_day_texts.find(group);
+    if (group_it == unavailable_day_texts.end()) return "";
+    auto day_it = group_it->second.find(date);
+    if (day_it == group_it->second.end()) return "";
+    return day_it->second;
+}
+
+bool HasPrintableGroupDay(
+    const CpSolverResponse& response,
+    const std::vector<std::vector<BoolVar>>& group_busy,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
+    const std::vector<Date>& all_days,
+    int group,
+    int day
+) {
+    if (HasGroupDay(response, group_busy, group, day)) return true;
+    return !SpecialDayText(unavailable_day_texts, group, all_days[day]).empty();
+}
+
+std::string BuildPrintableGroupSlotText(
+    const CpSolverResponse& response,
+    const std::vector<Date>& all_days,
+    const std::vector<Lesson>& lessons,
+    const std::vector<std::vector<BoolVar>>& x,
+    const std::vector<std::vector<IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
+    int group,
+    int day,
+    int slot
+) {
+    std::string special_text = SpecialDayText(unavailable_day_texts, group, all_days[day]);
+    if (!special_text.empty()) {
+        return slot == 0 ? special_text : "-";
+    }
+
+    return BuildGroupSlotText(
+        response,
+        all_days,
+        lessons,
+        x,
+        group_day_campus,
+        group,
+        day,
+        slot
+    );
+}
+
+}  // namespace
+
 void WriteGroupScheduleTxt(
     const std::string& file_name,
     const CpSolverResponse& response,
@@ -179,6 +235,7 @@ void WriteGroupScheduleTxt(
     const std::vector<std::vector<BoolVar>>& x,
     const std::vector<std::vector<BoolVar>>& group_busy,
     const std::vector<std::vector<IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
     int group
 ) {
     std::ofstream out(file_name, std::ios::binary);
@@ -193,7 +250,7 @@ void WriteGroupScheduleTxt(
     out << "========================================\n\n";
 
     for (int d = 0; d < static_cast<int>(all_days.size()); d++) {
-        if (!HasGroupDay(response, group_busy, group, d)) {
+        if (!HasPrintableGroupDay(response, group_busy, unavailable_day_texts, all_days, group, d)) {
             continue;
         }
 
@@ -204,12 +261,13 @@ void WriteGroupScheduleTxt(
 
         for (int s = 0; s < SLOTS_PER_DAY; s++) {
             out << "  " << PairSlotLabel(dt, s) << ": "
-                << BuildGroupSlotText(
+                << BuildPrintableGroupSlotText(
                     response,
                     all_days,
                     lessons,
                     x,
                     group_day_campus,
+                    unavailable_day_texts,
                     group,
                     d,
                     s
@@ -228,7 +286,8 @@ void WriteAllGroupsTxt(
     const std::vector<Lesson>& lessons,
     const std::vector<std::vector<BoolVar>>& x,
     const std::vector<std::vector<BoolVar>>& group_busy,
-    const std::vector<std::vector<IntVar>>& group_day_campus
+    const std::vector<std::vector<IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts
 ) {
     std::ofstream out(file_name, std::ios::binary);
     if (!out) {
@@ -245,7 +304,7 @@ void WriteAllGroupsTxt(
         out << "\n\n========== " << GROUP_NAME[g] << " ==========\n\n";
 
         for (int d = 0; d < static_cast<int>(all_days.size()); d++) {
-            if (!HasGroupDay(response, group_busy, g, d)) {
+            if (!HasPrintableGroupDay(response, group_busy, unavailable_day_texts, all_days, g, d)) {
                 continue;
             }
 
@@ -256,12 +315,13 @@ void WriteAllGroupsTxt(
 
             for (int s = 0; s < SLOTS_PER_DAY; s++) {
                 out << "  " << PairSlotLabel(dt, s) << ": "
-                    << BuildGroupSlotText(
+                    << BuildPrintableGroupSlotText(
                         response,
                         all_days,
                         lessons,
                         x,
                         group_day_campus,
+                        unavailable_day_texts,
                         g,
                         d,
                         s
@@ -281,7 +341,8 @@ void WriteGroupsCsv(
     const std::vector<Lesson>& lessons,
     const std::vector<std::vector<BoolVar>>& x,
     const std::vector<std::vector<BoolVar>>& group_busy,
-    const std::vector<std::vector<IntVar>>& group_day_campus
+    const std::vector<std::vector<IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts
 ) {
     std::ofstream out(file_name, std::ios::binary);
     if (!out) {
@@ -299,19 +360,20 @@ void WriteGroupsCsv(
 
     for (int g = 0; g < GROUPS; g++) {
         for (int d = 0; d < static_cast<int>(all_days.size()); d++) {
-            if (!HasGroupDay(response, group_busy, g, d)) {
+            if (!HasPrintableGroupDay(response, group_busy, unavailable_day_texts, all_days, g, d)) {
                 continue;
             }
 
             const Date& dt = all_days[d];
 
             for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                std::string text = BuildGroupSlotText(
+                std::string text = BuildPrintableGroupSlotText(
                     response,
                     all_days,
                     lessons,
                     x,
                     group_day_campus,
+                    unavailable_day_texts,
                     g,
                     d,
                     s
@@ -415,6 +477,7 @@ void WriteGroupJsonBody(
     const std::vector<std::vector<BoolVar>>& x,
     const std::vector<std::vector<BoolVar>>& group_busy,
     const std::vector<std::vector<IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
     int group
 ) {
     out << "{\n";
@@ -424,7 +487,7 @@ void WriteGroupJsonBody(
 
     bool first_day = true;
     for (int d = 0; d < static_cast<int>(all_days.size()); d++) {
-        if (!HasGroupDay(response, group_busy, group, d)) {
+        if (!HasPrintableGroupDay(response, group_busy, unavailable_day_texts, all_days, group, d)) {
             continue;
         }
 
@@ -440,12 +503,13 @@ void WriteGroupJsonBody(
         out << "      \"slots\": [\n";
 
         for (int s = 0; s < SLOTS_PER_DAY; s++) {
-            std::string text = BuildGroupSlotText(
+            std::string text = BuildPrintableGroupSlotText(
                 response,
                 all_days,
                 lessons,
                 x,
                 group_day_campus,
+                unavailable_day_texts,
                 group,
                 d,
                 s
@@ -479,6 +543,7 @@ void WriteGroupJson(
     const std::vector<std::vector<BoolVar>>& x,
     const std::vector<std::vector<BoolVar>>& group_busy,
     const std::vector<std::vector<IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
     int group
 ) {
     std::ofstream out(file_name, std::ios::binary);
@@ -487,7 +552,7 @@ void WriteGroupJson(
         return;
     }
 
-    WriteGroupJsonBody(out, response, all_days, lessons, x, group_busy, group_day_campus, group);
+    WriteGroupJsonBody(out, response, all_days, lessons, x, group_busy, group_day_campus, unavailable_day_texts, group);
 }
 
 void WriteAllGroupsJson(
@@ -497,7 +562,8 @@ void WriteAllGroupsJson(
     const std::vector<Lesson>& lessons,
     const std::vector<std::vector<BoolVar>>& x,
     const std::vector<std::vector<BoolVar>>& group_busy,
-    const std::vector<std::vector<IntVar>>& group_day_campus
+    const std::vector<std::vector<IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts
 ) {
     std::ofstream out(file_name, std::ios::binary);
     if (!out) {
@@ -509,7 +575,7 @@ void WriteAllGroupsJson(
     out << "  \"groups\": [\n";
     for (int g = 0; g < GROUPS; g++) {
         out << "    ";
-        WriteGroupJsonBody(out, response, all_days, lessons, x, group_busy, group_day_campus, g);
+        WriteGroupJsonBody(out, response, all_days, lessons, x, group_busy, group_day_campus, unavailable_day_texts, g);
         if (g + 1 < GROUPS) {
             out << ",";
         }

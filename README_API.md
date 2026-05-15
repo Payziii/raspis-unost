@@ -173,3 +173,36 @@ Invoke-RestMethod -Method Post `
 ```powershell
 Invoke-RestMethod -Method Post http://127.0.0.1:8080/api/schedule/regenerate
 ```
+
+## Недоступность групп / праздники
+
+`/api/unavailable` теперь поддерживает:
+
+- `dates`: массив конкретных дат, например `["2026-02-23", "2026-03-09"]`;
+- `text`: текст, который попадёт в первую пару этого дня;
+- `all_groups: true`: применить день ко всем группам;
+- старые поля `group`, `from`, `to` тоже работают.
+
+Пример для всех групп:
+
+```powershell
+Invoke-RestMethod -Method Post `
+  -Uri http://127.0.0.1:8080/api/unavailable `
+  -ContentType "application/json; charset=utf-8" `
+  -Body '{"all_groups":true,"dates":["2026-05-01","2026-05-09"],"text":"Праздник"}'
+```
+
+Пример для одной группы:
+
+```powershell
+Invoke-RestMethod -Method Post `
+  -Uri http://127.0.0.1:8080/api/unavailable `
+  -ContentType "application/json; charset=utf-8" `
+  -Body '{"group":0,"dates":["2026-03-20","2026-03-21"],"text":"Сборы"}'
+```
+
+После изменения вызови:
+
+```powershell
+Invoke-RestMethod -Method Post http://127.0.0.1:8080/api/schedule/regenerate
+```

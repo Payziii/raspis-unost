@@ -58,6 +58,7 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
     Date start_date = input_data.start_date;
     Date end_date = input_data.end_date;
     std::map<int, std::vector<std::pair<Date, Date>>> unavailable = input_data.unavailable;
+    const auto& unavailable_day_texts = input_data.unavailable_day_texts;
 
     auto all_days = GenerateSchoolDays(start_date, end_date);
 
@@ -801,7 +802,8 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
             lessons,
             x,
             group_busy,
-            group_day_campus
+            group_day_campus,
+            unavailable_day_texts
         );
 
         for (int g = 0; g < GROUPS; g++) {
@@ -813,6 +815,7 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
                 x,
                 group_busy,
                 group_day_campus,
+                unavailable_day_texts,
                 g
             );
         }
@@ -824,7 +827,8 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
             lessons,
             x,
             group_busy,
-            group_day_campus
+            group_day_campus,
+            unavailable_day_texts
         );
 
         WriteTeachersTxt(
@@ -845,7 +849,8 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
             lessons,
             x,
             group_busy,
-            group_day_campus
+            group_day_campus,
+            unavailable_day_texts
         );
 
         for (int g = 0; g < GROUPS; g++) {
@@ -857,6 +862,7 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
                 x,
                 group_busy,
                 group_day_campus,
+                unavailable_day_texts,
                 g
             );
         }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -55,6 +56,7 @@ void WriteGroupScheduleTxt(
     const std::vector<std::vector<operations_research::sat::BoolVar>>& x,
     const std::vector<std::vector<operations_research::sat::BoolVar>>& group_busy,
     const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
     int group
 );
 
@@ -65,7 +67,8 @@ void WriteAllGroupsTxt(
     const std::vector<Lesson>& lessons,
     const std::vector<std::vector<operations_research::sat::BoolVar>>& x,
     const std::vector<std::vector<operations_research::sat::BoolVar>>& group_busy,
-    const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus
+    const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts
 );
 
 void WriteGroupsCsv(
@@ -75,7 +78,8 @@ void WriteGroupsCsv(
     const std::vector<Lesson>& lessons,
     const std::vector<std::vector<operations_research::sat::BoolVar>>& x,
     const std::vector<std::vector<operations_research::sat::BoolVar>>& group_busy,
-    const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus
+    const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts
 );
 
 void WriteTeachersTxt(
@@ -96,7 +100,8 @@ void WriteAllGroupsJson(
     const std::vector<Lesson>& lessons,
     const std::vector<std::vector<operations_research::sat::BoolVar>>& x,
     const std::vector<std::vector<operations_research::sat::BoolVar>>& group_busy,
-    const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus
+    const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts
 );
 
 void WriteGroupJson(
@@ -107,6 +112,7 @@ void WriteGroupJson(
     const std::vector<std::vector<operations_research::sat::BoolVar>>& x,
     const std::vector<std::vector<operations_research::sat::BoolVar>>& group_busy,
     const std::vector<std::vector<operations_research::sat::IntVar>>& group_day_campus,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
     int group
 );
 

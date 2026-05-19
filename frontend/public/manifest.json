@@ -1,0 +1,13 @@
+{
+  "name": "Расписание УСПО",
+  "short_name": "Расписание",
+  "description": "Генератор расписания учебных занятий",
+  "theme_color": "#6366f1",
+  "background_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "any",
+  "start_url": "/",
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

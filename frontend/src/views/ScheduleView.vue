@@ -68,7 +68,7 @@
       <!-- No groups for selected year -->
       <div v-if="filteredGroups.length === 0" class="empty-state">
         <span class="icon">🎓</span>
-        <h3>Нет групп для {{ yearTabs.find(t=>t.value===selectedYear)?.label }}</h3>
+        <h3>Нет групп для {{ yearTabs.find(t => t.value === selectedYear)?.label }}</h3>
         <p>Попробуйте другой курс или выберите «Все группы»</p>
       </div>
 
@@ -81,43 +81,64 @@
       <div v-else class="sched-scroll">
         <table class="sched-table">
           <thead>
+            <!-- Row 1: day names -->
             <tr>
-              <th class="col-slot sticky-col">Пара / Время</th>
-              <th v-for="g in filteredGroups" :key="g.group_index" class="col-group">
-                {{ g.group_name }}
+              <th rowspan="2" class="th-slot sticky-col">
+                <span class="slot-header-icon">🕐</span>
+                <span class="slot-header-text">Пара</span>
               </th>
+              <th
+                v-for="dateStr in weekDates"
+                :key="dateStr"
+                :colspan="filteredGroups.length"
+                class="th-day"
+              >
+                <span class="day-name">{{ getDayWeekday(dateStr).toUpperCase() }}</span>
+                <span class="day-date-sub">{{ formatDateShort(dateStr) }}</span>
+              </th>
+            </tr>
+            <!-- Row 2: group names -->
+            <tr>
+              <template v-for="dateStr in weekDates" :key="dateStr">
+                <th
+                  v-for="(g, gi) in filteredGroups"
+                  :key="`${dateStr}-${g.group_index}`"
+                  class="th-group"
+                  :class="{ 'day-separator': gi === 0 }"
+                >
+                  {{ g.group_name }}
+                </th>
+              </template>
             </tr>
           </thead>
           <tbody>
-            <template v-for="dateStr in weekDates" :key="dateStr">
-              <tr class="day-row">
-                <td :colspan="filteredGroups.length + 1" class="day-header-cell">
-                  {{ getDayWeekday(dateStr).toUpperCase() }}&nbsp;&nbsp;
-                  <span class="day-date">{{ dateStr }}</span>
-                </td>
-              </tr>
-              <tr v-for="slotNum in maxSlots" :key="`${dateStr}-${slotNum}`" class="slot-row">
-                <td class="slot-label sticky-col">
-                  <span class="slot-num">{{ slotNum }}</span>
-                  <span class="slot-time">{{ getSlotTime(dateStr, slotNum) }}</span>
-                </td>
+            <tr v-for="slotNum in maxSlots" :key="slotNum" class="slot-row">
+              <td class="slot-label sticky-col">
+                <span class="slot-num">{{ slotNum }}</span>
+                <span class="slot-time">{{ getSlotTimeForSlot(slotNum) }}</span>
+              </td>
+              <template v-for="(dateStr, di) in weekDates" :key="dateStr">
                 <td
-                  v-for="g in filteredGroups"
-                  :key="g.group_index"
+                  v-for="(g, gi) in filteredGroups"
+                  :key="`${dateStr}-${g.group_index}`"
                   class="slot-cell"
-                  :class="getCellClass(g.group_index, dateStr, slotNum)"
+                  :class="[
+                    getCellClass(g.group_index, dateStr, slotNum),
+                    { 'day-separator': gi === 0 }
+                  ]"
                 >
                   <div class="cell-inner" v-if="getCellText(g.group_index, dateStr, slotNum)">
                     <span class="cell-subject">{{ parseSubject(getCellText(g.group_index, dateStr, slotNum)) }}</span>
                     <span
                       v-for="(detail, i) in parseDetails(getCellText(g.group_index, dateStr, slotNum))"
-                      :key="i" class="cell-detail"
+                      :key="i"
+                      class="cell-detail"
                     >{{ detail }}</span>
                   </div>
                   <span v-else class="cell-empty">—</span>
                 </td>
-              </tr>
-            </template>
+              </template>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -157,14 +178,18 @@ function getMonday(date) {
 }
 
 function fmtDate(date) {
-  return `${String(date.getDate()).padStart(2,'0')}.${String(date.getMonth()+1).padStart(2,'0')}.${date.getFullYear()}`
+  return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`
+}
+
+function formatDateShort(dateStr) {
+  const [d, m] = dateStr.split('.')
+  return `${d}.${m}`
 }
 
 function compareDMY(a, b) {
   return parseDMY(a) - parseDMY(b)
 }
 
-// Course year detection
 function detectCourseYear(name) {
   const m4 = name.match(/[^\d]2(\d)\d{2}/)
   if (m4) {
@@ -288,10 +313,12 @@ const filteredGroups = computed(() => {
 
 // ── Cell helpers ─────────────────────────────────────────────────────────
 
-function getSlotTime(dateStr, slotNum) {
-  for (const g of store.groups) {
-    const s = slotLookup.value[g.group_index]?.[dateStr]?.slots[slotNum]
-    if (s) return s.time
+function getSlotTimeForSlot(slotNum) {
+  for (const dateStr of weekDates.value) {
+    for (const g of store.groups) {
+      const s = slotLookup.value[g.group_index]?.[dateStr]?.slots[slotNum]
+      if (s?.time) return s.time
+    }
   }
   return ''
 }
@@ -304,10 +331,10 @@ function getCellText(groupIndex, dateStr, slotNum) {
 
 function getCellClass(groupIndex, dateStr, slotNum) {
   const text = getCellText(groupIndex, dateStr, slotNum)
-  if (!text) return 'cell-empty-row'
+  if (!text) return 'cell-empty-type'
   const lo = text.toLowerCase()
   if (lo.includes('лпз') || lo.includes('лаб')) return 'cell-lab'
-  if (lo.includes('уп-') || lo.includes('уп ') || lo.includes('практик')) return 'cell-block'
+  if (lo.includes('уп-') || lo.includes('уп ') || lo.includes('практик')) return 'cell-practice'
   return 'cell-normal'
 }
 
@@ -338,88 +365,261 @@ async function onRegenerate() {
 </script>
 
 <style scoped>
-/* Year tabs */
-.year-tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+/* ── Year tabs ─────────────────────────────────────────────────────────── */
+.year-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
 .year-tab {
-  display: flex; align-items: center; gap: 6px;
-  padding: 7px 14px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); background: var(--bg-secondary);
-  color: var(--text-secondary); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
 }
 .year-tab:hover { border-color: var(--accent); color: var(--text-primary); }
-.year-tab.active { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
-.tab-count { background: var(--bg-tertiary); border-radius: 10px; padding: 0 6px; font-size: 11px; }
-
-/* Week nav */
-.week-nav {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  margin-bottom: 20px; background: var(--bg-secondary);
-  border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px;
+.year-tab.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
 }
-.week-label { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tab-count {
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+/* ── Week nav ──────────────────────────────────────────────────────────── */
+.week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+}
+.week-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
 .week-label strong { font-size: 14px; }
 .week-dates { font-size: 12px; color: var(--text-muted); }
 
-/* Table */
-.sched-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); border: 1px solid var(--border); }
-.sched-table { border-collapse: collapse; font-size: 13px; width: 100%; }
-
-.col-slot { width: 110px; min-width: 90px; }
-.col-group { min-width: 160px; width: 200px; }
-
-.sched-table th {
-  background: var(--bg-secondary); color: var(--text-secondary);
-  font-weight: 600; font-size: 11px; text-transform: uppercase;
-  letter-spacing: 0.05em; padding: 10px 12px; text-align: left;
-  white-space: nowrap; border-bottom: 1px solid var(--border);
+/* ── Table scroll wrapper ──────────────────────────────────────────────── */
+.sched-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
-.sched-table td { border-top: 1px solid var(--border); vertical-align: top; padding: 0; }
 
-.sticky-col { position: sticky; left: 0; z-index: 2; }
-.sched-table th.sticky-col { z-index: 3; }
-
-/* Day header */
-.day-row .day-header-cell {
-  background: linear-gradient(90deg, var(--accent-light2) 0%, var(--bg-secondary) 100%);
-  color: var(--text-primary); font-weight: 700; font-size: 13px;
-  padding: 10px 14px; letter-spacing: 0.04em; border-top: 2px solid var(--accent);
+/* ── Table base ─────────────────────────────────────────────────────────  */
+.sched-table {
+  border-collapse: collapse;
+  font-size: 13px;
+  width: 100%;
+  table-layout: auto;
 }
-.day-date { color: var(--text-muted); font-weight: 400; font-size: 12px; }
 
-/* Slot label */
+/* ── Sticky first column ─────────────────────────────────────────────── */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+/* ── Header: slot cell (top-left, rowspan=2) ────────────────────────── */
+.th-slot {
+  background: var(--bg-secondary);
+  border-right: 2px solid var(--border-strong);
+  border-bottom: 2px solid var(--border-strong);
+  z-index: 4 !important;
+  text-align: center;
+  width: 84px;
+  min-width: 76px;
+  padding: 10px 8px;
+}
+.slot-header-icon {
+  display: block;
+  font-size: 18px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.slot-header-text {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Header: day columns ─────────────────────────────────────────────── */
+.th-day {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 60%, #818cf8 100%);
+  color: #fff;
+  text-align: center;
+  padding: 10px 14px;
+  border-left: 2px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  white-space: nowrap;
+}
+.th-day:first-child { border-left: none; }
+.day-name {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.day-date-sub {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.72;
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Header: group sub-row ───────────────────────────────────────────── */
+.th-group {
+  background: #1a2540;
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--border-strong);
+  min-width: 140px;
+}
+.th-group.day-separator {
+  border-left: 2px solid var(--border-strong);
+}
+
+/* ── Slot label (first column in body) ──────────────────────────────── */
 .slot-label {
-  background: var(--bg-secondary); padding: 10px 12px;
-  display: flex; flex-direction: column; gap: 2px;
-  border-right: 1px solid var(--border-strong);
+  background: var(--bg-secondary);
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-right: 2px solid var(--border-strong);
+  border-top: 1px solid var(--border);
+  min-height: 56px;
+  transition: background var(--transition);
 }
-.slot-num { font-size: 15px; font-weight: 700; color: var(--text-primary); line-height: 1; }
-.slot-time { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+.slot-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.slot-time {
+  font-size: 9px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
 
-/* Slot cells */
-.slot-cell { padding: 8px 10px; vertical-align: top; }
-.slot-cell:hover { background: rgba(255,255,255,0.03); }
-.cell-empty-row { }
-.cell-normal  { }
-.cell-lab     { background: rgba(16, 185, 129, 0.06); }
-.cell-block   { background: rgba(245, 158, 11, 0.06); }
+/* ── Data cells ──────────────────────────────────────────────────────── */
+.slot-cell {
+  padding: 8px 10px;
+  vertical-align: top;
+  border-top: 1px solid var(--border);
+  transition: background var(--transition);
+}
 
-.cell-inner { display: flex; flex-direction: column; gap: 4px; }
-.cell-subject { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+.slot-cell.day-separator {
+  border-left: 2px solid var(--border-strong);
+}
+
+.slot-row:hover .slot-cell {
+  background: rgba(255, 255, 255, 0.025);
+}
+.slot-row:hover .slot-label {
+  background: #253047;
+}
+
+/* Lesson type backgrounds */
+.cell-lab {
+  background: rgba(16, 185, 129, 0.07);
+}
+.slot-row:hover .cell-lab {
+  background: rgba(16, 185, 129, 0.13) !important;
+}
+.cell-practice {
+  background: rgba(245, 158, 11, 0.07);
+}
+.slot-row:hover .cell-practice {
+  background: rgba(245, 158, 11, 0.13) !important;
+}
+
+/* Cell content */
+.cell-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cell-subject {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
 .cell-detail {
-  font-size: 11px; color: var(--text-secondary);
-  background: var(--bg-tertiary); border-radius: 4px;
-  padding: 1px 5px; display: inline-block; width: fit-content;
+  font-size: 10px;
+  color: var(--text-secondary);
+  background: rgba(51, 65, 85, 0.7);
+  border-radius: 3px;
+  padding: 1px 5px;
+  display: inline-block;
+  width: fit-content;
+  white-space: nowrap;
 }
-.cell-empty { color: var(--text-muted); font-size: 14px; display: flex; align-items: center; justify-content: center; min-height: 32px; }
+.cell-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  opacity: 0.3;
+}
 
-/* Center block for loading */
-.center-block { display: flex; flex-direction: column; align-items: center; padding: 80px 20px; }
+/* Loading center */
+.center-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 20px;
+}
 
 @media (max-width: 640px) {
   .week-nav { flex-wrap: wrap; }
   .week-label { order: -1; width: 100%; align-items: center; }
-  .col-slot { min-width: 80px; }
-  .col-group { min-width: 130px; }
+  .th-slot { min-width: 68px; }
+  .th-group { min-width: 110px; }
 }
 </style>

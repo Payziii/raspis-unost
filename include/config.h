@@ -26,7 +26,7 @@ constexpr int SOLVER_WORKERS = 4;
 constexpr double SOLVER_MAX_MEMORY_MB = 8072.0;
 constexpr bool STOP_AFTER_FIRST_SOLUTION = false;
 
-constexpr int MIN_STUDENT_PAIRS_PER_STUDY_DAY = 2;
+constexpr int MIN_STUDENT_PAIRS_PER_STUDY_DAY = 1;
 constexpr int MAX_STUDENT_PAIRS_PER_DAY = 5;
 
 constexpr int MIN_STUDENT_STUDY_DAYS_PER_WEEK = 2;

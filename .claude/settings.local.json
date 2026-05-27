@@ -3,7 +3,12 @@
     "allow": [
       "Bash(python3 -c ' *)",
       "Bash(node -e ' *)",
-      "Bash(node import_schedule.js)"
+      "Bash(node import_schedule.js)",
+      "Bash(awk 'NR==6,/^  \\\\]/' data/timetable_data.json)",
+      "Bash(awk 'NR==198,/^  \\\\]/' data/timetable_data.json)",
+      "Bash(awk 'NR==448,/^  \\\\]/' data/timetable_data.json)",
+      "Bash(awk 'NR>=471' data/timetable_data.json)",
+      "Bash(awk -F': ' '{sum += $2; count++} END {print \"Total lessons:\", count; print \"Total slots required:\", sum}')"
     ]
   }
 }

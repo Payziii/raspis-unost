@@ -18,6 +18,7 @@
     <ClCompile Include="src\http_server.cpp"><Filter>Source Files</Filter></ClCompile>
     <ClCompile Include="src\json_utils.cpp"><Filter>Source Files</Filter></ClCompile>
     <ClCompile Include="src\data_store.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\runtime_config.cpp"><Filter>Source Files</Filter></ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\config.h"><Filter>Header Files</Filter></ClInclude>
@@ -32,5 +33,6 @@
     <ClInclude Include="include\http_server.h"><Filter>Header Files</Filter></ClInclude>
     <ClInclude Include="include\json_utils.h"><Filter>Header Files</Filter></ClInclude>
     <ClInclude Include="include\data_store.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="include\runtime_config.h"><Filter>Header Files</Filter></ClInclude>
   </ItemGroup>
 </Project>

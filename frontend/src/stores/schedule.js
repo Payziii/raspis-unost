@@ -20,13 +20,15 @@ export const useScheduleStore = defineStore('schedule', () => {
     }
   }
 
-  async function regenerate() {
+  async function regenerate(opts = {}) {
     generating.value = true
-    const res = await api.schedule.regenerate()
+    const res = await api.schedule.regenerate(opts)
     generating.value = false
     if (res.ok) {
       await fetchSchedule()
-      return { ok: true, message: res.data?.message || 'Расписание сгенерировано' }
+      const extra = res.data?.lock_source && res.data.lock_source !== 'none'
+        ? ` (закреплено ${res.data.locked_count} слотов из «${res.data.lock_source}»)` : ''
+      return { ok: true, message: (res.data?.message || 'Расписание сгенерировано') + extra }
     }
     return { ok: false, message: res.data?.message || 'Ошибка генерации' }
   }

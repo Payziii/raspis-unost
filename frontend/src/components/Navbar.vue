@@ -50,11 +50,12 @@ const route = useRoute()
 watch(route, () => { drawerOpen.value = false })
 
 const links = [
-  { to: '/schedule', label: 'Расписание',    icon: '📅' },
-  { to: '/teachers', label: 'Преподаватели', icon: '👤' },
-  { to: '/groups',   label: 'Группы',        icon: '🎓' },
-  { to: '/lessons',  label: 'Пары',          icon: '📖' },
-  { to: '/settings', label: 'Настройки',     icon: '⚙️' },
+  { to: '/schedule',    label: 'Расписание',    icon: '📅' },
+  { to: '/constructor', label: 'Конструктор',   icon: '🛠' },
+  { to: '/teachers',    label: 'Преподаватели', icon: '👤' },
+  { to: '/groups',      label: 'Группы',        icon: '🎓' },
+  { to: '/lessons',     label: 'Пары',          icon: '📖' },
+  { to: '/settings',    label: 'Настройки',     icon: '⚙️' },
 ]
 </script>
 

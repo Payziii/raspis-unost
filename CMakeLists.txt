@@ -22,6 +22,7 @@ add_executable(timetable_solver
     src/http_server.cpp
     src/json_utils.cpp
     src/data_store.cpp
+    src/runtime_config.cpp
 )
 
 target_include_directories(timetable_solver PRIVATE include)

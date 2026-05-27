@@ -18,7 +18,13 @@ export const api = {
   schedule: {
     get: () => request('GET', '/schedule'),
     getGroup: (id) => request('GET', `/schedule/group/${encodeURIComponent(id)}`),
-    regenerate: () => request('POST', '/schedule/regenerate'),
+    regenerate: (opts = {}) => request('POST', '/schedule/regenerate', opts),
+  },
+  constructor: {
+    load: () => request('GET', '/schedule/manual'),
+    save: (data) => request('POST', '/schedule/manual', data),
+    clear: () => request('DELETE', '/schedule/manual'),
+    copyFromAuto: () => request('POST', '/schedule/manual/copy-from-auto'),
   },
   groups: {
     list: () => request('GET', '/groups'),
@@ -47,5 +53,8 @@ export const api = {
   settings: {
     get: () => request('GET', '/settings'),
     update: (d) => request('PATCH', '/settings', d),
+    getSolverConfig: () => request('GET', '/settings/solver-config'),
+    updateSolverConfig: (d) => request('PATCH', '/settings/solver-config', d),
+    resetSolverConfig: () => request('POST', '/settings/solver-config/reset'),
   },
 }

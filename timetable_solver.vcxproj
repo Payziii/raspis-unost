@@ -91,6 +91,7 @@
     <ClCompile Include="src\http_server.cpp" />
     <ClCompile Include="src\json_utils.cpp" />
     <ClCompile Include="src\data_store.cpp" />
+    <ClCompile Include="src\runtime_config.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\config.h" />
@@ -105,6 +106,7 @@
     <ClInclude Include="include\http_server.h" />
     <ClInclude Include="include\json_utils.h" />
     <ClInclude Include="include\data_store.h" />
+    <ClInclude Include="include\runtime_config.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

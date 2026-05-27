@@ -9,6 +9,7 @@
 #include "config.h"
 #include "format_utils.h"
 #include "date_utils.h"
+#include "runtime_config.h"
 
 namespace timetable {
 namespace {
@@ -173,6 +174,7 @@ JsonValue DefaultDataJson() {
     JsonValue settings = JsonValue::MakeObject();
     settings.At("start_date") = JsonValue::MakeString("2026-01-12");
     settings.At("end_date") = JsonValue::MakeString("2026-06-19");
+    settings.At("solver_config") = SolverConfigToJson(DefaultSolverConfig());
     root.At("settings") = settings;
 
     JsonValue groups = JsonValue::MakeArray();
@@ -317,6 +319,7 @@ bool LoadScheduleInputData(ScheduleInputData& data, std::string& error) {
     const JsonValue& settings = root.At("settings");
     ParseDateIso(JsonString(settings, "start_date", "2026-01-12"), data.start_date);
     ParseDateIso(JsonString(settings, "end_date", "2026-06-19"), data.end_date);
+    LoadSolverConfigFromJson(settings.At("solver_config"));
 
     data.groups.clear();
     const JsonValue& groups = root.At("groups");

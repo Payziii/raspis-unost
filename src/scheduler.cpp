@@ -49,6 +49,11 @@ struct UpStartRef {
 };
 
 GenerationResult GenerateSchedule(const std::string& output_dir) {
+    GenerationOptions empty_opts;
+    return GenerateSchedule(output_dir, empty_opts);
+}
+
+GenerationResult GenerateSchedule(const std::string& output_dir, const GenerationOptions& options) {
     ScheduleInputData input_data;
     std::string input_error;
     if (!LoadScheduleInputData(input_data, input_error)) {
@@ -68,9 +73,16 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
     std::vector<Lesson> lessons = input_data.lessons;
     int num_lessons = static_cast<int>(lessons.size());
 
-    if (!ValidateInputLessons(lessons)) {
-        std::cerr << "\nВходные данные содержат ошибки. Модель не построена.\n";
-        return {false, "INPUT_ERROR", "Входные данные содержат ошибки. Модель не построена.", output_dir};
+    std::vector<std::string> validation_errors;
+    if (!ValidateInputLessonsDetailed(lessons, validation_errors)) {
+        std::cerr << "\nВходные данные содержат ошибки (" << validation_errors.size() << "). Модель не построена.\n";
+        std::string message = "Входные данные содержат ошибки (" + std::to_string(validation_errors.size()) + "): ";
+        for (size_t i = 0; i < validation_errors.size() && i < 5; i++) {
+            if (i > 0) message += " | ";
+            message += validation_errors[i];
+        }
+        if (validation_errors.size() > 5) message += " | …";
+        return {false, "INPUT_ERROR", message, output_dir};
     }
 
     std::filesystem::create_directories(output_dir);
@@ -183,6 +195,36 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
     std::cout << "Агрегированных блоковых занятий УП: " << blocks.size() << "\n";
     std::cout << "Переменных старта УП после агрегации: "
               << total_block_start_vars << "\n";
+
+    // ── Закрепление существующего расписания (lock_existing) ──
+    if (!options.locked.empty()) {
+        std::map<int, int> lesson_id_to_index;
+        for (int l = 0; l < num_lessons; l++) {
+            lesson_id_to_index[lessons[l].id] = l;
+        }
+        std::map<Date, int> date_to_day;
+        for (int d = 0; d < num_days; d++) {
+            date_to_day[all_days[d]] = d;
+        }
+        int applied = 0;
+        int skipped_lesson = 0;
+        int skipped_date = 0;
+        int skipped_slot = 0;
+        for (const LockedAssignment& a : options.locked) {
+            auto lit = lesson_id_to_index.find(a.lesson_id);
+            if (lit == lesson_id_to_index.end()) { skipped_lesson++; continue; }
+            auto dit = date_to_day.find(a.date);
+            if (dit == date_to_day.end()) { skipped_date++; continue; }
+            if (a.slot < 0 || a.slot >= SLOTS_PER_DAY) { skipped_slot++; continue; }
+            int t = dit->second * SLOTS_PER_DAY + a.slot;
+            model.AddEquality(x[lit->second][t], 1);
+            applied++;
+        }
+        std::cout << "Зафиксированных слотов (" << options.lock_source << "): " << applied
+                  << " (пропущено: уроков " << skipped_lesson
+                  << ", дат " << skipped_date
+                  << ", слотов " << skipped_slot << ")\n";
+    }
 
     for (int d = 0; d < num_days; d++) {
         for (int g = 0; g < GROUPS; g++) {
@@ -726,14 +768,41 @@ GenerationResult GenerateSchedule(const std::string& output_dir) {
         model.Minimize(objective);
     }
 
-    std::cout << "Запуск решателя...\n";
+    long long est_x_vars = static_cast<long long>(num_lessons) * total_slots;
+    long long est_group_busy = static_cast<long long>(GROUPS) * total_slots;
+    long long est_part_busy = static_cast<long long>(GROUPS) * PARTS_PER_GROUP * total_slots;
+    long long est_teacher_busy = static_cast<long long>(TEACHERS) * total_slots;
+    long long est_block_starts = total_block_start_vars;
+    long long est_student_day_has = static_cast<long long>(GROUPS) * PARTS_PER_GROUP * num_days;
+    long long est_five_pair = static_cast<long long>(student_five_pair_day_vars.size());
+    long long est_campus_int = static_cast<long long>(GROUPS) * num_days + static_cast<long long>(TEACHERS) * num_days;
+
+    std::cout << "\n========== Категории переменных (предварительная оценка) ==========\n";
+    std::cout << "x[lesson][slot]      : " << est_x_vars << "  (" << num_lessons << " уроков × " << total_slots << " слотов)\n";
+    std::cout << "group_busy           : " << est_group_busy << "\n";
+    std::cout << "part_busy            : " << est_part_busy << "\n";
+    std::cout << "teacher_busy         : " << est_teacher_busy << "\n";
+    std::cout << "block start_vars     : " << est_block_starts << "\n";
+    std::cout << "student_day_has      : " << est_student_day_has << "\n";
+    std::cout << "five_pair_day_vars   : " << est_five_pair << "\n";
+    std::cout << "*_day_campus (Int)   : " << est_campus_int << "\n";
+    std::cout << "ИТОГО (булевых +- )  : "
+              << (est_x_vars + est_group_busy + est_part_busy + est_teacher_busy + est_block_starts + est_student_day_has + est_five_pair)
+              << "\n";
+
+    std::cout << "\nЗапуск решателя...\n";
 
     CpModelProto model_proto = model.Build();
 
-    std::cout << "\n========== Размер модели ==========\n";
-    std::cout << "Переменных: " << model_proto.variables_size() << "\n";
-    std::cout << "Ограничений: " << model_proto.constraints_size() << "\n";
-    std::cout << "Размер proto: " << (model_proto.ByteSizeLong() / (1024.0 * 1024.0)) << " МБ\n";
+    std::cout << "\n========== Размер модели (фактический) ==========\n";
+    std::cout << "Всего переменных     : " << model_proto.variables_size() << "\n";
+    std::cout << "Всего ограничений    : " << model_proto.constraints_size() << "\n";
+    std::cout << "Размер proto         : " << (model_proto.ByteSizeLong() / (1024.0 * 1024.0)) << " МБ\n";
+    std::cout << "Параметры солвера    : workers=" << SOLVER_WORKERS
+              << ", time_limit=" << SOLVER_TIME_LIMIT_SECONDS << "s"
+              << ", quality_obj=" << (USE_QUALITY_OBJECTIVE ? "true" : "false")
+              << ", hard_no_student_windows=" << (HARD_NO_STUDENT_WINDOWS ? "true" : "false")
+              << ", stop_first=" << (STOP_AFTER_FIRST_SOLUTION ? "true" : "false") << "\n";
 
     SatParameters params;
     params.set_num_search_workers(SOLVER_WORKERS);

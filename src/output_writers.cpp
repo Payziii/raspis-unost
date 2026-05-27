@@ -7,6 +7,7 @@
 
 #include "config.h"
 #include "date_utils.h"
+#include "data_store.h"
 #include "format_utils.h"
 
 namespace timetable {
@@ -469,6 +470,37 @@ std::string JsonEscape(const std::string& s) {
     return out.str();
 }
 
+void WriteSlotLessonsJson(
+    std::ofstream& out,
+    const CpSolverResponse& response,
+    const std::vector<Lesson>& lessons,
+    const std::vector<std::vector<BoolVar>>& x,
+    int group,
+    int day,
+    int slot
+) {
+    int t = day * SLOTS_PER_DAY + slot;
+    out << "[";
+    bool first = true;
+    for (int l = 0; l < static_cast<int>(lessons.size()); l++) {
+        if (lessons[l].group != group) continue;
+        if (!BoolValue(response, x[l][t])) continue;
+
+        if (!first) out << ",";
+        first = false;
+
+        out << "{"
+            << "\"id\":" << lessons[l].id
+            << ",\"name\":\"" << JsonEscape(lessons[l].name) << "\""
+            << ",\"teacher_id\":" << lessons[l].teacher
+            << ",\"subgroup\":" << lessons[l].subgroup
+            << ",\"is_lab\":" << (lessons[l].is_lab ? "true" : "false")
+            << ",\"is_block\":" << (lessons[l].is_block ? "true" : "false")
+            << "}";
+    }
+    out << "]";
+}
+
 void WriteGroupJsonBody(
     std::ofstream& out,
     const CpSolverResponse& response,
@@ -499,6 +531,8 @@ void WriteGroupJsonBody(
 
         out << "    {\n";
         out << "      \"date\": \"" << JsonEscape(DateToString(dt)) << "\",\n";
+        out << "      \"date_iso\": \"" << JsonEscape(DateToIso(dt)) << "\",\n";
+        out << "      \"day_index\": " << d << ",\n";
         out << "      \"weekday\": \"" << JsonEscape(WEEKDAY_NAME[DayOfWeek(dt) - 1]) << "\",\n";
         out << "      \"slots\": [\n";
 
@@ -517,7 +551,10 @@ void WriteGroupJsonBody(
 
             out << "        {\"slot\": " << (s + 1)
                 << ", \"time\": \"" << JsonEscape(PairSlotLabel(dt, s))
-                << "\", \"text\": \"" << JsonEscape(text) << "\"}";
+                << "\", \"text\": \"" << JsonEscape(text) << "\""
+                << ", \"lessons\": ";
+            WriteSlotLessonsJson(out, response, lessons, x, group, d, s);
+            out << "}";
 
             if (s + 1 < SLOTS_PER_DAY) {
                 out << ",";

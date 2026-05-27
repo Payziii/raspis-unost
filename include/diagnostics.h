@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -9,6 +10,7 @@
 namespace timetable {
 
 bool ValidateInputLessons(const std::vector<Lesson>& lessons);
+bool ValidateInputLessonsDetailed(const std::vector<Lesson>& lessons, std::vector<std::string>& errors);
 
 void PrintInputDiagnostics(
     const std::vector<Lesson>& lessons,

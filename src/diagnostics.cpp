@@ -2,38 +2,48 @@
 
 #include <iostream>
 #include <set>
+#include <sstream>
 
 #include "config.h"
 #include "date_utils.h"
 
 namespace timetable {
 
-bool ValidateInputLessons(const std::vector<Lesson>& lessons) {
-    bool ok = true;
+bool ValidateInputLessonsDetailed(const std::vector<Lesson>& lessons, std::vector<std::string>& errors) {
+    errors.clear();
     std::set<int> seen_ids;
 
+    auto push = [&errors](const std::string& msg) {
+        errors.push_back(msg);
+        std::cerr << msg << "\n";
+    };
+
     for (const auto& lesson : lessons) {
+        std::ostringstream prefix;
+        prefix << "Занятие id=" << lesson.id << " «" << lesson.name << "»";
+
         if (!seen_ids.insert(lesson.id).second) {
-            std::cerr << "Повторяется id занятия: " << lesson.id << "\n";
-            ok = false;
+            push("Повторяется id занятия: " + std::to_string(lesson.id));
         }
 
         if (lesson.group < 0 || lesson.group >= GROUPS) {
-            std::cerr << "Некорректная группа у занятия: "
-                      << lesson.name << ", group=" << lesson.group << "\n";
-            ok = false;
+            std::ostringstream m;
+            m << prefix.str() << ": некорректная группа group=" << lesson.group
+              << " (всего групп: " << GROUPS << ")";
+            push(m.str());
         }
 
         if (lesson.teacher < 0 || lesson.teacher >= TEACHERS) {
-            std::cerr << "Некорректный преподаватель у занятия: "
-                      << lesson.name << ", teacher=" << lesson.teacher << "\n";
-            ok = false;
+            std::ostringstream m;
+            m << prefix.str() << ": некорректный преподаватель teacher=" << lesson.teacher
+              << " (всего преподов: " << TEACHERS << ")";
+            push(m.str());
         }
 
         if (lesson.total_slots <= 0) {
-            std::cerr << "Некорректное число пар у занятия: "
-                      << lesson.name << ", total_slots=" << lesson.total_slots << "\n";
-            ok = false;
+            std::ostringstream m;
+            m << prefix.str() << ": некорректное число пар total_slots=" << lesson.total_slots;
+            push(m.str());
         }
 
         if (lesson.group >= 0 && lesson.group < GROUPS && lesson.subgroup != -1) {
@@ -41,50 +51,44 @@ bool ValidateInputLessons(const std::vector<Lesson>& lessons) {
             int last_subgroup = base_subgroup + PARTS_PER_GROUP - 1;
 
             if (lesson.subgroup < base_subgroup || lesson.subgroup > last_subgroup) {
-                std::cerr << "Некорректная подгруппа у занятия: "
-                          << lesson.name
-                          << ", group=" << GROUP_NAME[lesson.group]
-                          << ", subgroup=" << lesson.subgroup
-                          << ", ожидается -1 или диапазон "
-                          << base_subgroup << ".." << last_subgroup << "\n";
-                ok = false;
+                std::ostringstream m;
+                m << prefix.str() << ": некорректная подгруппа subgroup=" << lesson.subgroup
+                  << " (ожидается -1 или " << base_subgroup << ".." << last_subgroup
+                  << " для группы «" << GROUP_NAME[lesson.group] << "»)";
+                push(m.str());
             }
         }
 
         if (lesson.allowed_campuses.empty()) {
-            std::cerr << "У занятия нет разрешённых кампусов: "
-                      << lesson.name << "\n";
-            ok = false;
+            push(prefix.str() + ": нет разрешённых кампусов");
         }
 
         for (Campus campus : lesson.allowed_campuses) {
             if (campus != LESNAYA && campus != KRIVOUSOVA) {
-                std::cerr << "Некорректный кампус у занятия: "
-                          << lesson.name << "\n";
-                ok = false;
+                push(prefix.str() + ": некорректный кампус");
             }
         }
 
         if (lesson.is_block) {
             if (lesson.total_slots % 2 != 0) {
-                std::cerr << "Блоковое занятие должно иметь чётное число пар: "
-                          << lesson.name
-                          << ", группа " << GROUP_NAME[lesson.group]
-                          << ", total_slots=" << lesson.total_slots << "\n";
-                ok = false;
+                std::ostringstream m;
+                m << prefix.str() << ": блоковое занятие должно иметь чётное число пар, total_slots="
+                  << lesson.total_slots;
+                push(m.str());
             }
 
             if (lesson.total_slots < 2) {
-                std::cerr << "Блоковое занятие должно иметь минимум 2 пары: "
-                          << lesson.name
-                          << ", группа " << GROUP_NAME[lesson.group]
-                          << "\n";
-                ok = false;
+                push(prefix.str() + ": блоковое занятие должно иметь минимум 2 пары");
             }
         }
     }
 
-    return ok;
+    return errors.empty();
+}
+
+bool ValidateInputLessons(const std::vector<Lesson>& lessons) {
+    std::vector<std::string> errors;
+    return ValidateInputLessonsDetailed(lessons, errors);
 }
 
 void PrintInputDiagnostics(

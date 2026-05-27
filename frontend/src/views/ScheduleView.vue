@@ -3,10 +3,17 @@
     <!-- Header -->
     <div class="page-header">
       <h1 class="page-title">📅 Расписание</h1>
-      <button class="btn btn-primary" :disabled="store.generating" @click="onRegenerate">
-        <span v-if="store.generating" class="spinner spinner-sm" />
-        <span>{{ store.generating ? 'Генерируется…' : 'Сгенерировать' }}</span>
-      </button>
+      <div class="header-actions">
+        <select v-model="lockMode" class="form-select lock-select" :disabled="store.generating">
+          <option value="none">С нуля</option>
+          <option value="manual">Зафиксировать Конструктор</option>
+          <option value="auto">Зафиксировать прошлую автогенерацию</option>
+        </select>
+        <button class="btn btn-primary" :disabled="store.generating" @click="onRegenerate">
+          <span v-if="store.generating" class="spinner spinner-sm" />
+          <span>{{ store.generating ? 'Генерируется…' : 'Сгенерировать' }}</span>
+        </button>
+      </div>
     </div>
 
     <!-- Course year tabs -->
@@ -156,6 +163,7 @@ const toast = useToast()
 
 const selectedYear = ref(0)
 const weekIndex = ref(0)
+const lockMode = ref('none')
 
 onMounted(async () => {
   await store.fetchSchedule()
@@ -354,9 +362,10 @@ function parseDetails(text) {
 // ── Regenerate ───────────────────────────────────────────────────────────
 
 async function onRegenerate() {
-  const r = await store.regenerate()
+  const opts = lockMode.value && lockMode.value !== 'none' ? { lock_existing: lockMode.value } : {}
+  const r = await store.regenerate(opts)
   if (r.ok) {
-    toast.success('Расписание успешно сгенерировано!')
+    toast.success(r.message || 'Расписание успешно сгенерировано!')
     jumpToCurrentWeek()
   } else {
     toast.error(r.message || 'Ошибка генерации расписания')
@@ -365,6 +374,9 @@ async function onRegenerate() {
 </script>
 
 <style scoped>
+.header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.lock-select { width: auto; min-width: 220px; padding: 7px 10px; font-size: 13px; }
+
 /* ── Year tabs ─────────────────────────────────────────────────────────── */
 .year-tabs {
   display: flex;

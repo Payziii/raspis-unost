@@ -26,6 +26,7 @@
 #include "config.h"
 #include "data_store.h"
 #include "json_utils.h"
+#include "runtime_config.h"
 #include "scheduler.h"
 
 namespace timetable {
@@ -263,6 +264,81 @@ std::string GetSettings() {
     return OkJson(parsed.value.At("settings"));
 }
 
+std::string GetSolverConfig() {
+    JsonParseResult parsed = LoadRoot();
+    if (!parsed.ok) return ErrorJson(500, "Internal Server Error", parsed.error);
+
+    JsonValue& settings = parsed.value.At("settings");
+    JsonValue& solver_config = settings.At("solver_config");
+
+    if (!solver_config.IsObject()) {
+        solver_config = SolverConfigToJson(DefaultSolverConfig());
+    } else {
+        JsonValue defaults = SolverConfigToJson(DefaultSolverConfig());
+        for (const auto& kv : defaults.object_value) {
+            if (!solver_config.Has(kv.first)) {
+                solver_config.At(kv.first) = kv.second;
+            }
+        }
+    }
+
+    JsonValue schema_arr = JsonValue::MakeArray();
+    for (const SolverConfigField& field : SolverConfigSchema()) {
+        JsonValue entry = JsonValue::MakeObject();
+        entry.At("key") = JsonValue::MakeString(field.key);
+        entry.At("label") = JsonValue::MakeString(field.label);
+        entry.At("description") = JsonValue::MakeString(field.description);
+        entry.At("category") = JsonValue::MakeString(field.category);
+        entry.At("type") = JsonValue::MakeString(field.type);
+        schema_arr.array_value.push_back(entry);
+    }
+
+    JsonValue result = JsonValue::MakeObject();
+    result.At("values") = solver_config;
+    result.At("schema") = schema_arr;
+    result.At("defaults") = SolverConfigToJson(DefaultSolverConfig());
+    return OkJson(result);
+}
+
+std::string UpdateSolverConfig(const std::string& body, bool reset_to_defaults) {
+    JsonParseResult parsed = LoadRoot();
+    if (!parsed.ok) return ErrorJson(500, "Internal Server Error", parsed.error);
+
+    JsonValue& settings = parsed.value.At("settings");
+    if (!settings.IsObject()) settings = JsonValue::MakeObject();
+
+    if (reset_to_defaults) {
+        settings.At("solver_config") = SolverConfigToJson(DefaultSolverConfig());
+        LoadSolverConfigFromJson(settings.At("solver_config"));
+    } else {
+        JsonParseResult body_json = ParseJson(body);
+        if (!body_json.ok || !body_json.value.IsObject()) {
+            return ErrorJson(400, "Bad Request", "Нужен JSON-объект в теле запроса");
+        }
+
+        JsonValue& solver_config = settings.At("solver_config");
+        if (!solver_config.IsObject()) solver_config = SolverConfigToJson(DefaultSolverConfig());
+
+        for (const auto& kv : body_json.value.object_value) {
+            solver_config.At(kv.first) = kv.second;
+        }
+
+        LoadSolverConfigFromJson(solver_config);
+    }
+
+    std::string error;
+    if (!SaveRoot(parsed.value, error)) return ErrorJson(500, "Internal Server Error", error);
+
+    JsonValue envelope = ResponseEnvelope(
+        true,
+        reset_to_defaults
+            ? "Параметры солвера сброшены к дефолтам. Запусти регенерацию чтобы применить."
+            : "Параметры солвера сохранены. Запусти регенерацию чтобы применить.",
+        &settings.At("solver_config")
+    );
+    return OkJson(envelope);
+}
+
 std::string UpdateSettings(const std::string& body, bool patch) {
     JsonParseResult parsed = LoadRoot();
     if (!parsed.ok) return ErrorJson(500, "Internal Server Error", parsed.error);
@@ -327,6 +403,8 @@ std::string HandleRequest(const std::string& request, const std::string& output_
             "\"GET /api/data\","
             "\"PUT /api/data\","
             "\"GET/PUT/PATCH /api/settings\","
+            "\"GET/PUT/PATCH /api/settings/solver-config\","
+            "\"POST /api/settings/solver-config/reset\","
             "\"GET/POST /api/groups\","
             "\"GET/PUT/PATCH/DELETE /api/groups/{id}\","
             "\"GET/POST /api/teachers\","
@@ -358,6 +436,14 @@ std::string HandleRequest(const std::string& request, const std::string& output_
     if (method == "GET" && path == "/api/settings") return GetSettings();
     if ((method == "PUT" || method == "PATCH") && path == "/api/settings") return UpdateSettings(body, method == "PATCH");
 
+    if (method == "GET" && path == "/api/settings/solver-config") return GetSolverConfig();
+    if ((method == "PUT" || method == "PATCH") && path == "/api/settings/solver-config") {
+        return UpdateSolverConfig(body, false);
+    }
+    if (method == "POST" && path == "/api/settings/solver-config/reset") {
+        return UpdateSolverConfig("", true);
+    }
+
     std::string crud;
     crud = HandleCrud(method, path, body, "/api/groups", "groups");
     if (!crud.empty()) return crud;
@@ -370,11 +456,87 @@ std::string HandleRequest(const std::string& request, const std::string& output_
 
     if (method == "POST" && path == "/api/schedule/regenerate") {
         std::lock_guard<std::mutex> lock(g_schedule_mutex);
-        GenerationResult result = GenerateSchedule(output_dir);
+
+        GenerationOptions opts;
+        opts.lock_source = "none";
+        if (!body.empty()) {
+            JsonParseResult parsed = ParseJson(body);
+            if (parsed.ok && parsed.value.IsObject()) {
+                std::string lock_existing = JsonString(parsed.value, "lock_existing", "none");
+                std::string lock_path;
+                if (lock_existing == "manual") {
+                    lock_path = (std::filesystem::path("output") / "manual" / "schedule_all.json").string();
+                } else if (lock_existing == "auto") {
+                    lock_path = (std::filesystem::path(output_dir) / "schedule_all.json").string();
+                }
+                if (!lock_path.empty() && FileExists(lock_path)) {
+                    JsonParseResult sched = ParseJson(ReadFileUtf8(lock_path));
+                    if (sched.ok && sched.value.IsObject()) {
+                        const JsonValue& groups_arr = sched.value.At("groups");
+                        if (groups_arr.IsArray()) {
+                            for (const JsonValue& g : groups_arr.array_value) {
+                                if (!g.IsObject()) continue;
+                                const JsonValue& days = g.At("days");
+                                if (!days.IsArray()) continue;
+                                for (const JsonValue& day : days.array_value) {
+                                    if (!day.IsObject()) continue;
+                                    Date date{};
+                                    if (!ParseDateIso(JsonString(day, "date_iso", ""), date)) {
+                                        // fallback на день DD.MM.YYYY
+                                        std::string disp = JsonString(day, "date", "");
+                                        if (disp.size() == 10 && disp[2] == '.' && disp[5] == '.') {
+                                            try {
+                                                date.day = std::stoi(disp.substr(0, 2));
+                                                date.month = std::stoi(disp.substr(3, 2));
+                                                date.year = std::stoi(disp.substr(6, 4));
+                                            } catch (...) {
+                                                continue;
+                                            }
+                                        } else {
+                                            continue;
+                                        }
+                                    }
+                                    const JsonValue& slots = day.At("slots");
+                                    if (!slots.IsArray()) continue;
+                                    for (const JsonValue& slot : slots.array_value) {
+                                        if (!slot.IsObject()) continue;
+                                        int slot_num = JsonInt(slot, "slot", 0);
+                                        if (slot_num < 1) continue;
+                                        const JsonValue& lessons_arr = slot.At("lessons");
+                                        if (!lessons_arr.IsArray()) continue;
+                                        for (const JsonValue& l : lessons_arr.array_value) {
+                                            if (!l.IsObject()) continue;
+                                            int lid = JsonInt(l, "id", -1);
+                                            if (lid < 0) continue;
+                                            LockedAssignment a;
+                                            a.lesson_id = lid;
+                                            a.date = date;
+                                            a.slot = slot_num - 1;
+                                            opts.locked.push_back(a);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        opts.lock_source = lock_existing;
+                    }
+                } else if (lock_existing == "manual" || lock_existing == "auto") {
+                    // Не нашли файл — отвечаем понятной ошибкой
+                    return ErrorJson(404, "Not Found",
+                        lock_existing == "manual"
+                            ? "Ручное расписание пусто. Открой Конструктор и сохрани хотя бы одно занятие."
+                            : "Автогенерации ещё нет — сначала сгенерируй обычное расписание.");
+                }
+            }
+        }
+
+        GenerationResult result = GenerateSchedule(output_dir, opts);
         std::ostringstream response_body;
         response_body << "{\"success\":" << (result.success ? "true" : "false")
                       << ",\"status\":\"" << JsonEscape(result.status) << "\""
                       << ",\"message\":\"" << JsonEscape(result.message) << "\""
+                      << ",\"lock_source\":\"" << JsonEscape(opts.lock_source) << "\""
+                      << ",\"locked_count\":" << opts.locked.size()
                       << ",\"output_dir\":\"" << JsonEscape(result.output_dir) << "\"}";
         return JsonResponse(result.success ? 200 : 500, result.success ? "OK" : "Internal Server Error", response_body.str());
     }
@@ -384,6 +546,75 @@ std::string HandleRequest(const std::string& request, const std::string& output_
         std::filesystem::path file = out_dir / "schedule_all.json";
         if (!FileExists(file)) return ErrorJson(404, "Not Found", "Расписание ещё не сгенерировано. Вызови POST /api/schedule/regenerate.");
         return JsonResponse(200, "OK", ReadFileUtf8(file));
+    }
+
+    // ── Manual (Конструктор) endpoints ──
+    if (method == "GET" && path == "/api/schedule/manual") {
+        std::lock_guard<std::mutex> lock(g_schedule_mutex);
+        std::filesystem::path file = std::filesystem::path("output") / "manual" / "schedule_all.json";
+        if (!FileExists(file)) return ErrorJson(404, "Not Found", "Ручное расписание пусто. Скопируй из автогенерации или начни с нуля.");
+        return JsonResponse(200, "OK", ReadFileUtf8(file));
+    }
+
+    if (method == "POST" && path == "/api/schedule/manual") {
+        std::lock_guard<std::mutex> lock(g_schedule_mutex);
+        JsonParseResult parsed = ParseJson(body);
+        if (!parsed.ok || !parsed.value.IsObject()) {
+            return ErrorJson(400, "Bad Request", parsed.error.empty() ? "Нужен JSON-объект" : parsed.error);
+        }
+        std::filesystem::path manual_dir = std::filesystem::path("output") / "manual";
+        std::filesystem::path groups_dir = manual_dir / "groups";
+        std::error_code ec;
+        std::filesystem::create_directories(groups_dir, ec);
+
+        std::ofstream out_all(manual_dir / "schedule_all.json", std::ios::binary);
+        if (!out_all) return ErrorJson(500, "Internal Server Error", "Не удалось открыть output/manual/schedule_all.json");
+        out_all << ToJson(parsed.value, 2);
+        out_all.close();
+
+        const JsonValue& groups_arr = parsed.value.At("groups");
+        if (groups_arr.IsArray()) {
+            for (const JsonValue& group : groups_arr.array_value) {
+                if (!group.IsObject()) continue;
+                int gi = JsonInt(group, "group_index", -1);
+                if (gi < 0) continue;
+                std::ofstream go(groups_dir / ("group_" + std::to_string(gi) + ".json"), std::ios::binary);
+                if (go) go << ToJson(group, 2);
+            }
+        }
+
+        return OkJson(ResponseEnvelope(true, "Ручное расписание сохранено."));
+    }
+
+    if (method == "DELETE" && path == "/api/schedule/manual") {
+        std::lock_guard<std::mutex> lock(g_schedule_mutex);
+        std::filesystem::path manual_dir = std::filesystem::path("output") / "manual";
+        std::error_code ec;
+        std::filesystem::remove_all(manual_dir, ec);
+        return OkJson(ResponseEnvelope(true, "Ручное расписание очищено."));
+    }
+
+    if (method == "POST" && path == "/api/schedule/manual/copy-from-auto") {
+        std::lock_guard<std::mutex> lock(g_schedule_mutex);
+        std::filesystem::path manual_dir = std::filesystem::path("output") / "manual";
+        std::filesystem::path groups_dir = manual_dir / "groups";
+        std::error_code ec;
+        std::filesystem::create_directories(groups_dir, ec);
+        std::filesystem::path src_all = out_dir / "schedule_all.json";
+        if (!FileExists(src_all)) {
+            return ErrorJson(404, "Not Found", "Автогенерации ещё нет. Сначала сгенерируй расписание.");
+        }
+        std::filesystem::copy_file(src_all, manual_dir / "schedule_all.json", std::filesystem::copy_options::overwrite_existing, ec);
+        if (ec) return ErrorJson(500, "Internal Server Error", "Не удалось скопировать schedule_all.json: " + ec.message());
+
+        std::filesystem::path src_groups = out_dir / "groups";
+        if (std::filesystem::exists(src_groups, ec)) {
+            for (const auto& entry : std::filesystem::directory_iterator(src_groups, ec)) {
+                if (!entry.is_regular_file()) continue;
+                std::filesystem::copy_file(entry.path(), groups_dir / entry.path().filename(), std::filesystem::copy_options::overwrite_existing, ec);
+            }
+        }
+        return OkJson(ResponseEnvelope(true, "Расписание скопировано из автогенерации в Конструктор."));
     }
 
     const std::string group_prefix = "/api/schedule/group/";

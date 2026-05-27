@@ -40,8 +40,10 @@ RuntimeSolverConfig DefaultSolverConfig() {
     cfg.max_student_pairs_per_day = 5;
     cfg.min_student_study_days_per_week = 2;
     cfg.subject_spread_bucket_available_days = 12;
-    cfg.min_subject_spread_total_slots = 4;
-    cfg.subject_bucket_extra_slots = 4;
+    // Spread полностью отключён: ни один урок не имеет 9999 слотов,
+    // поэтому штрафы spread не активируются. Чтобы включить, опусти до ~4.
+    cfg.min_subject_spread_total_slots = 9999;
+    cfg.subject_bucket_extra_slots = 8;
     cfg.subject_bucket_min_capacity = 2;
     cfg.normal_subject_active_bucket_unit = 2;
     cfg.block_subject_active_bucket_unit = 4;

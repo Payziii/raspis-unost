@@ -1,7 +1,9 @@
 #include "scheduler.h"
 
 #include <algorithm>
+#include <chrono>
 #include <filesystem>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <set>
@@ -22,6 +24,7 @@
 #include "lessons_data.h"
 #include "model_utils.h"
 #include "output_writers.h"
+#include "runtime_config.h"
 #include "types.h"
 
 namespace timetable {
@@ -807,17 +810,42 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
     SatParameters params;
     params.set_num_search_workers(SOLVER_WORKERS);
     params.set_max_time_in_seconds(SOLVER_TIME_LIMIT_SECONDS);
-    params.set_random_seed(1);
+    params.set_random_seed(g_solver_config.random_seed);
     params.set_max_memory_in_mb(SOLVER_MAX_MEMORY_MB);
-    params.set_linearization_level(0);
-    params.set_symmetry_level(2);
+    params.set_linearization_level(g_solver_config.linearization_level);
+    params.set_symmetry_level(g_solver_config.symmetry_level);
+
+    // Realtime-логи поиска: solver сам печатает прогресс каждые ~5 сек.
+    params.set_log_search_progress(true);
+    params.set_log_subsolver_statistics(true);
+    params.set_log_to_stdout(true);
 
     if (STOP_AFTER_FIRST_SOLUTION) {
         params.set_stop_after_first_solution(true);
     }
 
+    std::cout << "Random seed: " << g_solver_config.random_seed
+              << ", linearization_level: " << g_solver_config.linearization_level
+              << ", symmetry_level: " << g_solver_config.symmetry_level << "\n\n";
+
     operations_research::sat::Model sat_model;
     sat_model.Add(NewSatParameters(params));
+
+    // Колбэк на каждое найденное feasible-решение — печатает время и objective.
+    int solution_counter = 0;
+    auto solve_start = std::chrono::steady_clock::now();
+    sat_model.Add(operations_research::sat::NewFeasibleSolutionObserver(
+        [&solution_counter, &solve_start](const CpSolverResponse& r) {
+            solution_counter++;
+            auto now = std::chrono::steady_clock::now();
+            double elapsed = std::chrono::duration<double>(now - solve_start).count();
+            std::cout << "\n>>> [Решение #" << solution_counter << "] найдено за "
+                      << std::fixed << std::setprecision(2) << elapsed << " сек";
+            std::cout << ", objective=" << r.objective_value()
+                      << ", bound=" << r.best_objective_bound();
+            std::cout << " <<<\n" << std::flush;
+        }
+    ));
 
     CpSolverResponse response = SolveCpModel(model_proto, &sat_model);
 

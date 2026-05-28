@@ -2,7 +2,7 @@
 // Запуск: node import_schedule.js
 //
 // Логика:
-// - 1 пара = 2 часа; нечётное кол-во часов округляется вверх (Math.ceil)
+// - 1 пара = 2 часа (УП: 1 блок = 6 часов); округление вверх (Math.ceil)
 // - Предметы с "1 подгруппа" / "2 подгруппа" в названии → subgroup 0 или 1 относительно группы
 // - Предметы без подгрупп → subgroup = -1
 // - "ЛПЗ ..." → is_lab = true
@@ -18,15 +18,15 @@ const path = require('path');
 const LESNAYA = 0;
 const KRIVOUSOVA = 1;
 const END_DATE = '2026-06-19';
-const FOURTH_YEAR_PRACTICE_FROM = '2026-02-10'; // после 9 февраля = с 10 февраля
+const FOURTH_YEAR_PRACTICE_FROM = '2026-02-25'; 
 const PRACTICE_TEXT = 'Производственная практика';
 
 const raw = JSON.parse(fs.readFileSync('schedule.json', 'utf8'));
 
 // ----- helpers -----
 
-function hoursToSlots(h) {
-  return Math.ceil(h / 2);
+function hoursToSlots(h, block = false) {
+  return Math.ceil(h / (block ? 6 : 2));
 }
 
 function is4thYear(groupName) {
@@ -165,12 +165,7 @@ for (const r of raw) {
     subgroup = groupId * 2 + (sgKind - 1);
   }
 
-  let totalSlots = hoursToSlots(hours);
-
-  // Блоки (УП) должны иметь чётное кол-во слотов
-  if (block && totalSlots % 2 !== 0) {
-    totalSlots++;
-  }
+  let totalSlots = hoursToSlots(hours, block);
 
   // Минимум 1 слот
   if (totalSlots < 1) totalSlots = 1;

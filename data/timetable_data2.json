@@ -1,0 +1,5732 @@
+{
+  "groups": [
+    {
+      "id": 0,
+      "name": "ТАКХС-Пф-2201",
+      "parts": 2
+    },
+    {
+      "id": 1,
+      "name": "МЦМ-Пф-201",
+      "parts": 2
+    },
+    {
+      "id": 2,
+      "name": "ТЭО-Пф-2501",
+      "parts": 2
+    },
+    {
+      "id": 3,
+      "name": "ПКД-2806/07п",
+      "parts": 2
+    },
+    {
+      "id": 4,
+      "name": "СП-Пф-2601",
+      "parts": 2
+    },
+    {
+      "id": 5,
+      "name": "СП-Пф-2602п",
+      "parts": 2
+    },
+    {
+      "id": 6,
+      "name": "ТОРД-2706",
+      "parts": 2
+    },
+    {
+      "id": 7,
+      "name": "ТОРД-2707п",
+      "parts": 2
+    },
+    {
+      "id": 8,
+      "name": "ТМ-2415",
+      "parts": 2
+    },
+    {
+      "id": 9,
+      "name": "ТМ-2416п",
+      "parts": 2
+    },
+    {
+      "id": 10,
+      "name": "ИСП-2306п",
+      "parts": 2
+    },
+    {
+      "id": 11,
+      "name": "ИСП-2307п",
+      "parts": 2
+    }
+  ],
+  "lessons": [
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 0,
+      "is_block": false,
+      "is_lab": false,
+      "name": "История",
+      "subgroup": -1,
+      "subject_id": 203,
+      "teacher": 11,
+      "total_slots": 22
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 1,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 0,
+      "subject_id": 204,
+      "teacher": 16,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 2,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 1,
+      "subject_id": 204,
+      "teacher": 16,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 3,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 205,
+      "teacher": 7,
+      "total_slots": 21
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 4,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Математика",
+      "subgroup": -1,
+      "subject_id": 206,
+      "teacher": 25,
+      "total_slots": 14
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 5,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии в профессиональной деятельности / Адаптивные информационные и коммуникационные технологии",
+      "subgroup": 0,
+      "subject_id": 207,
+      "teacher": 33,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 6,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии в профессиональной деятельности / Адаптивные информационные и коммуникационные технологии",
+      "subgroup": 1,
+      "subject_id": 207,
+      "teacher": 33,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 7,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Органическая химия",
+      "subgroup": -1,
+      "subject_id": 208,
+      "teacher": 30,
+      "total_slots": 30
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 8,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Аналитическая химия",
+      "subgroup": -1,
+      "subject_id": 209,
+      "teacher": 19,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 9,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая и коллоидная химия",
+      "subgroup": -1,
+      "subject_id": 210,
+      "teacher": 30,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 10,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Электротехника и электроника",
+      "subgroup": -1,
+      "subject_id": 211,
+      "teacher": 31,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 11,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Основы аналитической химии и физико-химических методов анализа",
+      "subgroup": -1,
+      "subject_id": 212,
+      "teacher": 30,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 12,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Основы аналитической химии и физико-химических методов анализа",
+      "subgroup": 0,
+      "subject_id": 212,
+      "teacher": 30,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 13,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Основы аналитической химии и физико-химических методов анализа",
+      "subgroup": 1,
+      "subject_id": 212,
+      "teacher": 30,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 14,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.02.01 Основы качественного и количественного анализа природных и промышленных материалов",
+      "subgroup": -1,
+      "subject_id": 213,
+      "teacher": 19,
+      "total_slots": 1
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 15,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.02.01 Основы качественного и количественного анализа природных и промышленных материалов",
+      "subgroup": 0,
+      "subject_id": 213,
+      "teacher": 19,
+      "total_slots": 36
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 16,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.02.01 Основы качественного и количественного анализа природных и промышленных материалов",
+      "subgroup": 1,
+      "subject_id": 213,
+      "teacher": 19,
+      "total_slots": 36
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 17,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.04.02 Химический анализ сырья, материалов и готовой продукции",
+      "subgroup": -1,
+      "subject_id": 214,
+      "teacher": 30,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 18,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.02 Химический анализ сырья, материалов и готовой продукции",
+      "subgroup": 0,
+      "subject_id": 214,
+      "teacher": 30,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 19,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.02 Химический анализ сырья, материалов и готовой продукции",
+      "subgroup": 1,
+      "subject_id": 214,
+      "teacher": 30,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 20,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.04.03 Основы приготовления проб и растворов различной концентрации",
+      "subgroup": -1,
+      "subject_id": 215,
+      "teacher": 30,
+      "total_slots": 35
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 21,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.03 Основы приготовления проб и растворов различной концентрации",
+      "subgroup": 0,
+      "subject_id": 215,
+      "teacher": 30,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 22,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.03 Основы приготовления проб и растворов различной концентрации",
+      "subgroup": 1,
+      "subject_id": 215,
+      "teacher": 30,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 23,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.04.04 Основы экологического контроля производства и технологического процесса",
+      "subgroup": -1,
+      "subject_id": 216,
+      "teacher": 34,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 24,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.04 Основы экологического контроля производства и технологического процесса",
+      "subgroup": 0,
+      "subject_id": 216,
+      "teacher": 34,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 25,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.04 Основы экологического контроля производства и технологического процесса",
+      "subgroup": 1,
+      "subject_id": 216,
+      "teacher": 34,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 26,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.04",
+      "subgroup": 0,
+      "subject_id": -1,
+      "teacher": 30,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 27,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.04",
+      "subgroup": 1,
+      "subject_id": -1,
+      "teacher": 30,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 28,
+      "is_block": false,
+      "is_lab": false,
+      "name": "География",
+      "subgroup": -1,
+      "subject_id": 225,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 29,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Химия",
+      "subgroup": -1,
+      "subject_id": 226,
+      "teacher": 19,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 30,
+      "is_block": false,
+      "is_lab": false,
+      "name": "История России",
+      "subgroup": -1,
+      "subject_id": 227,
+      "teacher": 11,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 31,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 2,
+      "subject_id": 228,
+      "teacher": 4,
+      "total_slots": 22
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 32,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 3,
+      "subject_id": 228,
+      "teacher": 4,
+      "total_slots": 22
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 33,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 229,
+      "teacher": 7,
+      "total_slots": 31
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 34,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Основы финансовой грамотности",
+      "subgroup": -1,
+      "subject_id": 230,
+      "teacher": 35,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 35,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Основы металлургического производства",
+      "subgroup": -1,
+      "subject_id": 231,
+      "teacher": 36,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 36,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии в профессиональной деятельности",
+      "subgroup": 2,
+      "subject_id": 232,
+      "teacher": 37,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 37,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии в профессиональной деятельности",
+      "subgroup": 3,
+      "subject_id": 232,
+      "teacher": 37,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 38,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Компас 3D(т)",
+      "subgroup": -1,
+      "subject_id": 233,
+      "teacher": 38,
+      "total_slots": 5
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 39,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 2,
+      "subject_id": 234,
+      "teacher": 38,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 40,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 3,
+      "subject_id": 234,
+      "teacher": 38,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 41,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Пылеулавливание и очистка промышленных газов",
+      "subgroup": -1,
+      "subject_id": 235,
+      "teacher": 36,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 42,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Пылеулавливание и очистка промышленных газов",
+      "subgroup": 2,
+      "subject_id": 235,
+      "teacher": 36,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 43,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Пылеулавливание и очистка промышленных газов",
+      "subgroup": 3,
+      "subject_id": 235,
+      "teacher": 36,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 44,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Экологические основы природопользования",
+      "subgroup": -1,
+      "subject_id": 236,
+      "teacher": 13,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 45,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Электрооборудование металлургических цехов",
+      "subgroup": -1,
+      "subject_id": 237,
+      "teacher": 31,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 46,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая химия",
+      "subgroup": -1,
+      "subject_id": 238,
+      "teacher": 34,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 47,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Метрология и стандартизация",
+      "subgroup": -1,
+      "subject_id": 239,
+      "teacher": 39,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 48,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Электротехника и электроника",
+      "subgroup": -1,
+      "subject_id": 240,
+      "teacher": 31,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 49,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.02.01 Металлургия цветных металлов",
+      "subgroup": -1,
+      "subject_id": 241,
+      "teacher": 36,
+      "total_slots": 24
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 50,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.02.02 Технология производства цветных металлов и сплавов",
+      "subgroup": -1,
+      "subject_id": 242,
+      "teacher": 36,
+      "total_slots": 30
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 51,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.02",
+      "subgroup": 2,
+      "subject_id": -1,
+      "teacher": 36,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 52,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.02",
+      "subgroup": 3,
+      "subject_id": -1,
+      "teacher": 36,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 53,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.03.02 Технология производства цветных металлов и сплавов (по типам производств)",
+      "subgroup": -1,
+      "subject_id": 243,
+      "teacher": 36,
+      "total_slots": 22
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 54,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.03.02 Технология производства цветных металлов и сплавов (по типам производств)",
+      "subgroup": 2,
+      "subject_id": 243,
+      "teacher": 36,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 55,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.03.02 Технология производства цветных металлов и сплавов (по типам производств)",
+      "subgroup": 3,
+      "subject_id": 243,
+      "teacher": 36,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 56,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.03.03 Анодная медь",
+      "subgroup": -1,
+      "subject_id": 244,
+      "teacher": 40,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 57,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.03.03 Анодная медь",
+      "subgroup": 2,
+      "subject_id": 244,
+      "teacher": 40,
+      "total_slots": 5
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 58,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.03.03 Анодная медь",
+      "subgroup": 3,
+      "subject_id": 244,
+      "teacher": 40,
+      "total_slots": 5
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 59,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.03",
+      "subgroup": 2,
+      "subject_id": -1,
+      "teacher": 40,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 60,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.03",
+      "subgroup": 3,
+      "subject_id": -1,
+      "teacher": 40,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 61,
+      "is_block": false,
+      "is_lab": false,
+      "name": "История России",
+      "subgroup": -1,
+      "subject_id": 257,
+      "teacher": 11,
+      "total_slots": 24
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 62,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 4,
+      "subject_id": 258,
+      "teacher": 16,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 63,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 5,
+      "subject_id": 258,
+      "teacher": 16,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 64,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 259,
+      "teacher": 8,
+      "total_slots": 22
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 65,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Инженерная графика",
+      "subgroup": -1,
+      "subject_id": 260,
+      "teacher": 27,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 66,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Электротехника и электроника",
+      "subgroup": -1,
+      "subject_id": 261,
+      "teacher": 31,
+      "total_slots": 36
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 67,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Электрические машины и электропривод",
+      "subgroup": -1,
+      "subject_id": 262,
+      "teacher": 31,
+      "total_slots": 30
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 68,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии в профессиональной деятельности",
+      "subgroup": 4,
+      "subject_id": 263,
+      "teacher": 33,
+      "total_slots": 33
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 69,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии в профессиональной деятельности",
+      "subgroup": 5,
+      "subject_id": 263,
+      "teacher": 33,
+      "total_slots": 33
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 70,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Электроснабжение",
+      "subgroup": -1,
+      "subject_id": 264,
+      "teacher": 31,
+      "total_slots": 36
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 71,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Технология ремонта, монтажа и наладки электрического и электромеханического оборудования",
+      "subgroup": -1,
+      "subject_id": 265,
+      "teacher": 43,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 72,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Технология ремонта, монтажа и наладки электрического и электромеханического оборудования",
+      "subgroup": 4,
+      "subject_id": 265,
+      "teacher": 43,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 73,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Технология ремонта, монтажа и наладки электрического и электромеханического оборудования",
+      "subgroup": 5,
+      "subject_id": 265,
+      "teacher": 43,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 74,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 4,
+      "subject_id": -1,
+      "teacher": 27,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 75,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 5,
+      "subject_id": -1,
+      "teacher": 27,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 76,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.03.01 Основы энергоснабжения объектов отрасли",
+      "subgroup": -1,
+      "subject_id": 266,
+      "teacher": 43,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 77,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.01 Основы энергоснабжения объектов отрасли",
+      "subgroup": 4,
+      "subject_id": 266,
+      "teacher": 43,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 78,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.01 Основы энергоснабжения объектов отрасли",
+      "subgroup": 5,
+      "subject_id": 266,
+      "teacher": 43,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 79,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.04.01 Выполнение монтажных работ, монтажное оборудование и контрольно-измерительные приборы",
+      "subgroup": -1,
+      "subject_id": 267,
+      "teacher": 43,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 80,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.04.01 Выполнение монтажных работ, монтажное оборудование и контрольно-измерительные приборы",
+      "subgroup": 4,
+      "subject_id": 267,
+      "teacher": 43,
+      "total_slots": 31
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 81,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.04.01 Выполнение монтажных работ, монтажное оборудование и контрольно-измерительные приборы",
+      "subgroup": 5,
+      "subject_id": 267,
+      "teacher": 43,
+      "total_slots": 31
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 82,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.04",
+      "subgroup": 4,
+      "subject_id": -1,
+      "teacher": 27,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 83,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.04",
+      "subgroup": 5,
+      "subject_id": -1,
+      "teacher": 27,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 84,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.05.01 Организация работ по ремонту и обслуживанию электрооборудования",
+      "subgroup": -1,
+      "subject_id": 268,
+      "teacher": 43,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 85,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК..05.01 Организация работ по ремонту и обслуживанию электрооборудования",
+      "subgroup": 4,
+      "subject_id": 269,
+      "teacher": 43,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 86,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК..05.01 Организация работ по ремонту и обслуживанию электрооборудования",
+      "subgroup": 5,
+      "subject_id": 269,
+      "teacher": 43,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 87,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.05",
+      "subgroup": 4,
+      "subject_id": -1,
+      "teacher": 43,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 88,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.05",
+      "subgroup": 5,
+      "subject_id": -1,
+      "teacher": 43,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 89,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 6,
+      "subject_id": 273,
+      "teacher": 16,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 90,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 7,
+      "subject_id": 273,
+      "teacher": 16,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 91,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 274,
+      "teacher": 8,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 92,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Химия",
+      "subgroup": -1,
+      "subject_id": 275,
+      "teacher": 19,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 93,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Микробиология, физиология питания, санитария и гигиена",
+      "subgroup": -1,
+      "subject_id": 276,
+      "teacher": 44,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 94,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Организация хранения и контроль запасов и сырья",
+      "subgroup": -1,
+      "subject_id": 277,
+      "teacher": 44,
+      "total_slots": 14
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 95,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Организация обслуживания",
+      "subgroup": -1,
+      "subject_id": 278,
+      "teacher": 45,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 96,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.02 Процессы приготовления, подготовки к реализации кулинарных полуфабрикатов",
+      "subgroup": -1,
+      "subject_id": 279,
+      "teacher": 45,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 97,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Процессы приготовления, подготовки к реализации кулинарных полуфабрикатов",
+      "subgroup": 6,
+      "subject_id": 279,
+      "teacher": 45,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 98,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Процессы приготовления, подготовки к реализации кулинарных полуфабрикатов",
+      "subgroup": 7,
+      "subject_id": 279,
+      "teacher": 46,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 99,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 6,
+      "subject_id": -1,
+      "teacher": 45,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 100,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 7,
+      "subject_id": -1,
+      "teacher": 46,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 101,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.07.01 Технология приготовления теста для хлебобулочных изделий",
+      "subgroup": -1,
+      "subject_id": 280,
+      "teacher": 44,
+      "total_slots": 7
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 102,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.07.01 Технология приготовления теста для хлебобулочных изделий",
+      "subgroup": 6,
+      "subject_id": 280,
+      "teacher": 44,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 103,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.07.01 Технология приготовления теста для хлебобулочных изделий",
+      "subgroup": 7,
+      "subject_id": 280,
+      "teacher": 44,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 104,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.07.02 Термическая обработка теста и отделка поверхности хлебобулочных изделий",
+      "subgroup": -1,
+      "subject_id": 281,
+      "teacher": 44,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 105,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.07.02 Термическая обработка теста и отделка поверхности хлебобулочных изделий",
+      "subgroup": 6,
+      "subject_id": 281,
+      "teacher": 44,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 106,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.07.02 Термическая обработка теста и отделка поверхности хлебобулочных изделий",
+      "subgroup": 7,
+      "subject_id": 281,
+      "teacher": 46,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 107,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.07",
+      "subgroup": 6,
+      "subject_id": -1,
+      "teacher": 44,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 108,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.07",
+      "subgroup": 7,
+      "subject_id": -1,
+      "teacher": 46,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 109,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.08.01 Технология приготовления, оформления и подготовка к реализации простых мучных кондитерских изделий разнообразного ассортимента",
+      "subgroup": -1,
+      "subject_id": 282,
+      "teacher": 44,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 110,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.08.01 Технология приготовления, оформления и подготовка к реализации простых мучных кондитерских изделий разнообразного ассортимента",
+      "subgroup": 6,
+      "subject_id": 282,
+      "teacher": 44,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 111,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.08.01 Технология приготовления, оформления и подготовка к реализации простых мучных кондитерских изделий разнообразного ассортимента",
+      "subgroup": 7,
+      "subject_id": 282,
+      "teacher": 46,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 112,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.08.02 Технология приготовления, оформления и подготовка к реализации кондитерской, шоколадной продукции и мороженого",
+      "subgroup": -1,
+      "subject_id": 283,
+      "teacher": 44,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 113,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.08.02 Технология приготовления, оформления и подготовка к реализации кондитерской, шоколадной продукции и мороженого",
+      "subgroup": 6,
+      "subject_id": 283,
+      "teacher": 44,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 114,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.08.02 Технология приготовления, оформления и подготовка к реализации кондитерской, шоколадной продукции и мороженого",
+      "subgroup": 7,
+      "subject_id": 283,
+      "teacher": 44,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 115,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.08",
+      "subgroup": 6,
+      "subject_id": -1,
+      "teacher": 44,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 116,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.08",
+      "subgroup": 7,
+      "subject_id": -1,
+      "teacher": 44,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 117,
+      "is_block": false,
+      "is_lab": false,
+      "name": "География",
+      "subgroup": -1,
+      "subject_id": 297,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 118,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Химия",
+      "subgroup": -1,
+      "subject_id": 298,
+      "teacher": 19,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 119,
+      "is_block": false,
+      "is_lab": false,
+      "name": "История России",
+      "subgroup": -1,
+      "subject_id": 299,
+      "teacher": 11,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 120,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 8,
+      "subject_id": 300,
+      "teacher": 28,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 121,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 9,
+      "subject_id": 300,
+      "teacher": 28,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 122,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 301,
+      "teacher": 7,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 123,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Основы финансовой грамотности",
+      "subgroup": -1,
+      "subject_id": 302,
+      "teacher": 35,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 124,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Техническая механика",
+      "subgroup": -1,
+      "subject_id": 303,
+      "teacher": 5,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 125,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Технологические процессы в машиностроении",
+      "subgroup": -1,
+      "subject_id": 304,
+      "teacher": 32,
+      "total_slots": 30
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 126,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Технология конструкционных материалов",
+      "subgroup": -1,
+      "subject_id": 305,
+      "teacher": 47,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 127,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Компас 3D",
+      "subgroup": -1,
+      "subject_id": 306,
+      "teacher": 48,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 128,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 8,
+      "subject_id": 306,
+      "teacher": 48,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 129,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 9,
+      "subject_id": 306,
+      "teacher": 48,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 130,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Технология сварочных работ",
+      "subgroup": -1,
+      "subject_id": 307,
+      "teacher": 47,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 131,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Технология сварочных работ",
+      "subgroup": 8,
+      "subject_id": 307,
+      "teacher": 49,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 132,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Технология сварочных работ",
+      "subgroup": 9,
+      "subject_id": 307,
+      "teacher": 49,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 133,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.02 Основное оборудование для производства сварных конструкций",
+      "subgroup": -1,
+      "subject_id": 308,
+      "teacher": 47,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 134,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Основное оборудование для производства сварных конструкций",
+      "subgroup": 8,
+      "subject_id": 308,
+      "teacher": 47,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 135,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Основное оборудование для производства сварных конструкций",
+      "subgroup": 9,
+      "subject_id": 308,
+      "teacher": 47,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 136,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 8,
+      "subject_id": -1,
+      "teacher": 49,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 137,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 9,
+      "subject_id": -1,
+      "teacher": 49,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 138,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций",
+      "subgroup": -1,
+      "subject_id": 309,
+      "teacher": 47,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 139,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций",
+      "subgroup": 8,
+      "subject_id": 309,
+      "teacher": 47,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 140,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций",
+      "subgroup": 9,
+      "subject_id": 309,
+      "teacher": 47,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 141,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.03",
+      "subgroup": 8,
+      "subject_id": -1,
+      "teacher": 50,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 142,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.03",
+      "subgroup": 9,
+      "subject_id": -1,
+      "teacher": 50,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 143,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах",
+      "subgroup": -1,
+      "subject_id": 310,
+      "teacher": 51,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 144,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах",
+      "subgroup": 8,
+      "subject_id": 310,
+      "teacher": 51,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 145,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах",
+      "subgroup": 9,
+      "subject_id": 310,
+      "teacher": 51,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 146,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.05",
+      "subgroup": 8,
+      "subject_id": -1,
+      "teacher": 48,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 147,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.05",
+      "subgroup": 9,
+      "subject_id": -1,
+      "teacher": 48,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 148,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.06.01 Технология выполнения газовой сварки и резки",
+      "subgroup": -1,
+      "subject_id": 311,
+      "teacher": 47,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 149,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.06.01 Технология выполнения газовой сварки и резки",
+      "subgroup": 8,
+      "subject_id": 311,
+      "teacher": 48,
+      "total_slots": 26
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 150,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.06.01 Технология выполнения газовой сварки и резки",
+      "subgroup": 9,
+      "subject_id": 311,
+      "teacher": 48,
+      "total_slots": 26
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 151,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.06.02 Технология ручной дуговой сварки",
+      "subgroup": -1,
+      "subject_id": 312,
+      "teacher": 47,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 152,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.06.02 Технология ручной дуговой сварки",
+      "subgroup": 8,
+      "subject_id": 312,
+      "teacher": 48,
+      "total_slots": 30
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 153,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.06.02 Технология ручной дуговой сварки",
+      "subgroup": 9,
+      "subject_id": 312,
+      "teacher": 48,
+      "total_slots": 30
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 154,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.06",
+      "subgroup": 8,
+      "subject_id": -1,
+      "teacher": 48,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 155,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.06",
+      "subgroup": 9,
+      "subject_id": -1,
+      "teacher": 48,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 156,
+      "is_block": false,
+      "is_lab": false,
+      "name": "География",
+      "subgroup": -1,
+      "subject_id": 313,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 157,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Химия",
+      "subgroup": -1,
+      "subject_id": 314,
+      "teacher": 19,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 158,
+      "is_block": false,
+      "is_lab": false,
+      "name": "История России",
+      "subgroup": -1,
+      "subject_id": 315,
+      "teacher": 11,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 159,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": -1,
+      "subject_id": 316,
+      "teacher": 28,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 160,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 317,
+      "teacher": 7,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 161,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Основы финансовой грамотности",
+      "subgroup": -1,
+      "subject_id": 318,
+      "teacher": 35,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 162,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Техническая механика",
+      "subgroup": -1,
+      "subject_id": 319,
+      "teacher": 5,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 163,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Технологические процессы в машиностроении",
+      "subgroup": -1,
+      "subject_id": 320,
+      "teacher": 32,
+      "total_slots": 30
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 164,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Технология конструкционных материалов",
+      "subgroup": -1,
+      "subject_id": 321,
+      "teacher": 47,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 165,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Компас 3D",
+      "subgroup": -1,
+      "subject_id": 322,
+      "teacher": 48,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 166,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": -1,
+      "subject_id": 322,
+      "teacher": 48,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 167,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Технология сварочных работ",
+      "subgroup": -1,
+      "subject_id": 323,
+      "teacher": 47,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 168,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Технология сварочных работ",
+      "subgroup": -1,
+      "subject_id": 323,
+      "teacher": 49,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 169,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.02 Основное оборудование для производства сварных конструкций",
+      "subgroup": -1,
+      "subject_id": 324,
+      "teacher": 47,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 170,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Основное оборудование для производства сварных конструкций",
+      "subgroup": -1,
+      "subject_id": 324,
+      "teacher": 47,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 171,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": -1,
+      "subject_id": -1,
+      "teacher": 49,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 172,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций",
+      "subgroup": -1,
+      "subject_id": 325,
+      "teacher": 47,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 173,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.01 Формы и методы контроля качества металлов и сварных конструкций",
+      "subgroup": -1,
+      "subject_id": 325,
+      "teacher": 47,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 174,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.03",
+      "subgroup": -1,
+      "subject_id": -1,
+      "teacher": 47,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 175,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах",
+      "subgroup": -1,
+      "subject_id": 326,
+      "teacher": 51,
+      "total_slots": 13
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 176,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.05.01 Электросварочные работы на автоматических и полуавтоматических машинах",
+      "subgroup": -1,
+      "subject_id": 326,
+      "teacher": 51,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 177,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.05",
+      "subgroup": -1,
+      "subject_id": -1,
+      "teacher": 48,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 178,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.06.01 Технология выполнения газовой сварки и резки",
+      "subgroup": -1,
+      "subject_id": 327,
+      "teacher": 47,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 179,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.06.01 Технология выполнения газовой сварки и резки",
+      "subgroup": -1,
+      "subject_id": 327,
+      "teacher": 48,
+      "total_slots": 26
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 180,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.06.02 Технология ручной дуговой сварки",
+      "subgroup": -1,
+      "subject_id": 328,
+      "teacher": 47,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 181,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.06.02 Технология ручной дуговой сварки",
+      "subgroup": -1,
+      "subject_id": 328,
+      "teacher": 48,
+      "total_slots": 30
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 182,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.06",
+      "subgroup": -1,
+      "subject_id": -1,
+      "teacher": 48,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 183,
+      "is_block": false,
+      "is_lab": false,
+      "name": "География",
+      "subgroup": -1,
+      "subject_id": 349,
+      "teacher": 3,
+      "total_slots": 7
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 184,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Химия",
+      "subgroup": -1,
+      "subject_id": 350,
+      "teacher": 10,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 185,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 12,
+      "subject_id": 351,
+      "teacher": 24,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 186,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 13,
+      "subject_id": 351,
+      "teacher": 24,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 187,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 352,
+      "teacher": 8,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 188,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Математика",
+      "subgroup": -1,
+      "subject_id": 353,
+      "teacher": 5,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 189,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 354,
+      "teacher": 26,
+      "total_slots": 1
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 190,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 12,
+      "subject_id": 355,
+      "teacher": 26,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 191,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 13,
+      "subject_id": 355,
+      "teacher": 26,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 192,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Инженерная графика",
+      "subgroup": -1,
+      "subject_id": 356,
+      "teacher": 53,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 193,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Техническая механика",
+      "subgroup": -1,
+      "subject_id": 357,
+      "teacher": 5,
+      "total_slots": 53
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 194,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Электротехника и электроника",
+      "subgroup": -1,
+      "subject_id": 358,
+      "teacher": 31,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 195,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Компас 3D",
+      "subgroup": -1,
+      "subject_id": 359,
+      "teacher": 27,
+      "total_slots": 2
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 196,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 12,
+      "subject_id": 359,
+      "teacher": 27,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 197,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 13,
+      "subject_id": 359,
+      "teacher": 27,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 198,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Устройство автомобилей",
+      "subgroup": -1,
+      "subject_id": 360,
+      "teacher": 5,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 199,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Устройство автомобилей",
+      "subgroup": 12,
+      "subject_id": 360,
+      "teacher": 48,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 200,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Устройство автомобилей",
+      "subgroup": 13,
+      "subject_id": 360,
+      "teacher": 48,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 201,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 12,
+      "subject_id": -1,
+      "teacher": 54,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 202,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 13,
+      "subject_id": -1,
+      "teacher": 48,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 203,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.04.01 Слесарное дело и технические измерения",
+      "subgroup": -1,
+      "subject_id": 361,
+      "teacher": 54,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 204,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.01 Слесарное дело и технические измерения",
+      "subgroup": 12,
+      "subject_id": 361,
+      "teacher": 54,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 205,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.01 Слесарное дело и технические измерения",
+      "subgroup": 13,
+      "subject_id": 361,
+      "teacher": 48,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 206,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля",
+      "subgroup": -1,
+      "subject_id": 362,
+      "teacher": 55,
+      "total_slots": 11
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 207,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля",
+      "subgroup": 12,
+      "subject_id": 362,
+      "teacher": 55,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 208,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля",
+      "subgroup": 13,
+      "subject_id": 362,
+      "teacher": 55,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 209,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.04",
+      "subgroup": 12,
+      "subject_id": -1,
+      "teacher": 54,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 210,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.04",
+      "subgroup": 13,
+      "subject_id": -1,
+      "teacher": 55,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 211,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.05.01 Основы законодательства в сфере дорожного движения",
+      "subgroup": -1,
+      "subject_id": 363,
+      "teacher": 55,
+      "total_slots": 42
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 212,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.05.02 Основы управления транспортными средствами",
+      "subgroup": -1,
+      "subject_id": 364,
+      "teacher": 55,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 213,
+      "is_block": false,
+      "is_lab": false,
+      "name": "География",
+      "subgroup": -1,
+      "subject_id": 365,
+      "teacher": 3,
+      "total_slots": 7
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 214,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Химия",
+      "subgroup": -1,
+      "subject_id": 366,
+      "teacher": 19,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 215,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 14,
+      "subject_id": 367,
+      "teacher": 24,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 216,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 15,
+      "subject_id": 367,
+      "teacher": 4,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 217,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 368,
+      "teacher": 8,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 218,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Математика",
+      "subgroup": -1,
+      "subject_id": 369,
+      "teacher": 5,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 219,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 370,
+      "teacher": 26,
+      "total_slots": 1
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 220,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 14,
+      "subject_id": 371,
+      "teacher": 26,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 221,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 15,
+      "subject_id": 371,
+      "teacher": 26,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 222,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Инженерная графика",
+      "subgroup": -1,
+      "subject_id": 372,
+      "teacher": 53,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 223,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Техническая механика",
+      "subgroup": -1,
+      "subject_id": 373,
+      "teacher": 5,
+      "total_slots": 53
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 224,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Электротехника и электроника",
+      "subgroup": -1,
+      "subject_id": 374,
+      "teacher": 31,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 225,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Компас 3D",
+      "subgroup": -1,
+      "subject_id": 375,
+      "teacher": 27,
+      "total_slots": 2
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 226,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 14,
+      "subject_id": 375,
+      "teacher": 27,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 227,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 15,
+      "subject_id": 375,
+      "teacher": 27,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 228,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Устройство автомобилей",
+      "subgroup": -1,
+      "subject_id": 376,
+      "teacher": 5,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 229,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Устройство автомобилей",
+      "subgroup": 14,
+      "subject_id": 376,
+      "teacher": 48,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 230,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Устройство автомобилей",
+      "subgroup": 15,
+      "subject_id": 376,
+      "teacher": 48,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 231,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 14,
+      "subject_id": -1,
+      "teacher": 54,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 232,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 15,
+      "subject_id": -1,
+      "teacher": 48,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 233,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.04.01 Слесарное дело и технические измерения",
+      "subgroup": -1,
+      "subject_id": 377,
+      "teacher": 54,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 234,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.01 Слесарное дело и технические измерения",
+      "subgroup": 14,
+      "subject_id": 377,
+      "teacher": 54,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 235,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.01 Слесарное дело и технические измерения",
+      "subgroup": 15,
+      "subject_id": 377,
+      "teacher": 48,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 236,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля",
+      "subgroup": -1,
+      "subject_id": 378,
+      "teacher": 55,
+      "total_slots": 11
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 237,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля",
+      "subgroup": 14,
+      "subject_id": 378,
+      "teacher": 55,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 238,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.04.02 Диагностика, техническое обслуживание и ремонт мехатронных систем автомобиля",
+      "subgroup": 15,
+      "subject_id": 378,
+      "teacher": 55,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 239,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.04",
+      "subgroup": 14,
+      "subject_id": -1,
+      "teacher": 54,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 240,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.04",
+      "subgroup": 15,
+      "subject_id": -1,
+      "teacher": 55,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 241,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.05.01 Основы законодательства в сфере дорожного движения",
+      "subgroup": -1,
+      "subject_id": 379,
+      "teacher": 55,
+      "total_slots": 36
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 242,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.05.02 Основы управления транспортными средствами",
+      "subgroup": -1,
+      "subject_id": 380,
+      "teacher": 55,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 243,
+      "is_block": false,
+      "is_lab": false,
+      "name": "География",
+      "subgroup": -1,
+      "subject_id": 393,
+      "teacher": 3,
+      "total_slots": 7
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 244,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Химия",
+      "subgroup": -1,
+      "subject_id": 394,
+      "teacher": 10,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 245,
+      "is_block": false,
+      "is_lab": false,
+      "name": "История России",
+      "subgroup": -1,
+      "subject_id": 395,
+      "teacher": 11,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 246,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 16,
+      "subject_id": 396,
+      "teacher": 28,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 247,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 17,
+      "subject_id": 396,
+      "teacher": 28,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 248,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 397,
+      "teacher": 7,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 249,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Основы бережливого производства",
+      "subgroup": -1,
+      "subject_id": 398,
+      "teacher": 13,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 250,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Техническая механика",
+      "subgroup": -1,
+      "subject_id": 399,
+      "teacher": 53,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 251,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Метрология, стандартизация и сертификация",
+      "subgroup": -1,
+      "subject_id": 400,
+      "teacher": 39,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 252,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Процессы формообразования и инструменты",
+      "subgroup": -1,
+      "subject_id": 401,
+      "teacher": 53,
+      "total_slots": 21
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 253,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Технология машиностроения",
+      "subgroup": -1,
+      "subject_id": 402,
+      "teacher": 53,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 254,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Охрана труда",
+      "subgroup": -1,
+      "subject_id": 403,
+      "teacher": 13,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 255,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Математика в профессиональной деятельности",
+      "subgroup": -1,
+      "subject_id": 404,
+      "teacher": 25,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 256,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Компас 3D",
+      "subgroup": -1,
+      "subject_id": 405,
+      "teacher": 56,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 257,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 16,
+      "subject_id": 405,
+      "teacher": 56,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 258,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 17,
+      "subject_id": 405,
+      "teacher": 56,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 259,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Технологическая оснастка",
+      "subgroup": -1,
+      "subject_id": 406,
+      "teacher": 53,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 260,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии в профессиональной деятельности",
+      "subgroup": -1,
+      "subject_id": 407,
+      "teacher": 33,
+      "total_slots": 7
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 261,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Информационные технологии в профессиональной деятельности",
+      "subgroup": 16,
+      "subject_id": 407,
+      "teacher": 33,
+      "total_slots": 11
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 262,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Информационные технологии в профессиональной деятельности",
+      "subgroup": 17,
+      "subject_id": 407,
+      "teacher": 33,
+      "total_slots": 11
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 263,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования",
+      "subgroup": -1,
+      "subject_id": 408,
+      "teacher": 57,
+      "total_slots": 11
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 264,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования",
+      "subgroup": 16,
+      "subject_id": 408,
+      "teacher": 57,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 265,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования",
+      "subgroup": 17,
+      "subject_id": 408,
+      "teacher": 57,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 266,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин",
+      "subgroup": -1,
+      "subject_id": 409,
+      "teacher": 53,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 267,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин",
+      "subgroup": 16,
+      "subject_id": 409,
+      "teacher": 53,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 268,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин",
+      "subgroup": 17,
+      "subject_id": 409,
+      "teacher": 53,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 269,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 16,
+      "subject_id": -1,
+      "teacher": 32,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 270,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 17,
+      "subject_id": -1,
+      "teacher": 32,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 271,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин",
+      "subgroup": -1,
+      "subject_id": 410,
+      "teacher": 57,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 272,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин",
+      "subgroup": 16,
+      "subject_id": 410,
+      "teacher": 57,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 273,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин",
+      "subgroup": 17,
+      "subject_id": 410,
+      "teacher": 57,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 274,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.07.01 Технология обработки на металлорежущих станках",
+      "subgroup": -1,
+      "subject_id": 411,
+      "teacher": 53,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 275,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.07.01 Технология обработки на металлорежущих станках",
+      "subgroup": 16,
+      "subject_id": 411,
+      "teacher": 58,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 276,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.07.01 Технология обработки на металлорежущих станках",
+      "subgroup": 17,
+      "subject_id": 411,
+      "teacher": 58,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 277,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.07",
+      "subgroup": 16,
+      "subject_id": -1,
+      "teacher": 58,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 278,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.07",
+      "subgroup": 17,
+      "subject_id": -1,
+      "teacher": 58,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 279,
+      "is_block": false,
+      "is_lab": false,
+      "name": "География",
+      "subgroup": -1,
+      "subject_id": 412,
+      "teacher": 3,
+      "total_slots": 7
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 280,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Химия",
+      "subgroup": -1,
+      "subject_id": 413,
+      "teacher": 10,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 281,
+      "is_block": false,
+      "is_lab": false,
+      "name": "История России",
+      "subgroup": -1,
+      "subject_id": 414,
+      "teacher": 11,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 282,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 18,
+      "subject_id": 415,
+      "teacher": 28,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 283,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 19,
+      "subject_id": 415,
+      "teacher": 28,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 284,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 416,
+      "teacher": 7,
+      "total_slots": 23
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 285,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Основы бережливого производства",
+      "subgroup": -1,
+      "subject_id": 417,
+      "teacher": 13,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 286,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Техническая механика",
+      "subgroup": -1,
+      "subject_id": 418,
+      "teacher": 53,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 287,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Метрология, стандартизация и сертификация",
+      "subgroup": -1,
+      "subject_id": 419,
+      "teacher": 39,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 288,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Процессы формообразования и инструменты",
+      "subgroup": -1,
+      "subject_id": 420,
+      "teacher": 53,
+      "total_slots": 21
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 289,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Технология машиностроения",
+      "subgroup": -1,
+      "subject_id": 421,
+      "teacher": 53,
+      "total_slots": 17
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 290,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Охрана труда",
+      "subgroup": -1,
+      "subject_id": 422,
+      "teacher": 13,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 291,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Математика в профессиональной деятельности",
+      "subgroup": -1,
+      "subject_id": 423,
+      "teacher": 25,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 292,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Компас 3D",
+      "subgroup": -1,
+      "subject_id": 424,
+      "teacher": 56,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 293,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 18,
+      "subject_id": 424,
+      "teacher": 56,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 294,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Компас 3D",
+      "subgroup": 19,
+      "subject_id": 424,
+      "teacher": 56,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 295,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Технологическая оснастка",
+      "subgroup": -1,
+      "subject_id": 425,
+      "teacher": 53,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 296,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии в профессиональной деятельности",
+      "subgroup": -1,
+      "subject_id": 426,
+      "teacher": 33,
+      "total_slots": 7
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 297,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Информационные технологии в профессиональной деятельности",
+      "subgroup": 18,
+      "subject_id": 426,
+      "teacher": 33,
+      "total_slots": 11
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 298,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Информационные технологии в профессиональной деятельности",
+      "subgroup": 19,
+      "subject_id": 426,
+      "teacher": 33,
+      "total_slots": 11
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 299,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования",
+      "subgroup": -1,
+      "subject_id": 427,
+      "teacher": 57,
+      "total_slots": 11
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 300,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования",
+      "subgroup": 18,
+      "subject_id": 427,
+      "teacher": 57,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 301,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Разработка технологических процессов изготовления деталей машин с применением систем автоматизированного проектирования",
+      "subgroup": 19,
+      "subject_id": 427,
+      "teacher": 57,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 302,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин",
+      "subgroup": -1,
+      "subject_id": 428,
+      "teacher": 53,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 303,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин",
+      "subgroup": 18,
+      "subject_id": 428,
+      "teacher": 53,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 304,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.02 Оформление технологической документации по процессам изготовления деталей машин",
+      "subgroup": 19,
+      "subject_id": 428,
+      "teacher": 53,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 305,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 18,
+      "subject_id": -1,
+      "teacher": 32,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 306,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 19,
+      "subject_id": -1,
+      "teacher": 32,
+      "total_slots": 3
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 307,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин",
+      "subgroup": -1,
+      "subject_id": 429,
+      "teacher": 57,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 308,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин",
+      "subgroup": 18,
+      "subject_id": 429,
+      "teacher": 57,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 309,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.02.01 Разработка и внедрение управляющих программ изготовления деталей машин",
+      "subgroup": 19,
+      "subject_id": 429,
+      "teacher": 57,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 310,
+      "is_block": false,
+      "is_lab": false,
+      "name": "ВМДК.07.01 Технология обработки на металлорежущих станках",
+      "subgroup": -1,
+      "subject_id": 430,
+      "teacher": 53,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 311,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.07.01 Технология обработки на металлорежущих станках",
+      "subgroup": 18,
+      "subject_id": 430,
+      "teacher": 56,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 312,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ ВМДК.07.01 Технология обработки на металлорежущих станках",
+      "subgroup": 19,
+      "subject_id": 430,
+      "teacher": 56,
+      "total_slots": 16
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 313,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.07",
+      "subgroup": 18,
+      "subject_id": -1,
+      "teacher": 56,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 314,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.07",
+      "subgroup": 19,
+      "subject_id": -1,
+      "teacher": 56,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 315,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 20,
+      "subject_id": 448,
+      "teacher": 24,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 316,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 21,
+      "subject_id": 448,
+      "teacher": 4,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 317,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 449,
+      "teacher": 7,
+      "total_slots": 26
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 318,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Элементы высшей математики",
+      "subgroup": -1,
+      "subject_id": 450,
+      "teacher": 25,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 319,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Теория вероятностей и математическая статистика",
+      "subgroup": -1,
+      "subject_id": 451,
+      "teacher": 25,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 320,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Архитектура аппаратных средств",
+      "subgroup": -1,
+      "subject_id": 452,
+      "teacher": 38,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 321,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии",
+      "subgroup": -1,
+      "subject_id": 453,
+      "teacher": 33,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 322,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Информационные технологии",
+      "subgroup": 20,
+      "subject_id": 453,
+      "teacher": 33,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 323,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Информационные технологии",
+      "subgroup": 21,
+      "subject_id": 453,
+      "teacher": 33,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 324,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Основы алгоритмизации и программирования",
+      "subgroup": -1,
+      "subject_id": 454,
+      "teacher": 59,
+      "total_slots": 32
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 325,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Основы алгоритмизации и программирования",
+      "subgroup": 20,
+      "subject_id": 454,
+      "teacher": 59,
+      "total_slots": 38
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 326,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Основы алгоритмизации и программирования",
+      "subgroup": 21,
+      "subject_id": 454,
+      "teacher": 38,
+      "total_slots": 38
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 327,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Численные методы",
+      "subgroup": -1,
+      "subject_id": 455,
+      "teacher": 25,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 328,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Разработка программных модулей",
+      "subgroup": -1,
+      "subject_id": 456,
+      "teacher": 60,
+      "total_slots": 14
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 329,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Разработка программных модулей",
+      "subgroup": 20,
+      "subject_id": 456,
+      "teacher": 60,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 330,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Разработка программных модулей",
+      "subgroup": 21,
+      "subject_id": 456,
+      "teacher": 60,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 331,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 20,
+      "subject_id": -1,
+      "teacher": 60,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 332,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 21,
+      "subject_id": -1,
+      "teacher": 60,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 333,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.03.02 Обеспечение качеств функционирования компьютерных систем",
+      "subgroup": -1,
+      "subject_id": 457,
+      "teacher": 61,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 334,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.02 Обеспечение качеств функционирования компьютерных систем",
+      "subgroup": 20,
+      "subject_id": 457,
+      "teacher": 61,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 335,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.02 Обеспечение качеств функционирования компьютерных систем",
+      "subgroup": 21,
+      "subject_id": 457,
+      "teacher": 61,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 336,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 22,
+      "subject_id": 458,
+      "teacher": 24,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 337,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Иностранный язык в профессиональной деятельности",
+      "subgroup": 23,
+      "subject_id": 458,
+      "teacher": 4,
+      "total_slots": 27
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 338,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 459,
+      "teacher": 7,
+      "total_slots": 26
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 339,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Элементы высшей математики",
+      "subgroup": -1,
+      "subject_id": 460,
+      "teacher": 22,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 340,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Теория вероятностей и математическая статистика",
+      "subgroup": -1,
+      "subject_id": 461,
+      "teacher": 22,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 341,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Архитектура аппаратных средств",
+      "subgroup": -1,
+      "subject_id": 462,
+      "teacher": 38,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 342,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Информационные технологии",
+      "subgroup": -1,
+      "subject_id": 463,
+      "teacher": 33,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 343,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Информационные технологии",
+      "subgroup": 22,
+      "subject_id": 463,
+      "teacher": 33,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 344,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Информационные технологии",
+      "subgroup": 23,
+      "subject_id": 463,
+      "teacher": 33,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 345,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Основы алгоритмизации и программирования",
+      "subgroup": -1,
+      "subject_id": 464,
+      "teacher": 59,
+      "total_slots": 32
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 346,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Основы алгоритмизации и программирования",
+      "subgroup": 22,
+      "subject_id": 464,
+      "teacher": 59,
+      "total_slots": 38
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 347,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ Основы алгоритмизации и программирования",
+      "subgroup": 23,
+      "subject_id": 464,
+      "teacher": 38,
+      "total_slots": 38
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 348,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Численные методы",
+      "subgroup": -1,
+      "subject_id": 465,
+      "teacher": 22,
+      "total_slots": 18
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 349,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.01.01 Разработка программных модулей",
+      "subgroup": -1,
+      "subject_id": 466,
+      "teacher": 60,
+      "total_slots": 14
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 350,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Разработка программных модулей",
+      "subgroup": 22,
+      "subject_id": 466,
+      "teacher": 60,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 351,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.01.01 Разработка программных модулей",
+      "subgroup": 23,
+      "subject_id": 466,
+      "teacher": 60,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 352,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 22,
+      "subject_id": -1,
+      "teacher": 60,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 353,
+      "is_block": true,
+      "is_lab": false,
+      "name": "УП.01",
+      "subgroup": 23,
+      "subject_id": -1,
+      "teacher": 60,
+      "total_slots": 12
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 354,
+      "is_block": false,
+      "is_lab": false,
+      "name": "МДК.03.02 Обеспечение качеств функционирования компьютерных систем",
+      "subgroup": -1,
+      "subject_id": 467,
+      "teacher": 38,
+      "total_slots": 20
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 355,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.02 Обеспечение качеств функционирования компьютерных систем",
+      "subgroup": 22,
+      "subject_id": 467,
+      "teacher": 38,
+      "total_slots": 15
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 356,
+      "is_block": false,
+      "is_lab": true,
+      "name": "ЛПЗ МДК.03.02 Обеспечение качеств функционирования компьютерных систем",
+      "subgroup": 23,
+      "subject_id": 467,
+      "teacher": 38,
+      "total_slots": 15
+    }
+  ],
+  "settings": {
+    "end_date": "2026-06-19",
+    "solver_config": {
+      "block_subject_active_bucket_unit": 4,
+      "group_week_missing_day_weight": 2000,
+      "hard_min_2_teacher_pairs_per_day": false,
+      "hard_min_study_days_per_week": false,
+      "hard_no_student_windows": false,
+      "hard_no_teacher_windows": false,
+      "linearization_level": 0,
+      "max_student_pairs_per_day": 5,
+      "min_initial_theory_slots_before_labs": 1,
+      "min_student_pairs_per_study_day": 1,
+      "min_student_study_days_per_week": 2,
+      "min_subject_spread_total_slots": 9999,
+      "normal_subject_active_bucket_unit": 2,
+      "optimize_teacher_windows": false,
+      "random_seed": 1,
+      "solver_max_memory_mb": 8072,
+      "solver_time_limit_seconds": 600,
+      "solver_workers": 4,
+      "stop_after_first_solution": true,
+      "strict_all_theory_before_labs": false,
+      "student_five_pair_day_weight": 100,
+      "student_late_slot_weight": 0,
+      "subject_bucket_extra_slots": 8,
+      "subject_bucket_min_capacity": 2,
+      "subject_bucket_overload_weight": 120,
+      "subject_missing_bucket_weight": 1200,
+      "subject_missing_segment_weight": 1500,
+      "subject_spread_bucket_available_days": 12,
+      "symmetry_level": 2,
+      "teacher_late_slot_weight": 0,
+      "teacher_window_weight": 1,
+      "use_quality_objective": false
+    },
+    "start_date": "2026-01-12"
+  },
+  "teachers": [
+    {
+      "id": 0,
+      "name": "Кибардина Татьяна Леонидовна"
+    },
+    {
+      "id": 1,
+      "name": "Лучинин Александр Васильевич"
+    },
+    {
+      "id": 2,
+      "name": "Демина Екатерина Алексеевна"
+    },
+    {
+      "id": 3,
+      "name": "Кропотова Анастасия Андреевна"
+    },
+    {
+      "id": 4,
+      "name": "Давыдова Валентина Алексеевна"
+    },
+    {
+      "id": 5,
+      "name": "Абрамчук Раида Филимазовна"
+    },
+    {
+      "id": 6,
+      "name": "Третяк Надежда Александровна"
+    },
+    {
+      "id": 7,
+      "name": "Нуров Мирзо Нуралиевич"
+    },
+    {
+      "id": 8,
+      "name": "Потапова Регина Александровна"
+    },
+    {
+      "id": 9,
+      "name": "Силенок Марина Юрьевна"
+    },
+    {
+      "id": 10,
+      "name": "Соболева Любовь Анатольевна"
+    },
+    {
+      "id": 11,
+      "name": "Цимфер Татьяна Ивановна"
+    },
+    {
+      "id": 12,
+      "name": "Рабенок Мария Александровна"
+    },
+    {
+      "id": 13,
+      "name": "Костарева Наталья Викторовна"
+    },
+    {
+      "id": 14,
+      "name": "Хасанова Гузель Хамитовна"
+    },
+    {
+      "id": 15,
+      "name": "Нуриахметова Надежда Сергеевна"
+    },
+    {
+      "id": 16,
+      "name": "Синельникова Елена Владимировна"
+    },
+    {
+      "id": 17,
+      "name": "Домарева Ирина Вячеславовна"
+    },
+    {
+      "id": 18,
+      "name": "Бурдин Алексей Александрович"
+    },
+    {
+      "id": 19,
+      "name": "Семенова Лилиана Ивановна"
+    },
+    {
+      "id": 20,
+      "name": "Шадрина Елена Федоровна"
+    },
+    {
+      "id": 21,
+      "name": "Зорин Никита Александрович"
+    },
+    {
+      "id": 22,
+      "name": "Комарова Яна Николаевна"
+    },
+    {
+      "id": 23,
+      "name": "Тарасов Игорь Викторович"
+    },
+    {
+      "id": 24,
+      "name": "Новосeлова Светлана Юрьевна"
+    },
+    {
+      "id": 25,
+      "name": "Нифонтова Ирина Геннадьевна"
+    },
+    {
+      "id": 26,
+      "name": "Отрак Елена Сергеевна"
+    },
+    {
+      "id": 27,
+      "name": "Кошелев Дмитрий Александрович"
+    },
+    {
+      "id": 28,
+      "name": "Ермолина Ирина Павловна"
+    },
+    {
+      "id": 29,
+      "name": "Дроговейко Дарья Юрьевна"
+    },
+    {
+      "id": 30,
+      "name": "Кальчевская Наталья Владимировна"
+    },
+    {
+      "id": 31,
+      "name": "Динмухаметов Владислав Дуферович"
+    },
+    {
+      "id": 32,
+      "name": "Сивилькаев Вадим Михайлович"
+    },
+    {
+      "id": 33,
+      "name": "Азарян Карине Айказовна"
+    },
+    {
+      "id": 34,
+      "name": "Альшаева Алина Павловна"
+    },
+    {
+      "id": 35,
+      "name": "Елагина Ольга Александровна"
+    },
+    {
+      "id": 36,
+      "name": "Попова Татьяна Вильевна"
+    },
+    {
+      "id": 37,
+      "name": "Галузин Антон Илюсович"
+    },
+    {
+      "id": 38,
+      "name": "Гарбузов Андрей Евгеньевич"
+    },
+    {
+      "id": 39,
+      "name": "Садриева Татьяна Геннадьевна"
+    },
+    {
+      "id": 40,
+      "name": "Письмак Владимир Николаевич"
+    },
+    {
+      "id": 41,
+      "name": "Серянина Светлана Федоровна"
+    },
+    {
+      "id": 42,
+      "name": "Черепанова Татьяна Михайловна"
+    },
+    {
+      "id": 43,
+      "name": "Шабуров Анатолий Анатольевич"
+    },
+    {
+      "id": 44,
+      "name": "Чадова Марина Александровна"
+    },
+    {
+      "id": 45,
+      "name": "Конева Кристина Сергеевна"
+    },
+    {
+      "id": 46,
+      "name": "Кузнецова Елизавета Олеговна"
+    },
+    {
+      "id": 47,
+      "name": "Ахметов Артур Фанависович"
+    },
+    {
+      "id": 48,
+      "name": "Подчиненнов Александр Юрьевич"
+    },
+    {
+      "id": 49,
+      "name": "Горин Максим Валерьевич"
+    },
+    {
+      "id": 50,
+      "name": "Верхнев Николай Александрович"
+    },
+    {
+      "id": 51,
+      "name": "Лимонова Евгения Николаевна"
+    },
+    {
+      "id": 52,
+      "name": "Вагайская Татьяна Александровна"
+    },
+    {
+      "id": 53,
+      "name": "Саламатина Вера Викторовна"
+    },
+    {
+      "id": 54,
+      "name": "Самцов Андрей Евгеньевич"
+    },
+    {
+      "id": 55,
+      "name": "Тимеров Валерий Вагизович"
+    },
+    {
+      "id": 56,
+      "name": "Симаков Семен Данилович"
+    },
+    {
+      "id": 57,
+      "name": "Вальдиянов Ян Мансурович"
+    },
+    {
+      "id": 58,
+      "name": "Клабуков Василий Витальевич"
+    },
+    {
+      "id": 59,
+      "name": "Колтышев Евгений Валерьевич"
+    },
+    {
+      "id": 60,
+      "name": "Самцова Валентина Викторовна"
+    },
+    {
+      "id": 61,
+      "name": "Гобов Никита Ильич"
+    }
+  ],
+  "unavailable": [
+    {
+      "from": "2026-02-25",
+      "group": 18,
+      "id": 0,
+      "text": "Производственная практика",
+      "to": "2026-06-19"
+    },
+    {
+      "from": "2026-02-25",
+      "group": 32,
+      "id": 1,
+      "text": "Производственная практика",
+      "to": "2026-06-19"
+    },
+    {
+      "from": "2026-02-25",
+      "group": 37,
+      "id": 2,
+      "text": "Производственная практика",
+      "to": "2026-06-19"
+    }
+  ]
+}

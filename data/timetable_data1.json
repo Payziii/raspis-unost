@@ -1,0 +1,3797 @@
+{
+  "groups": [
+    {
+      "id": 0,
+      "name": "ТМ-1417",
+      "parts": 2
+    },
+    {
+      "id": 1,
+      "name": "МЦМ-Пф-102",
+      "parts": 2
+    },
+    {
+      "id": 2,
+      "name": "ТИК-112",
+      "parts": 2
+    },
+    {
+      "id": 3,
+      "name": "ИСП-1308",
+      "parts": 2
+    },
+    {
+      "id": 4,
+      "name": "СП-Пф-1603",
+      "parts": 2
+    },
+    {
+      "id": 5,
+      "name": "ТЭиРП-1901",
+      "parts": 2
+    },
+    {
+      "id": 6,
+      "name": "ТАКХС-Пф-1202",
+      "parts": 2
+    },
+    {
+      "id": 7,
+      "name": "ИСП-1309п",
+      "parts": 2
+    },
+    {
+      "id": 8,
+      "name": "ТОиРА-1701п",
+      "parts": 2
+    },
+    {
+      "id": 9,
+      "name": "ПКД-1808п",
+      "parts": 2
+    },
+    {
+      "id": 10,
+      "name": "ТМ-1418п",
+      "parts": 2
+    },
+    {
+      "id": 11,
+      "name": "СП-Пф-1604п",
+      "parts": 2
+    }
+  ],
+  "lessons": [
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 0,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 0,
+      "teacher": 0,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 1,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 1,
+      "teacher": 0,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 2,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 2,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 3,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 3,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 4,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 4,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 5,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 0,
+      "subject_id": 5,
+      "teacher": 4,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 6,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 1,
+      "subject_id": 5,
+      "teacher": 4,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 7,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 6,
+      "teacher": 5,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 8,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 7,
+      "teacher": 6,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 9,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 0,
+      "subject_id": 8,
+      "teacher": 6,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 10,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 1,
+      "subject_id": 8,
+      "teacher": 6,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 11,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 9,
+      "teacher": 7,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 12,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 10,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 13,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 11,
+      "teacher": 9,
+      "total_slots": 47
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 14,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 12,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 15,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 13,
+      "teacher": 10,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 16,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 14,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 17,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 15,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 0,
+      "id": 18,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 15,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 19,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 16,
+      "teacher": 14,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 20,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 17,
+      "teacher": 14,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 21,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 18,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 22,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 19,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 23,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 20,
+      "teacher": 15,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 24,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 2,
+      "subject_id": 21,
+      "teacher": 16,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 25,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 3,
+      "subject_id": 21,
+      "teacher": 16,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 26,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 22,
+      "teacher": 17,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 27,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 23,
+      "teacher": 6,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 28,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 2,
+      "subject_id": 24,
+      "teacher": 6,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 29,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 3,
+      "subject_id": 24,
+      "teacher": 6,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 30,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 25,
+      "teacher": 18,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 31,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 26,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 32,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 27,
+      "teacher": 9,
+      "total_slots": 47
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 33,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 28,
+      "teacher": 19,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 34,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 29,
+      "teacher": 10,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 35,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 30,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 36,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 31,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 1,
+      "id": 37,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 31,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 38,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 32,
+      "teacher": 14,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 39,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 33,
+      "teacher": 14,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 40,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 34,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 41,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 35,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 42,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 36,
+      "teacher": 15,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 43,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 4,
+      "subject_id": 37,
+      "teacher": 16,
+      "total_slots": 46
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 44,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 5,
+      "subject_id": 37,
+      "teacher": 20,
+      "total_slots": 46
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 45,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 38,
+      "teacher": 17,
+      "total_slots": 66
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 46,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 39,
+      "teacher": 21,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 47,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 4,
+      "subject_id": 40,
+      "teacher": 22,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 48,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 5,
+      "subject_id": 40,
+      "teacher": 22,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 49,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 41,
+      "teacher": 7,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 50,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 42,
+      "teacher": 23,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 51,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 43,
+      "teacher": 9,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 52,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 44,
+      "teacher": 10,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 53,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 45,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 54,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 46,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 55,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 47,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 2,
+      "id": 56,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 47,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 57,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 48,
+      "teacher": 0,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 58,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 49,
+      "teacher": 0,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 59,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 50,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 60,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 51,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 61,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 52,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 62,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 6,
+      "subject_id": 53,
+      "teacher": 4,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 63,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 7,
+      "subject_id": 53,
+      "teacher": 24,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 64,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 54,
+      "teacher": 25,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 65,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 55,
+      "teacher": 26,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 66,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 6,
+      "subject_id": 56,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 67,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 7,
+      "subject_id": 56,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 68,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 57,
+      "teacher": 7,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 69,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 58,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 70,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 59,
+      "teacher": 27,
+      "total_slots": 38
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 71,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 60,
+      "teacher": 19,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 72,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 61,
+      "teacher": 10,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 73,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 62,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 74,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 63,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 3,
+      "id": 75,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 63,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 76,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 64,
+      "teacher": 0,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 77,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 65,
+      "teacher": 0,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 78,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 66,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 79,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 67,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 80,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 68,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 81,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 8,
+      "subject_id": 69,
+      "teacher": 28,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 82,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 9,
+      "subject_id": 69,
+      "teacher": 28,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 83,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 70,
+      "teacher": 17,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 84,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 71,
+      "teacher": 6,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 85,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 8,
+      "subject_id": 72,
+      "teacher": 6,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 86,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 9,
+      "subject_id": 72,
+      "teacher": 6,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 87,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 73,
+      "teacher": 7,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 88,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 74,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 89,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 75,
+      "teacher": 9,
+      "total_slots": 47
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 90,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 76,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 91,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 77,
+      "teacher": 10,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 92,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 78,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 93,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 79,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 4,
+      "id": 94,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 79,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 95,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 80,
+      "teacher": 14,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 96,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 81,
+      "teacher": 14,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 97,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 82,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 98,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 83,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 99,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 84,
+      "teacher": 15,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 100,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 10,
+      "subject_id": 85,
+      "teacher": 16,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 101,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 11,
+      "subject_id": 85,
+      "teacher": 16,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 102,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 86,
+      "teacher": 17,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 103,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 87,
+      "teacher": 26,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 104,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 10,
+      "subject_id": 88,
+      "teacher": 26,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 105,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 11,
+      "subject_id": 88,
+      "teacher": 26,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 106,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 89,
+      "teacher": 7,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 107,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 90,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 108,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 91,
+      "teacher": 9,
+      "total_slots": 47
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 109,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 92,
+      "teacher": 19,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 110,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 93,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 111,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 94,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 112,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 95,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 5,
+      "id": 113,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 95,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 114,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 96,
+      "teacher": 14,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 115,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 97,
+      "teacher": 14,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 116,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 98,
+      "teacher": 29,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 117,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 99,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 118,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 100,
+      "teacher": 15,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 119,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 12,
+      "subject_id": 101,
+      "teacher": 16,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 120,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 13,
+      "subject_id": 101,
+      "teacher": 16,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 121,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 102,
+      "teacher": 9,
+      "total_slots": 66
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 122,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 103,
+      "teacher": 26,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 123,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 12,
+      "subject_id": 104,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 124,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 13,
+      "subject_id": 104,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 125,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 105,
+      "teacher": 18,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 126,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 106,
+      "teacher": 23,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 127,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 107,
+      "teacher": 30,
+      "total_slots": 56
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 128,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 108,
+      "teacher": 19,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 129,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 109,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 130,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 110,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 131,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 111,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 6,
+      "id": 132,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 111,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 133,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 112,
+      "teacher": 0,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 134,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 113,
+      "teacher": 0,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 135,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 114,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 136,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 115,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 137,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 116,
+      "teacher": 15,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 138,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 14,
+      "subject_id": 117,
+      "teacher": 4,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 139,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 15,
+      "subject_id": 117,
+      "teacher": 4,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 140,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 118,
+      "teacher": 25,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 141,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 119,
+      "teacher": 26,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 142,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 14,
+      "subject_id": 120,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 143,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 15,
+      "subject_id": 120,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 144,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 121,
+      "teacher": 8,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 145,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 122,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 146,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 123,
+      "teacher": 31,
+      "total_slots": 38
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 147,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 124,
+      "teacher": 19,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 148,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 125,
+      "teacher": 10,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 149,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 126,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 150,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 127,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 7,
+      "id": 151,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 127,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 152,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 128,
+      "teacher": 0,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 153,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 129,
+      "teacher": 0,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 154,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 130,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 155,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 131,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 156,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 132,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 157,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 16,
+      "subject_id": 133,
+      "teacher": 28,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 158,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 17,
+      "subject_id": 133,
+      "teacher": 28,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 159,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 134,
+      "teacher": 25,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 160,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 135,
+      "teacher": 26,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 161,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 16,
+      "subject_id": 136,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 162,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 17,
+      "subject_id": 136,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 163,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 137,
+      "teacher": 8,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 164,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 138,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 165,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 139,
+      "teacher": 30,
+      "total_slots": 38
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 166,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 140,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 167,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 141,
+      "teacher": 10,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 168,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 142,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 169,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 143,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 8,
+      "id": 170,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 143,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 171,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 144,
+      "teacher": 0,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 172,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 145,
+      "teacher": 0,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 173,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 146,
+      "teacher": 29,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 174,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 147,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 175,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 148,
+      "teacher": 15,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 176,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 18,
+      "subject_id": 149,
+      "teacher": 16,
+      "total_slots": 46
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 177,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 19,
+      "subject_id": 149,
+      "teacher": 20,
+      "total_slots": 46
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 178,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 150,
+      "teacher": 9,
+      "total_slots": 66
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 179,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 151,
+      "teacher": 26,
+      "total_slots": 6
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 180,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 18,
+      "subject_id": 152,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 181,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 19,
+      "subject_id": 152,
+      "teacher": 26,
+      "total_slots": 40
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 182,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 153,
+      "teacher": 7,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 183,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 154,
+      "teacher": 23,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 184,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 155,
+      "teacher": 27,
+      "total_slots": 28
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 185,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 156,
+      "teacher": 10,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 186,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 157,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 187,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 158,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 188,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 159,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 9,
+      "id": 189,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 159,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 190,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 160,
+      "teacher": 0,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 191,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 161,
+      "teacher": 0,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 192,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 162,
+      "teacher": 1,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 193,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 163,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 194,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 164,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 195,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 20,
+      "subject_id": 165,
+      "teacher": 28,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 196,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 21,
+      "subject_id": 165,
+      "teacher": 28,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 197,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 166,
+      "teacher": 5,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 198,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 167,
+      "teacher": 26,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 199,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 20,
+      "subject_id": 168,
+      "teacher": 26,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 200,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 21,
+      "subject_id": 168,
+      "teacher": 26,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 201,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 169,
+      "teacher": 7,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 202,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 170,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 203,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 171,
+      "teacher": 9,
+      "total_slots": 47
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 204,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 172,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 205,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 173,
+      "teacher": 10,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 206,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 174,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 207,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 175,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 10,
+      "id": 208,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 175,
+      "teacher": 13,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 209,
+      "is_block": false,
+      "is_lab": false,
+      "name": "русский язык",
+      "subgroup": -1,
+      "subject_id": 176,
+      "teacher": 0,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 210,
+      "is_block": false,
+      "is_lab": false,
+      "name": "литература",
+      "subgroup": -1,
+      "subject_id": 177,
+      "teacher": 0,
+      "total_slots": 37
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 211,
+      "is_block": false,
+      "is_lab": false,
+      "name": "история",
+      "subgroup": -1,
+      "subject_id": 178,
+      "teacher": 29,
+      "total_slots": 34
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 212,
+      "is_block": false,
+      "is_lab": false,
+      "name": "обществознание",
+      "subgroup": -1,
+      "subject_id": 179,
+      "teacher": 2,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 213,
+      "is_block": false,
+      "is_lab": false,
+      "name": "география",
+      "subgroup": -1,
+      "subject_id": 180,
+      "teacher": 3,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 214,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 22,
+      "subject_id": 181,
+      "teacher": 28,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 215,
+      "is_block": false,
+      "is_lab": false,
+      "name": "иностранный язык",
+      "subgroup": 23,
+      "subject_id": 181,
+      "teacher": 28,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 216,
+      "is_block": false,
+      "is_lab": false,
+      "name": "математика",
+      "subgroup": -1,
+      "subject_id": 182,
+      "teacher": 25,
+      "total_slots": 93
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 217,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика(т)",
+      "subgroup": -1,
+      "subject_id": 183,
+      "teacher": 26,
+      "total_slots": 8
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 218,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 22,
+      "subject_id": 184,
+      "teacher": 26,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 219,
+      "is_block": false,
+      "is_lab": false,
+      "name": "информатика",
+      "subgroup": 23,
+      "subject_id": 184,
+      "teacher": 26,
+      "total_slots": 29
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 220,
+      "is_block": false,
+      "is_lab": false,
+      "name": "Физическая культура",
+      "subgroup": -1,
+      "subject_id": 185,
+      "teacher": 8,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 221,
+      "is_block": false,
+      "is_lab": false,
+      "name": "основы безопасности и защиты Родины",
+      "subgroup": -1,
+      "subject_id": 186,
+      "teacher": 8,
+      "total_slots": 25
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 222,
+      "is_block": false,
+      "is_lab": false,
+      "name": "физика",
+      "subgroup": -1,
+      "subject_id": 187,
+      "teacher": 31,
+      "total_slots": 47
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 223,
+      "is_block": false,
+      "is_lab": false,
+      "name": "химия",
+      "subgroup": -1,
+      "subject_id": 188,
+      "teacher": 10,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 224,
+      "is_block": false,
+      "is_lab": false,
+      "name": "биология",
+      "subgroup": -1,
+      "subject_id": 189,
+      "teacher": 10,
+      "total_slots": 19
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 225,
+      "is_block": false,
+      "is_lab": false,
+      "name": "индивидуальный проект",
+      "subgroup": -1,
+      "subject_id": 190,
+      "teacher": 11,
+      "total_slots": 10
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 226,
+      "is_block": false,
+      "is_lab": false,
+      "name": "техника бесконфликтного общения",
+      "subgroup": -1,
+      "subject_id": 191,
+      "teacher": 12,
+      "total_slots": 9
+    },
+    {
+      "allowed_campuses": [
+        0,
+        1
+      ],
+      "group": 11,
+      "id": 227,
+      "is_block": false,
+      "is_lab": false,
+      "name": "введение в специальность",
+      "subgroup": -1,
+      "subject_id": 191,
+      "teacher": 13,
+      "total_slots": 9
+    }
+  ],
+  "settings": {
+    "end_date": "2026-06-19",
+    "solver_config": {
+      "block_subject_active_bucket_unit": 4,
+      "group_week_missing_day_weight": 2000,
+      "hard_min_2_teacher_pairs_per_day": false,
+      "hard_min_study_days_per_week": false,
+      "hard_no_student_windows": false,
+      "hard_no_teacher_windows": false,
+      "linearization_level": 0,
+      "max_student_pairs_per_day": 5,
+      "min_initial_theory_slots_before_labs": 1,
+      "min_student_pairs_per_study_day": 1,
+      "min_student_study_days_per_week": 2,
+      "min_subject_spread_total_slots": 9999,
+      "normal_subject_active_bucket_unit": 2,
+      "optimize_teacher_windows": false,
+      "random_seed": 42,
+      "solver_max_memory_mb": 8072,
+      "solver_time_limit_seconds": 500,
+      "solver_workers": 4,
+      "stop_after_first_solution": true,
+      "strict_all_theory_before_labs": false,
+      "student_five_pair_day_weight": 100,
+      "student_late_slot_weight": 0,
+      "subject_bucket_extra_slots": 8,
+      "subject_bucket_min_capacity": 2,
+      "subject_bucket_overload_weight": 120,
+      "subject_missing_bucket_weight": 1200,
+      "subject_missing_segment_weight": 1500,
+      "subject_spread_bucket_available_days": 12,
+      "symmetry_level": 2,
+      "teacher_late_slot_weight": 0,
+      "teacher_window_weight": 1,
+      "use_quality_objective": false
+    },
+    "start_date": "2026-01-12"
+  },
+  "teachers": [
+    {
+      "id": 0,
+      "name": "Кибардина Татьяна Леонидовна"
+    },
+    {
+      "id": 1,
+      "name": "Лучинин Александр Васильевич"
+    },
+    {
+      "id": 2,
+      "name": "Демина Екатерина Алексеевна"
+    },
+    {
+      "id": 3,
+      "name": "Кропотова Анастасия Андреевна"
+    },
+    {
+      "id": 4,
+      "name": "Давыдова Валентина Алексеевна"
+    },
+    {
+      "id": 5,
+      "name": "Абрамчук Раида Филимазовна"
+    },
+    {
+      "id": 6,
+      "name": "Третяк Надежда Александровна"
+    },
+    {
+      "id": 7,
+      "name": "Нуров Мирзо Нуралиевич"
+    },
+    {
+      "id": 8,
+      "name": "Потапова Регина Александровна"
+    },
+    {
+      "id": 9,
+      "name": "Силенок Марина Юрьевна"
+    },
+    {
+      "id": 10,
+      "name": "Соболева Любовь Анатольевна"
+    },
+    {
+      "id": 11,
+      "name": "Цимфер Татьяна Ивановна"
+    },
+    {
+      "id": 12,
+      "name": "Рабенок Мария Александровна"
+    },
+    {
+      "id": 13,
+      "name": "Костарева Наталья Викторовна"
+    },
+    {
+      "id": 14,
+      "name": "Хасанова Гузель Хамитовна"
+    },
+    {
+      "id": 15,
+      "name": "Нуриахметова Надежда Сергеевна"
+    },
+    {
+      "id": 16,
+      "name": "Синельникова Елена Владимировна"
+    },
+    {
+      "id": 17,
+      "name": "Домарева Ирина Вячеславовна"
+    },
+    {
+      "id": 18,
+      "name": "Бурдин Алексей Александрович"
+    },
+    {
+      "id": 19,
+      "name": "Семенова Лилиана Ивановна"
+    },
+    {
+      "id": 20,
+      "name": "Шадрина Елена Федоровна"
+    },
+    {
+      "id": 21,
+      "name": "Зорин Никита Александрович"
+    },
+    {
+      "id": 22,
+      "name": "Комарова Яна Николаевна"
+    },
+    {
+      "id": 23,
+      "name": "Тарасов Игорь Викторович"
+    },
+    {
+      "id": 24,
+      "name": "Новосeлова Светлана Юрьевна"
+    },
+    {
+      "id": 25,
+      "name": "Нифонтова Ирина Геннадьевна"
+    },
+    {
+      "id": 26,
+      "name": "Отрак Елена Сергеевна"
+    },
+    {
+      "id": 27,
+      "name": "Кошелев Дмитрий Александрович"
+    },
+    {
+      "id": 28,
+      "name": "Ермолина Ирина Павловна"
+    },
+    {
+      "id": 29,
+      "name": "Дроговейко Дарья Юрьевна"
+    },
+    {
+      "id": 30,
+      "name": "Кальчевская Наталья Владимировна"
+    },
+    {
+      "id": 31,
+      "name": "Динмухаметов Владислав Дуферович"
+    },
+    {
+      "id": 32,
+      "name": "Сивилькаев Вадим Михайлович"
+    },
+    {
+      "id": 33,
+      "name": "Азарян Карине Айказовна"
+    },
+    {
+      "id": 34,
+      "name": "Альшаева Алина Павловна"
+    },
+    {
+      "id": 35,
+      "name": "Елагина Ольга Александровна"
+    },
+    {
+      "id": 36,
+      "name": "Попова Татьяна Вильевна"
+    },
+    {
+      "id": 37,
+      "name": "Галузин Антон Илюсович"
+    },
+    {
+      "id": 38,
+      "name": "Гарбузов Андрей Евгеньевич"
+    },
+    {
+      "id": 39,
+      "name": "Садриева Татьяна Геннадьевна"
+    },
+    {
+      "id": 40,
+      "name": "Письмак Владимир Николаевич"
+    },
+    {
+      "id": 41,
+      "name": "Серянина Светлана Федоровна"
+    },
+    {
+      "id": 42,
+      "name": "Черепанова Татьяна Михайловна"
+    },
+    {
+      "id": 43,
+      "name": "Шабуров Анатолий Анатольевич"
+    },
+    {
+      "id": 44,
+      "name": "Чадова Марина Александровна"
+    },
+    {
+      "id": 45,
+      "name": "Конева Кристина Сергеевна"
+    },
+    {
+      "id": 46,
+      "name": "Кузнецова Елизавета Олеговна"
+    },
+    {
+      "id": 47,
+      "name": "Ахметов Артур Фанависович"
+    },
+    {
+      "id": 48,
+      "name": "Подчиненнов Александр Юрьевич"
+    },
+    {
+      "id": 49,
+      "name": "Горин Максим Валерьевич"
+    },
+    {
+      "id": 50,
+      "name": "Верхнев Николай Александрович"
+    },
+    {
+      "id": 51,
+      "name": "Лимонова Евгения Николаевна"
+    },
+    {
+      "id": 52,
+      "name": "Вагайская Татьяна Александровна"
+    },
+    {
+      "id": 53,
+      "name": "Саламатина Вера Викторовна"
+    },
+    {
+      "id": 54,
+      "name": "Самцов Андрей Евгеньевич"
+    },
+    {
+      "id": 55,
+      "name": "Тимеров Валерий Вагизович"
+    },
+    {
+      "id": 56,
+      "name": "Симаков Семен Данилович"
+    },
+    {
+      "id": 57,
+      "name": "Вальдиянов Ян Мансурович"
+    },
+    {
+      "id": 58,
+      "name": "Клабуков Василий Витальевич"
+    },
+    {
+      "id": 59,
+      "name": "Колтышев Евгений Валерьевич"
+    },
+    {
+      "id": 60,
+      "name": "Самцова Валентина Викторовна"
+    },
+    {
+      "id": 61,
+      "name": "Гобов Никита Ильич"
+    }
+  ],
+  "unavailable": [
+    {
+      "from": "2026-02-25",
+      "group": 18,
+      "id": 0,
+      "text": "Производственная практика",
+      "to": "2026-06-19"
+    },
+    {
+      "from": "2026-02-25",
+      "group": 32,
+      "id": 1,
+      "text": "Производственная практика",
+      "to": "2026-06-19"
+    },
+    {
+      "from": "2026-02-25",
+      "group": 37,
+      "id": 2,
+      "text": "Производственная практика",
+      "to": "2026-06-19"
+    }
+  ]
+}

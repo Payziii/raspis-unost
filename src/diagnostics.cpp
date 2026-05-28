@@ -73,15 +73,8 @@ bool ValidateInputLessonsDetailed(const std::vector<Lesson>& lessons, std::vecto
         }
 
         if (lesson.is_block) {
-            if (lesson.total_slots % 2 != 0) {
-                std::ostringstream m;
-                m << prefix.str() << ": блоковое занятие должно иметь чётное число пар, total_slots="
-                  << lesson.total_slots;
-                push(m.str());
-            }
-
-            if (lesson.total_slots < 2) {
-                push(prefix.str() + ": блоковое занятие должно иметь минимум 2 пары");
+            if (lesson.total_slots < 1) {
+                push(prefix.str() + ": блоковое занятие должно иметь минимум 1 двойной блок");
             }
         }
     }
@@ -112,7 +105,7 @@ void PrintInputDiagnostics(
 
         if (lesson.is_block) {
             block_lessons++;
-            required_double_blocks += lesson.total_slots / 2;
+            required_double_blocks += lesson.total_slots;
         }
     }
 

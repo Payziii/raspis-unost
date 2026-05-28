@@ -154,7 +154,7 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
     for (auto& blk : blocks) {
         int l = blk.lesson_id;
 
-        int required_starts = lessons[l].total_slots / 2;
+        int required_starts = lessons[l].total_slots;
         total_block_start_vars += static_cast<int>(blk.start_vars.size());
 
         if (static_cast<int>(blk.possible_starts.size()) < required_starts) {

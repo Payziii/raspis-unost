@@ -8,7 +8,8 @@
       "Bash(awk 'NR==198,/^  \\\\]/' data/timetable_data.json)",
       "Bash(awk 'NR==448,/^  \\\\]/' data/timetable_data.json)",
       "Bash(awk 'NR>=471' data/timetable_data.json)",
-      "Bash(awk -F': ' '{sum += $2; count++} END {print \"Total lessons:\", count; print \"Total slots required:\", sum}')"
+      "Bash(awk -F': ' '{sum += $2; count++} END {print \"Total lessons:\", count; print \"Total slots required:\", sum}')",
+      "Read(//c/Users/vasil/Documents/**)"
     ]
   }
 }

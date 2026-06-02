@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include "config.h"
 #include "date_utils.h"
@@ -45,9 +46,12 @@ std::string BuildGroupSlotText(
                 }
             }
 
+            std::string teacher_display = lessons[l].teacher >= 0
+                ? TEACHER_NAME[lessons[l].teacher]
+                : "вакансия";
             ss << lesson_name
                << " — " << SubgroupName(lessons[l].subgroup)
-               << ", " << TEACHER_NAME[lessons[l].teacher]
+               << ", " << teacher_display
                << ", " << CampusName(campus);
 
             items.push_back(ss.str());
@@ -492,7 +496,7 @@ void WriteSlotLessonsJson(
         out << "{"
             << "\"id\":" << lessons[l].id
             << ",\"name\":\"" << JsonEscape(lessons[l].name) << "\""
-            << ",\"teacher_id\":" << lessons[l].teacher
+            << ",\"teacher_id\":" << (lessons[l].teacher >= 0 ? std::to_string(lessons[l].teacher) : "null")
             << ",\"subgroup\":" << lessons[l].subgroup
             << ",\"is_lab\":" << (lessons[l].is_lab ? "true" : "false")
             << ",\"is_block\":" << (lessons[l].is_block ? "true" : "false")

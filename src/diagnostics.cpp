@@ -36,7 +36,7 @@ bool ValidateInputLessonsDetailed(const std::vector<Lesson>& lessons, std::vecto
             push(m.str());
         }
 
-        if (lesson.teacher < 0 || lesson.teacher >= TEACHERS) {
+        if (lesson.teacher != -1 && (lesson.teacher < 0 || lesson.teacher >= TEACHERS)) {
             std::ostringstream m;
             m << prefix.str() << ": некорректный преподаватель teacher=" << lesson.teacher
               << " (всего преподов: " << TEACHERS << ")";
@@ -101,7 +101,7 @@ void PrintInputDiagnostics(
 
     for (const auto& lesson : lessons) {
         group_load[lesson.group] += lesson.total_slots;
-        teacher_load[lesson.teacher] += lesson.total_slots;
+        if (lesson.teacher >= 0) teacher_load[lesson.teacher] += lesson.total_slots;
 
         if (lesson.is_block) {
             block_lessons++;

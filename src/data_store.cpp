@@ -417,7 +417,10 @@ bool LoadScheduleInputData(ScheduleInputData& data, std::string& error) {
         lesson.id = JsonInt(item, "id", static_cast<int>(data.lessons.size()));
         lesson.group = JsonInt(item, "group", 0);
         lesson.subgroup = JsonInt(item, "subgroup", -1);
-        lesson.teacher = JsonInt(item, "teacher", 0);
+        {
+            const JsonValue& tv = item.At("teacher");
+            lesson.teacher = tv.IsNumber() ? static_cast<int>(std::llround(tv.number_value)) : -1;
+        }
         lesson.total_slots = JsonInt(item, "total_slots", 1);
         lesson.name = JsonString(item, "name", "Занятие");
         lesson.subject_id = JsonInt(item, "subject_id", -1);

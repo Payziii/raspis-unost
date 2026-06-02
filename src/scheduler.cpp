@@ -397,6 +397,8 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
         int l = blk.lesson_id;
         int teacher = lessons[l].teacher;
 
+        if (teacher < 0) continue;
+
         for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
             int start_t = blk.possible_starts[i];
             std::vector<int> blocked_slots = TeacherBlockedSlotsForUpStart(
@@ -448,7 +450,7 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
             const UpStartRef& left = up_start_refs[a];
             const UpStartRef& right = up_start_refs[b];
 
-            if (left.teacher != right.teacher) {
+            if (left.teacher < 0 || left.teacher != right.teacher) {
                 continue;
             }
 
@@ -714,8 +716,10 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
             for (int s = 0; s < SLOTS_PER_DAY; s++) {
                 int t = d * SLOTS_PER_DAY + s;
 
-                model.AddEquality(group_day_campus[group][d], teacher_day_campus[teacher][d])
-                    .OnlyEnforceIf(x[l][t]);
+                if (teacher >= 0) {
+                    model.AddEquality(group_day_campus[group][d], teacher_day_campus[teacher][d])
+                        .OnlyEnforceIf(x[l][t]);
+                }
 
                 if (lessons[l].allowed_campuses.size() == 1) {
                     int campus = static_cast<int>(*lessons[l].allowed_campuses.begin());
@@ -723,8 +727,10 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
                     model.AddEquality(group_day_campus[group][d], campus)
                         .OnlyEnforceIf(x[l][t]);
 
-                    model.AddEquality(teacher_day_campus[teacher][d], campus)
-                        .OnlyEnforceIf(x[l][t]);
+                    if (teacher >= 0) {
+                        model.AddEquality(teacher_day_campus[teacher][d], campus)
+                            .OnlyEnforceIf(x[l][t]);
+                    }
                 }
             }
         }

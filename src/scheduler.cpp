@@ -247,6 +247,38 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
         }
     }
 
+    // ── ПП: разрешаем только последние ceil(total_slots/3) доступных дней группы ──
+    {
+        std::vector<std::vector<int>> group_avail_days(GROUPS);
+        for (int g = 0; g < GROUPS; g++) {
+            for (int d = 0; d < num_days; d++) {
+                if (IsAvailable(all_days[d], g, unavailable)) {
+                    group_avail_days[g].push_back(d);
+                }
+            }
+        }
+
+        for (int l = 0; l < num_lessons; l++) {
+            if (!lessons[l].is_pp) continue;
+
+            int g = lessons[l].group;
+            int pp_days = (lessons[l].total_slots + 2) / 3;  // ceil(total_slots/3)
+            const auto& avail = group_avail_days[g];
+
+            if ((int)avail.size() <= pp_days) continue;
+
+            int cutoff_idx = (int)avail.size() - pp_days;
+            std::set<int> allowed_days(avail.begin() + cutoff_idx, avail.end());
+
+            for (int d = 0; d < num_days; d++) {
+                if (allowed_days.count(d)) continue;
+                for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                    model.AddEquality(x[l][d * SLOTS_PER_DAY + s], 0);
+                }
+            }
+        }
+    }
+
     std::vector<std::vector<BoolVar>> group_busy(
         GROUPS,
         std::vector<BoolVar>(total_slots)
@@ -739,6 +771,15 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
     if (USE_QUALITY_OBJECTIVE) {
         for (const auto& v : student_five_pair_day_vars) {
             objective += v * STUDENT_FIVE_PAIR_DAY_WEIGHT;
+        }
+
+        if (!HARD_NO_STUDENT_WINDOWS && OPTIMIZE_STUDENT_WINDOWS) {
+            std::vector<BoolVar> student_gaps =
+                CreateWindowPenaltyVars(model, student_entities, num_days);
+
+            for (const auto& gap : student_gaps) {
+                objective += gap * STUDENT_WINDOW_WEIGHT;
+            }
         }
 
         if (!HARD_NO_TEACHER_WINDOWS && OPTIMIZE_TEACHER_WINDOWS) {

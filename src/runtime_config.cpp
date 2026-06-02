@@ -26,6 +26,7 @@ RuntimeSolverConfig DefaultSolverConfig() {
     cfg.use_quality_objective = false;
     cfg.strict_all_theory_before_labs = false;
     cfg.optimize_teacher_windows = false;
+    cfg.optimize_student_windows = false;
 
     cfg.group_week_missing_day_weight = 2000;
     cfg.subject_missing_bucket_weight = 1200;
@@ -35,6 +36,7 @@ RuntimeSolverConfig DefaultSolverConfig() {
     cfg.student_late_slot_weight = 0;
     cfg.teacher_late_slot_weight = 0;
     cfg.teacher_window_weight = 1;
+    cfg.student_window_weight = 300;
 
     cfg.min_student_pairs_per_study_day = 1;
     cfg.max_student_pairs_per_day = 5;
@@ -96,6 +98,7 @@ void LoadSolverConfigFromJson(const JsonValue& solver_config_json) {
         PullBool(solver_config_json, "use_quality_objective", cfg.use_quality_objective);
         PullBool(solver_config_json, "strict_all_theory_before_labs", cfg.strict_all_theory_before_labs);
         PullBool(solver_config_json, "optimize_teacher_windows", cfg.optimize_teacher_windows);
+        PullBool(solver_config_json, "optimize_student_windows", cfg.optimize_student_windows);
 
         PullInt(solver_config_json, "group_week_missing_day_weight", cfg.group_week_missing_day_weight);
         PullInt(solver_config_json, "subject_missing_bucket_weight", cfg.subject_missing_bucket_weight);
@@ -105,6 +108,7 @@ void LoadSolverConfigFromJson(const JsonValue& solver_config_json) {
         PullInt(solver_config_json, "student_late_slot_weight", cfg.student_late_slot_weight);
         PullInt(solver_config_json, "teacher_late_slot_weight", cfg.teacher_late_slot_weight);
         PullInt(solver_config_json, "teacher_window_weight", cfg.teacher_window_weight);
+        PullInt(solver_config_json, "student_window_weight", cfg.student_window_weight);
 
         PullInt(solver_config_json, "min_student_pairs_per_study_day", cfg.min_student_pairs_per_study_day);
         PullInt(solver_config_json, "max_student_pairs_per_day", cfg.max_student_pairs_per_day);
@@ -143,6 +147,7 @@ JsonValue SolverConfigToJson(const RuntimeSolverConfig& cfg) {
     v.At("use_quality_objective") = JsonValue::MakeBool(cfg.use_quality_objective);
     v.At("strict_all_theory_before_labs") = JsonValue::MakeBool(cfg.strict_all_theory_before_labs);
     v.At("optimize_teacher_windows") = JsonValue::MakeBool(cfg.optimize_teacher_windows);
+    v.At("optimize_student_windows") = JsonValue::MakeBool(cfg.optimize_student_windows);
 
     v.At("group_week_missing_day_weight") = JsonValue::MakeNumber(cfg.group_week_missing_day_weight);
     v.At("subject_missing_bucket_weight") = JsonValue::MakeNumber(cfg.subject_missing_bucket_weight);
@@ -152,6 +157,7 @@ JsonValue SolverConfigToJson(const RuntimeSolverConfig& cfg) {
     v.At("student_late_slot_weight") = JsonValue::MakeNumber(cfg.student_late_slot_weight);
     v.At("teacher_late_slot_weight") = JsonValue::MakeNumber(cfg.teacher_late_slot_weight);
     v.At("teacher_window_weight") = JsonValue::MakeNumber(cfg.teacher_window_weight);
+    v.At("student_window_weight") = JsonValue::MakeNumber(cfg.student_window_weight);
 
     v.At("min_student_pairs_per_study_day") = JsonValue::MakeNumber(cfg.min_student_pairs_per_study_day);
     v.At("max_student_pairs_per_day") = JsonValue::MakeNumber(cfg.max_student_pairs_per_day);
@@ -185,6 +191,7 @@ void UpdateSolverConfigFromPatch(const JsonValue& patch) {
     PullBool(patch, "use_quality_objective", cfg.use_quality_objective);
     PullBool(patch, "strict_all_theory_before_labs", cfg.strict_all_theory_before_labs);
     PullBool(patch, "optimize_teacher_windows", cfg.optimize_teacher_windows);
+    PullBool(patch, "optimize_student_windows", cfg.optimize_student_windows);
 
     PullInt(patch, "group_week_missing_day_weight", cfg.group_week_missing_day_weight);
     PullInt(patch, "subject_missing_bucket_weight", cfg.subject_missing_bucket_weight);
@@ -194,6 +201,7 @@ void UpdateSolverConfigFromPatch(const JsonValue& patch) {
     PullInt(patch, "student_late_slot_weight", cfg.student_late_slot_weight);
     PullInt(patch, "teacher_late_slot_weight", cfg.teacher_late_slot_weight);
     PullInt(patch, "teacher_window_weight", cfg.teacher_window_weight);
+    PullInt(patch, "student_window_weight", cfg.student_window_weight);
 
     PullInt(patch, "min_student_pairs_per_study_day", cfg.min_student_pairs_per_study_day);
     PullInt(patch, "max_student_pairs_per_day", cfg.max_student_pairs_per_day);
@@ -261,6 +269,9 @@ const std::vector<SolverConfigField>& SolverConfigSchema() {
         {"optimize_teacher_windows", "Оптимизировать окна у преподов",
          "Включает штраф за окна у преподов. Только если use_quality_objective=true.",
          "hard_soft", "bool"},
+        {"optimize_student_windows", "Оптимизировать окна у студентов (soft)",
+         "Включает штраф за окна у студентов через objective. Только если use_quality_objective=true и hard_no_student_windows=false.",
+         "hard_soft", "bool"},
 
         // === Веса ===
         {"group_week_missing_day_weight", "Штраф: пропущенный учебный день недели",
@@ -286,6 +297,9 @@ const std::vector<SolverConfigField>& SolverConfigSchema() {
          "weights", "int"},
         {"teacher_window_weight", "Штраф: окно у препода",
          "Только при optimize_teacher_windows=true.",
+         "weights", "int"},
+        {"student_window_weight", "Штраф: окно у студента",
+         "Только при optimize_student_windows=true. Рекомендуемый диапазон: 200–600.",
          "weights", "int"},
 
         // === Размерности ===

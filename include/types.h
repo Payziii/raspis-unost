@@ -51,6 +51,7 @@ struct Lesson {
     int subject_id;     // для связки теория-лабы
     bool is_lab;
     bool is_block;      // true = УП, одно появление = 2 пары нагрузки
+    bool is_pp;         // true = ПП, ставится только в конец семестра
     std::set<Campus> allowed_campuses;
 };
 

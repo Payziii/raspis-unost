@@ -51,6 +51,7 @@ JsonValue LessonJson(
     v.At("subject_id") = JsonValue::MakeNumber(subject_id);
     v.At("is_lab") = JsonValue::MakeBool(is_lab);
     v.At("is_block") = JsonValue::MakeBool(is_block);
+    v.At("is_pp") = JsonValue::MakeBool(false);
     JsonValue campuses = JsonValue::MakeArray();
     for (int campus : allowed_campuses) {
         campuses.array_value.push_back(JsonValue::MakeNumber(campus));
@@ -426,6 +427,7 @@ bool LoadScheduleInputData(ScheduleInputData& data, std::string& error) {
         lesson.subject_id = JsonInt(item, "subject_id", -1);
         lesson.is_lab = JsonBool(item, "is_lab", false);
         lesson.is_block = JsonBool(item, "is_block", false);
+        lesson.is_pp = JsonBool(item, "is_pp", false);
         lesson.allowed_campuses.clear();
         const JsonValue& campuses = item.At("allowed_campuses");
         if (campuses.IsArray()) {

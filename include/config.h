@@ -58,7 +58,9 @@ void SetRuntimeNames(const std::vector<std::string>& groups, const std::vector<s
 #define MIN_INITIAL_THEORY_SLOTS_BEFORE_LABS (timetable::g_solver_config.min_initial_theory_slots_before_labs)
 
 #define OPTIMIZE_TEACHER_WINDOWS (timetable::g_solver_config.optimize_teacher_windows)
+#define OPTIMIZE_STUDENT_WINDOWS (timetable::g_solver_config.optimize_student_windows)
 #define TEACHER_WINDOW_WEIGHT (timetable::g_solver_config.teacher_window_weight)
+#define STUDENT_WINDOW_WEIGHT (timetable::g_solver_config.student_window_weight)
 
 #define STUDENT_FIVE_PAIR_DAY_WEIGHT (timetable::g_solver_config.student_five_pair_day_weight)
 #define STUDENT_LATE_SLOT_WEIGHT (timetable::g_solver_config.student_late_slot_weight)

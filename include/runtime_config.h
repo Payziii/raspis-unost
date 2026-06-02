@@ -23,6 +23,7 @@ struct RuntimeSolverConfig {
     bool use_quality_objective = true;
     bool strict_all_theory_before_labs = false;
     bool optimize_teacher_windows = false;
+    bool optimize_student_windows = false;
 
     int group_week_missing_day_weight = 2000;
     int subject_missing_bucket_weight = 1200;
@@ -32,6 +33,7 @@ struct RuntimeSolverConfig {
     int student_late_slot_weight = 1;
     int teacher_late_slot_weight = 0;
     int teacher_window_weight = 1;
+    int student_window_weight = 300;
 
     int min_student_pairs_per_study_day = 1;
     int max_student_pairs_per_day = 5;

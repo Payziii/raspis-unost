@@ -48,7 +48,7 @@ std::string BuildGroupSlotText(
 
             std::string teacher_display = lessons[l].teacher >= 0
                 ? TEACHER_NAME[lessons[l].teacher]
-                : "вакансия";
+                : "преподаватель не указан";
             ss << lesson_name
                << " — " << SubgroupName(lessons[l].subgroup)
                << ", " << teacher_display

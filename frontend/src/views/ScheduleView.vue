@@ -87,52 +87,37 @@
 
       <div v-else class="sched-scroll">
         <table class="sched-table">
-          <thead>
-            <!-- Row 1: day names -->
-            <tr>
-              <th rowspan="2" class="th-slot sticky-col">
-                <span class="slot-header-icon">🕐</span>
-                <span class="slot-header-text">Пара</span>
-              </th>
-              <th
-                v-for="dateStr in weekDates"
-                :key="dateStr"
-                :colspan="filteredGroups.length"
-                class="th-day"
-              >
-                <span class="day-name">{{ getDayWeekday(dateStr).toUpperCase() }}</span>
-                <span class="day-date-sub">{{ formatDateShort(dateStr) }}</span>
-              </th>
-            </tr>
-            <!-- Row 2: group names -->
-            <tr>
-              <template v-for="dateStr in weekDates" :key="dateStr">
+          <template v-for="dateStr in weekDates" :key="dateStr">
+            <thead class="day-thead">
+              <tr>
+                <th class="th-day-name">
+                  <span class="day-name">{{ getDayWeekday(dateStr).toUpperCase() }}</span>
+                  <span class="day-date-sub">{{ formatDateShort(dateStr) }}</span>
+                </th>
                 <th
-                  v-for="(g, gi) in filteredGroups"
-                  :key="`${dateStr}-${g.group_index}`"
+                  v-for="g in filteredGroups"
+                  :key="`${dateStr}-h-${g.group_index}`"
                   class="th-group"
-                  :class="{ 'day-separator': gi === 0 }"
                 >
                   {{ g.group_name }}
                 </th>
-              </template>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="slotNum in maxSlots" :key="slotNum" class="slot-row">
-              <td class="slot-label sticky-col">
-                <span class="slot-num">{{ slotNum }}</span>
-                <span class="slot-time">{{ getSlotTimeForSlot(slotNum) }}</span>
-              </td>
-              <template v-for="(dateStr, di) in weekDates" :key="dateStr">
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="slotNum in getDayMaxSlots(dateStr)"
+                :key="`${dateStr}-${slotNum}`"
+                class="slot-row"
+              >
+                <td class="slot-label">
+                  <span class="slot-num">{{ slotNum }} пара</span>
+                  <span class="slot-time">{{ getSlotTimeForSlot(slotNum) }}</span>
+                </td>
                 <td
-                  v-for="(g, gi) in filteredGroups"
-                  :key="`${dateStr}-${g.group_index}`"
+                  v-for="g in filteredGroups"
+                  :key="`${dateStr}-${slotNum}-${g.group_index}`"
                   class="slot-cell"
-                  :class="[
-                    getCellClass(g.group_index, dateStr, slotNum),
-                    { 'day-separator': gi === 0 }
-                  ]"
+                  :class="getCellClass(g.group_index, dateStr, slotNum)"
                 >
                   <div class="cell-inner" v-if="getCellText(g.group_index, dateStr, slotNum)">
                     <span class="cell-subject">{{ parseSubject(getCellText(g.group_index, dateStr, slotNum)) }}</span>
@@ -144,9 +129,9 @@
                   </div>
                   <span v-else class="cell-empty">—</span>
                 </td>
-              </template>
-            </tr>
-          </tbody>
+              </tr>
+            </tbody>
+          </template>
         </table>
       </div>
     </template>
@@ -295,6 +280,19 @@ const maxSlots = computed(() => {
   }
   return max || 7
 })
+
+function getDayMaxSlots(dateStr) {
+  let max = 0
+  for (const g of filteredGroups.value) {
+    const lookup = slotLookup.value[g.group_index]?.[dateStr]
+    if (!lookup) continue
+    for (const slotKey of Object.keys(lookup.slots)) {
+      const n = parseInt(slotKey)
+      if (n > max) max = n
+    }
+  }
+  return max || maxSlots.value
+}
 
 // ── Year tabs ────────────────────────────────────────────────────────────
 
@@ -449,53 +447,24 @@ async function onRegenerate() {
   table-layout: auto;
 }
 
-/* ── Sticky first column ─────────────────────────────────────────────── */
-.sticky-col {
-  position: sticky;
-  left: 0;
-  z-index: 2;
-}
-
-/* ── Header: slot cell (top-left, rowspan=2) ────────────────────────── */
-.th-slot {
-  background: var(--bg-secondary);
-  border-right: 2px solid var(--border-strong);
-  border-bottom: 2px solid var(--border-strong);
-  z-index: 4 !important;
-  text-align: center;
-  width: 84px;
-  min-width: 76px;
-  padding: 10px 8px;
-}
-.slot-header-icon {
-  display: block;
-  font-size: 18px;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-.slot-header-text {
-  display: block;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-/* ── Header: day columns ─────────────────────────────────────────────── */
-.th-day {
+/* ── Per-day header (top-left cell with day name + group columns) ────── */
+.day-thead .th-day-name {
   background: linear-gradient(135deg, #4f46e5 0%, #6366f1 60%, #818cf8 100%);
   color: #fff;
   text-align: center;
-  padding: 10px 14px;
-  border-left: 2px solid rgba(255, 255, 255, 0.18);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--border-strong);
+  border-top: 2px solid var(--border-strong);
   white-space: nowrap;
+  width: 140px;
+  min-width: 120px;
 }
-.th-day:first-child { border-left: none; }
+.day-thead:first-of-type .th-day-name {
+  border-top: none;
+}
 .day-name {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -504,55 +473,56 @@ async function onRegenerate() {
   display: block;
   font-size: 10px;
   font-weight: 400;
-  opacity: 0.72;
+  opacity: 0.75;
   margin-top: 3px;
   letter-spacing: 0.04em;
 }
 
-/* ── Header: group sub-row ───────────────────────────────────────────── */
+/* ── Group headers within a day block ────────────────────────────────── */
 .th-group {
   background: #1a2540;
   color: var(--text-secondary);
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 6px 10px;
+  padding: 10px 10px;
   white-space: nowrap;
   border-bottom: 2px solid var(--border-strong);
+  border-top: 2px solid var(--border-strong);
+  border-left: 1px solid var(--border);
   min-width: 140px;
 }
-.th-group.day-separator {
-  border-left: 2px solid var(--border-strong);
+.day-thead:first-of-type .th-group {
+  border-top: none;
 }
 
 /* ── Slot label (first column in body) ──────────────────────────────── */
 .slot-label {
   background: var(--bg-secondary);
-  padding: 10px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+  padding: 10px 10px;
+  text-align: center;
   border-right: 2px solid var(--border-strong);
   border-top: 1px solid var(--border);
   min-height: 56px;
   transition: background var(--transition);
+  white-space: nowrap;
 }
 .slot-num {
-  font-size: 20px;
-  font-weight: 800;
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text-primary);
-  line-height: 1;
+  line-height: 1.1;
 }
 .slot-time {
-  font-size: 9px;
+  display: block;
+  font-size: 10px;
   color: var(--text-muted);
   white-space: nowrap;
   letter-spacing: 0.03em;
-  text-align: center;
+  margin-top: 3px;
 }
 
 /* ── Data cells ──────────────────────────────────────────────────────── */
@@ -560,11 +530,8 @@ async function onRegenerate() {
   padding: 8px 10px;
   vertical-align: top;
   border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
   transition: background var(--transition);
-}
-
-.slot-cell.day-separator {
-  border-left: 2px solid var(--border-strong);
 }
 
 .slot-row:hover .slot-cell {
@@ -631,7 +598,7 @@ async function onRegenerate() {
 @media (max-width: 640px) {
   .week-nav { flex-wrap: wrap; }
   .week-label { order: -1; width: 100%; align-items: center; }
-  .th-slot { min-width: 68px; }
+  .th-day-name { min-width: 90px; width: 90px; padding: 10px 6px; }
   .th-group { min-width: 110px; }
 }
 </style>

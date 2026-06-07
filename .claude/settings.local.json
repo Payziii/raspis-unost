@@ -10,7 +10,16 @@
       "Bash(awk 'NR>=471' data/timetable_data.json)",
       "Bash(awk -F': ' '{sum += $2; count++} END {print \"Total lessons:\", count; print \"Total slots required:\", sum}')",
       "Read(//c/Users/vasil/Documents/**)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(python3 *)",
+      "Bash(python3.12 --version)",
+      "Bash(python3.11 --version)",
+      "Bash(python3.10 --version)",
+      "Bash(py --version)",
+      "Bash(py -c \"import openpyxl; print\\('ok'\\)\")",
+      "Bash(py -m pip install openpyxl -q)",
+      "Bash(py)",
+      "Bash(py *)"
     ]
   }
 }

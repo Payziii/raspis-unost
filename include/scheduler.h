@@ -27,6 +27,12 @@ struct GenerationOptions {
 
 GenerationResult GenerateSchedule(const std::string& output_dir);
 GenerationResult GenerateSchedule(const std::string& output_dir, const GenerationOptions& options);
+
+// Генерация по неделям: отдельная маленькая CP-SAT задача на каждую неделю.
+// Квоты из Брезенхема гарантируют корректное распределение нагрузки.
+GenerationResult GenerateScheduleWeekly(const std::string& output_dir);
+GenerationResult GenerateScheduleWeekly(const std::string& output_dir, const GenerationOptions& options);
+
 int RunScheduler();
 
 }  // namespace timetable

@@ -459,9 +459,11 @@ std::string HandleRequest(const std::string& request, const std::string& output_
 
         GenerationOptions opts;
         opts.lock_source = "none";
+        std::string gen_mode = "weekly";
         if (!body.empty()) {
             JsonParseResult parsed = ParseJson(body);
             if (parsed.ok && parsed.value.IsObject()) {
+                gen_mode = JsonString(parsed.value, "mode", "weekly");
                 std::string lock_existing = JsonString(parsed.value, "lock_existing", "none");
                 std::string lock_path;
                 if (lock_existing == "manual") {
@@ -530,13 +532,16 @@ std::string HandleRequest(const std::string& request, const std::string& output_
             }
         }
 
-        GenerationResult result = GenerateSchedule(output_dir, opts);
+        GenerationResult result = (gen_mode == "monolithic")
+            ? GenerateSchedule(output_dir, opts)
+            : GenerateScheduleWeekly(output_dir, opts);
         std::ostringstream response_body;
         response_body << "{\"success\":" << (result.success ? "true" : "false")
                       << ",\"status\":\"" << JsonEscape(result.status) << "\""
                       << ",\"message\":\"" << JsonEscape(result.message) << "\""
                       << ",\"lock_source\":\"" << JsonEscape(opts.lock_source) << "\""
                       << ",\"locked_count\":" << opts.locked.size()
+                      << ",\"mode\":\"" << JsonEscape(gen_mode) << "\""
                       << ",\"output_dir\":\"" << JsonEscape(result.output_dir) << "\"}";
         return JsonResponse(result.success ? 200 : 500, result.success ? "OK" : "Internal Server Error", response_body.str());
     }

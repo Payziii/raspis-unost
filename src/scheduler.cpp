@@ -73,6 +73,28 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
     int num_days = static_cast<int>(all_days.size());
     int total_slots = num_days * SLOTS_PER_DAY;
 
+    // ── Weekly structure ─────────────────────────────────────────────────────
+    // week_index[d] = raw sequential week number for day d
+    std::vector<int> week_index(num_days);
+    for (int d = 0; d < num_days; d++) {
+        week_index[d] = WeekIndexFromStart(start_date, all_days[d]);
+    }
+    // Sorted unique week numbers → dense position index
+    std::set<int> wk_set_tmp;
+    for (int wi : week_index) wk_set_tmp.insert(wi);
+    const std::vector<int> weeks_list(wk_set_tmp.begin(), wk_set_tmp.end());
+    const int num_weeks = static_cast<int>(weeks_list.size());
+    std::map<int, int> week_pos;   // raw week → position in weeks_list
+    for (int i = 0; i < num_weeks; i++) week_pos[weeks_list[i]] = i;
+    // All global slot indices grouped by week position
+    std::vector<std::vector<int>> week_slots(num_weeks);
+    for (int d = 0; d < num_days; d++) {
+        int w = week_pos[week_index[d]];
+        for (int s = 0; s < SLOTS_PER_DAY; s++) {
+            week_slots[w].push_back(d * SLOTS_PER_DAY + s);
+        }
+    }
+
     std::vector<Lesson> lessons = input_data.lessons;
     int num_lessons = static_cast<int>(lessons.size());
 
@@ -137,15 +159,66 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
         blocks.push_back(bi);
     }
 
+    // ── Per-lesson weekly quota via Bresenham distribution ─────────────────
+    // For each lesson we know total_slots and how many "available weeks"
+    // the group has. Quota for week w = Bresenham step, so that sum == total_slots.
+    // Weeks where the group has zero available school days get quota 0 always.
+
+    // group → sorted list of week positions that have ≥1 available day
+    std::vector<std::vector<int>> group_avail_weeks(GROUPS);
+    // group × week → list of available day indices in that week
+    std::vector<std::map<int, std::vector<int>>> group_week_days(GROUPS);
+
+    for (int g = 0; g < GROUPS; g++) {
+        for (int d = 0; d < num_days; d++) {
+            if (IsAvailable(all_days[d], g, unavailable)) {
+                int w = week_pos[week_index[d]];
+                group_week_days[g][w].push_back(d);
+            }
+        }
+        for (auto& kv : group_week_days[g]) {
+            group_avail_weeks[g].push_back(kv.first);
+        }
+    }
+
+    // Bresenham distributor: distribute `total` slots across `active_weeks`
+    // Returns quota[i] for i-th active week.
+    auto bresenham_quota = [](int total, int active_weeks) -> std::vector<int> {
+        if (active_weeks <= 0) return {};
+        std::vector<int> q(active_weeks, 0);
+        int acc = 0;
+        for (int i = 0; i < active_weeks; i++) {
+            acc += total;
+            int slots_here = acc / active_weeks;
+            acc -= slots_here * active_weeks;
+            q[i] = slots_here;
+        }
+        return q;
+    };
+
+    // lesson_week_quota[l][w] = how many placements of lesson l belong in week w
+    // (w is a dense week position; groups with no available days get 0)
+    std::vector<std::vector<int>> lesson_week_quota(num_lessons, std::vector<int>(num_weeks, 0));
+
+    for (int l = 0; l < num_lessons; l++) {
+        int g = lessons[l].group;
+        const auto& avail_weeks = group_avail_weeks[g];
+        int active = static_cast<int>(avail_weeks.size());
+        if (active == 0) continue;
+        auto q = bresenham_quota(lessons[l].total_slots, active);
+        for (int i = 0; i < active; i++) {
+            lesson_week_quota[l][avail_weeks[i]] = q[i];
+        }
+    }
+
+    std::cout << "Недель в расписании: " << num_weeks << "\n";
+    std::cout << "Дней в расписании: " << num_days << "\n";
+
     for (int l = 0; l < num_lessons; l++) {
         if (lessons[l].is_block) continue;
 
         LinearExpr sum;
-
-        for (int t = 0; t < total_slots; t++) {
-            sum += x[l][t];
-        }
-
+        for (int t = 0; t < total_slots; t++) sum += x[l][t];
         model.AddEquality(sum, lessons[l].total_slots);
     }
 
@@ -167,13 +240,12 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
             return {false, "INPUT_ERROR", "Недостаточно возможных стартов для блока", output_dir};
         }
 
-        LinearExpr start_sum;
-
-        for (const auto& v : blk.start_vars) {
-            start_sum += v;
+        // Global equality: exactly required_starts block starts total
+        {
+            LinearExpr start_sum;
+            for (const auto& v : blk.start_vars) start_sum += v;
+            model.AddEquality(start_sum, required_starts);
         }
-
-        model.AddEquality(start_sum, required_starts);
 
         std::vector<std::vector<BoolVar>> covers(total_slots);
 
@@ -563,11 +635,6 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
         }
     }
 
-    std::vector<int> week_index(num_days);
-    for (int d = 0; d < num_days; d++) {
-        week_index[d] = WeekIndexFromStart(start_date, all_days[d]);
-    }
-
     for (int g = 0; g < GROUPS; g++) {
         std::map<int, std::vector<int>> week_days;
 
@@ -639,83 +706,6 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
 
     if (HARD_NO_TEACHER_WINDOWS) {
         AddNoWindowsHard(model, teacher_busy, num_days);
-    }
-
-    std::map<std::pair<int, int>, std::vector<int>> theory_of;
-    std::map<std::pair<int, int>, std::vector<int>> lab_of;
-
-    for (int l = 0; l < num_lessons; l++) {
-        if (lessons[l].subject_id < 0) continue;
-
-        auto key = std::make_pair(lessons[l].group, lessons[l].subject_id);
-
-        if (lessons[l].is_lab) {
-            lab_of[key].push_back(l);
-        } else {
-            theory_of[key].push_back(l);
-        }
-    }
-
-    for (const auto& item : lab_of) {
-        const auto& key = item.first;
-        const auto& labs = item.second;
-
-        auto it = theory_of.find(key);
-        if (it == theory_of.end()) continue;
-
-        const auto& theories = it->second;
-        if (theories.empty()) continue;
-
-        if (STRICT_ALL_THEORY_BEFORE_LABS) {
-            IntVar last_theory = model.NewIntVar(Domain(0, total_slots - 1));
-
-            for (int l_th : theories) {
-                for (int t = 0; t < total_slots; t++) {
-                    model.AddGreaterOrEqual(last_theory, t).OnlyEnforceIf(x[l_th][t]);
-                }
-            }
-
-            for (int l_lab : labs) {
-                for (int t = 0; t < total_slots; t++) {
-                    model.AddLessThan(last_theory, t).OnlyEnforceIf(x[l_lab][t]);
-                }
-            }
-        } else {
-            int group = key.first;
-            std::vector<std::vector<int>> buckets =
-                BuildAvailableDayBuckets(group, all_days, unavailable);
-
-            if (buckets.empty()) {
-                continue;
-            }
-
-            LinearExpr initial_theory_sum;
-            LinearExpr initial_lab_sum;
-
-            for (int l_th : theories) {
-                for (int d : buckets.front()) {
-                    for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                        int t = d * SLOTS_PER_DAY + s;
-                        initial_theory_sum += x[l_th][t];
-                    }
-                }
-            }
-
-            for (int l_lab : labs) {
-                for (int d : buckets.front()) {
-                    for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                        int t = d * SLOTS_PER_DAY + s;
-                        initial_lab_sum += x[l_lab][t];
-                    }
-                }
-            }
-
-            model.AddGreaterOrEqual(
-                initial_theory_sum,
-                MIN_INITIAL_THEORY_SLOTS_BEFORE_LABS
-            );
-            model.AddEquality(initial_lab_sum, 0);
-        }
     }
 
     std::vector<std::vector<IntVar>> group_day_campus(
@@ -1051,6 +1041,970 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
     }
 
     return {false, "UNKNOWN", "Решение не найдено", output_dir};
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Weekly generation: отдельная маленькая CP-SAT задача на каждую неделю.
+// Квоты (сколько пар/стартов у каждого занятия в конкретную неделю) берутся
+// из алгоритма Брезенхема, поэтому сумма квот == total_slots по каждому уроку.
+// ─────────────────────────────────────────────────────────────────────────────
+
+namespace {
+
+struct WeekSolveResult {
+    bool success = false;
+    std::string status;
+    // x_vals[l][local_slot] — 0/1; для уроков с quota==0 не заполняется (всё 0)
+    std::vector<std::vector<int>> x_vals;
+};
+
+static WeekSolveResult SolveOneWeek(
+    int week_num,
+    const std::vector<int>& wdix,    // индексы в all_days для дней этой недели
+    const std::vector<Date>& all_days,
+    const std::vector<Lesson>& lessons,
+    const std::map<int, std::vector<std::pair<Date, Date>>>& unavailable,
+    const std::vector<int>& quotas,  // quotas[l] = кол-во пар/стартов в эту неделю
+    const std::vector<std::vector<int>>& pp_allowed_global,  // [g] -> set of global day idx
+    const std::vector<LockedAssignment>& locked
+) {
+    using operations_research::Domain;
+    using operations_research::sat::BoolVar;
+    using operations_research::sat::CpModelBuilder;
+    using operations_research::sat::CpModelProto;
+    using operations_research::sat::CpSolverResponse;
+    using operations_research::sat::CpSolverStatus;
+    using operations_research::sat::CpSolverStatus_Name;
+    using operations_research::sat::IntVar;
+    using operations_research::sat::LinearExpr;
+    using operations_research::sat::NewSatParameters;
+    using operations_research::sat::SatParameters;
+    using operations_research::sat::SolveCpModel;
+    using operations_research::sat::SolutionIntegerValue;
+
+    const int num_lessons = static_cast<int>(lessons.size());
+    const int W = static_cast<int>(wdix.size());
+    const int local_slots = W * SLOTS_PER_DAY;
+
+    // Дни недели (локальный индекс → Date)
+    std::vector<Date> week_days;
+    week_days.reserve(W);
+    for (int gd : wdix) week_days.push_back(all_days[gd]);
+
+    // pp_allowed_global[g] хранится как вектор; переводим в set для быстрого поиска
+    std::vector<std::set<int>> pp_allowed(GROUPS);
+    for (int g = 0; g < GROUPS; g++) {
+        for (int gd : pp_allowed_global[g]) pp_allowed[g].insert(gd);
+    }
+
+    CpModelBuilder model;
+    LinearExpr objective;
+
+    // x[l][lt] — только для уроков с quota > 0
+    std::vector<std::vector<BoolVar>> x(num_lessons, std::vector<BoolVar>(local_slots));
+    for (int l = 0; l < num_lessons; l++) {
+        if (quotas[l] == 0) continue;
+        for (int lt = 0; lt < local_slots; lt++) x[l][lt] = model.NewBoolVar();
+    }
+
+    // ── Блочные (УП) уроки ─────────────────────────────────────────────────
+    struct LocalBlockInfo {
+        int lesson_id;
+        std::vector<int> possible_starts;
+        std::vector<BoolVar> start_vars;
+    };
+    std::vector<LocalBlockInfo> blocks;
+
+    for (int l = 0; l < num_lessons; l++) {
+        if (!lessons[l].is_block || quotas[l] == 0) continue;
+
+        LocalBlockInfo bi;
+        bi.lesson_id = l;
+
+        for (int ld = 0; ld < W; ld++) {
+            if (!IsAvailable(week_days[ld], lessons[l].group, unavailable)) continue;
+            for (int s = 0; s < SLOTS_PER_DAY - 1; s++) {
+                if (!IsAllowedUpStartSlot(week_days[ld], s)) continue;
+                bi.possible_starts.push_back(ld * SLOTS_PER_DAY + s);
+            }
+        }
+        for (int i = 0; i < static_cast<int>(bi.possible_starts.size()); i++)
+            bi.start_vars.push_back(model.NewBoolVar());
+
+        blocks.push_back(bi);
+    }
+
+    // ── Ограничения суммы ──────────────────────────────────────────────────
+    for (int l = 0; l < num_lessons; l++) {
+        if (quotas[l] == 0 || lessons[l].is_block) continue;
+        LinearExpr sum;
+        for (int lt = 0; lt < local_slots; lt++) sum += x[l][lt];
+        model.AddEquality(sum, quotas[l]);
+    }
+
+    for (auto& blk : blocks) {
+        int l = blk.lesson_id;
+        int req = quotas[l];
+
+        if (static_cast<int>(blk.possible_starts.size()) < req) {
+            WeekSolveResult res;
+            res.success = false;
+            res.status = "NO_STARTS_W" + std::to_string(week_num);
+            return res;
+        }
+
+        {
+            LinearExpr ss;
+            for (const auto& v : blk.start_vars) ss += v;
+            model.AddEquality(ss, req);
+        }
+
+        std::vector<std::vector<BoolVar>> covers(local_slots);
+        for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
+            int st = blk.possible_starts[i];
+            covers[st].push_back(blk.start_vars[i]);
+            covers[st + 1].push_back(blk.start_vars[i]);
+        }
+        for (int lt = 0; lt < local_slots; lt++) {
+            LinearExpr cs;
+            for (const auto& v : covers[lt]) cs += v;
+            model.AddEquality(x[l][lt], cs);
+        }
+    }
+
+    // ── Зафиксированные слоты (locked) ────────────────────────────────────
+    {
+        std::map<int, int> lid_to_l;
+        for (int l = 0; l < num_lessons; l++) lid_to_l[lessons[l].id] = l;
+
+        for (const LockedAssignment& a : locked) {
+            auto it = lid_to_l.find(a.lesson_id);
+            if (it == lid_to_l.end()) continue;
+            int l = it->second;
+            if (quotas[l] == 0) continue;
+            int local_d = -1;
+            for (int ld = 0; ld < W; ld++) {
+                if (week_days[ld] == a.date) { local_d = ld; break; }
+            }
+            if (local_d < 0 || a.slot < 0 || a.slot >= SLOTS_PER_DAY) continue;
+            int lt = local_d * SLOTS_PER_DAY + a.slot;
+            model.AddEquality(x[l][lt], 1);
+        }
+    }
+
+    // ── Недоступные дни ───────────────────────────────────────────────────
+    for (int ld = 0; ld < W; ld++) {
+        for (int g = 0; g < GROUPS; g++) {
+            if (IsAvailable(week_days[ld], g, unavailable)) continue;
+            for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                int lt = ld * SLOTS_PER_DAY + s;
+                for (int l = 0; l < num_lessons; l++) {
+                    if (quotas[l] > 0 && lessons[l].group == g)
+                        model.AddEquality(x[l][lt], 0);
+                }
+            }
+        }
+    }
+
+    // ── ПП: только в разрешённые дни ──────────────────────────────────────
+    for (int l = 0; l < num_lessons; l++) {
+        if (!lessons[l].is_pp || quotas[l] == 0) continue;
+        int g = lessons[l].group;
+        for (int ld = 0; ld < W; ld++) {
+            if (pp_allowed[g].count(wdix[ld])) continue;
+            for (int s = 0; s < SLOTS_PER_DAY; s++)
+                model.AddEquality(x[l][ld * SLOTS_PER_DAY + s], 0);
+        }
+    }
+
+    // ── group_busy, part_busy ─────────────────────────────────────────────
+    std::vector<std::vector<BoolVar>> group_busy(GROUPS, std::vector<BoolVar>(local_slots));
+    std::vector<std::vector<std::vector<BoolVar>>> part_busy(
+        GROUPS,
+        std::vector<std::vector<BoolVar>>(PARTS_PER_GROUP, std::vector<BoolVar>(local_slots))
+    );
+
+    for (int g = 0; g < GROUPS; g++) {
+        int base_sg = g * PARTS_PER_GROUP;
+        for (int lt = 0; lt < local_slots; lt++) {
+            LinearExpr whole_sum;
+            LinearExpr sub_sum[PARTS_PER_GROUP];
+
+            for (int l = 0; l < num_lessons; l++) {
+                if (quotas[l] == 0 || lessons[l].group != g) continue;
+                if (lessons[l].subgroup == -1) {
+                    whole_sum += x[l][lt];
+                } else {
+                    int part = lessons[l].subgroup - base_sg;
+                    if (part >= 0 && part < PARTS_PER_GROUP) sub_sum[part] += x[l][lt];
+                }
+            }
+
+            model.AddLessOrEqual(whole_sum, 1);
+            for (int p = 0; p < PARTS_PER_GROUP; p++) {
+                model.AddLessOrEqual(sub_sum[p], 1);
+                LinearExpr wp; wp += whole_sum; wp += sub_sum[p];
+                model.AddLessOrEqual(wp, 1);
+            }
+
+            LinearExpr gss; gss += whole_sum;
+            for (int p = 0; p < PARTS_PER_GROUP; p++) gss += sub_sum[p];
+            group_busy[g][lt] = MakePositiveIndicator(model, gss);
+
+            for (int p = 0; p < PARTS_PER_GROUP; p++) {
+                LinearExpr pss; pss += whole_sum; pss += sub_sum[p];
+                part_busy[g][p][lt] = MakePositiveIndicator(model, pss);
+            }
+        }
+    }
+
+    std::vector<std::vector<BoolVar>> student_entities;
+    for (int g = 0; g < GROUPS; g++)
+        for (int p = 0; p < PARTS_PER_GROUP; p++)
+            student_entities.push_back(part_busy[g][p]);
+
+    // ── Правило УП-день ───────────────────────────────────────────────────
+    for (int g = 0; g < GROUPS; g++) {
+        for (int p = 0; p < PARTS_PER_GROUP; p++) {
+            for (int ld = 0; ld < W; ld++) {
+                std::vector<BoolVar> up_starts;
+                for (const auto& blk : blocks) {
+                    if (!LessonAffectsPart(lessons[blk.lesson_id], g, p)) continue;
+                    for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
+                        if (blk.possible_starts[i] / SLOTS_PER_DAY == ld)
+                            up_starts.push_back(blk.start_vars[i]);
+                    }
+                }
+                if (up_starts.empty()) continue;
+
+                LinearExpr uss;
+                for (const auto& v : up_starts) uss += v;
+                model.AddLessOrEqual(uss, 1);
+
+                LinearExpr day_sum;
+                for (int s = 0; s < SLOTS_PER_DAY; s++)
+                    day_sum += part_busy[g][p][ld * SLOTS_PER_DAY + s];
+
+                BoolVar has_up = MakePositiveIndicator(model, uss);
+                LinearExpr req2; req2 += uss; req2 += uss;
+                model.AddEquality(day_sum, req2).OnlyEnforceIf(has_up);
+            }
+        }
+    }
+
+    // ── teacher_busy ──────────────────────────────────────────────────────
+    std::vector<std::vector<BoolVar>> teacher_busy(TEACHERS, std::vector<BoolVar>(local_slots));
+    for (int teacher = 0; teacher < TEACHERS; teacher++) {
+        for (int lt = 0; lt < local_slots; lt++) {
+            LinearExpr sum;
+            for (int l = 0; l < num_lessons; l++) {
+                if (quotas[l] > 0 && lessons[l].teacher == teacher) sum += x[l][lt];
+            }
+            model.AddLessOrEqual(sum, 1);
+            teacher_busy[teacher][lt] = MakePositiveIndicator(model, sum);
+        }
+    }
+
+    // ── Преподаватель заблокирован во время УП ────────────────────────────
+    for (const auto& blk : blocks) {
+        int teacher = lessons[blk.lesson_id].teacher;
+        if (teacher < 0) continue;
+        for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
+            int start_lt = blk.possible_starts[i];
+            // week_days используется как локальный all_days → возвращает локальные слоты
+            std::vector<int> blocked = TeacherBlockedSlotsForUpStart(week_days, start_lt);
+            for (int blt : blocked) {
+                LinearExpr ord;
+                for (int other = 0; other < num_lessons; other++) {
+                    if (quotas[other] == 0 || lessons[other].is_block) continue;
+                    if (lessons[other].teacher == teacher) ord += x[other][blt];
+                }
+                model.AddEquality(ord, 0).OnlyEnforceIf(blk.start_vars[i]);
+            }
+        }
+    }
+
+    // ── Нельзя двум УП одного преподавателя пересекаться по времени ──────
+    {
+        struct UpRef { int bi, si, teacher, lt; TimeInterval iv; };
+        std::vector<UpRef> up_refs;
+        for (int b = 0; b < static_cast<int>(blocks.size()); b++) {
+            const auto& blk = blocks[b];
+            int teacher = lessons[blk.lesson_id].teacher;
+            for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
+                int lt = blk.possible_starts[i];
+                int ld = lt / SLOTS_PER_DAY;
+                up_refs.push_back({b, i, teacher, lt,
+                    UpIntervalForStartSlot(week_days[ld], lt % SLOTS_PER_DAY)});
+            }
+        }
+        for (int a = 0; a < static_cast<int>(up_refs.size()); a++) {
+            for (int b = a + 1; b < static_cast<int>(up_refs.size()); b++) {
+                const auto& la = up_refs[a]; const auto& lb = up_refs[b];
+                if (la.teacher < 0 || la.teacher != lb.teacher) continue;
+                if (la.lt / SLOTS_PER_DAY != lb.lt / SLOTS_PER_DAY) continue;
+                if (!IntervalsOverlap(la.iv, lb.iv)) continue;
+                LinearExpr both;
+                both += blocks[la.bi].start_vars[la.si];
+                both += blocks[lb.bi].start_vars[lb.si];
+                model.AddLessOrEqual(both, 1);
+            }
+        }
+    }
+
+    // ── Макс/мин пар в день ───────────────────────────────────────────────
+    std::vector<std::vector<std::vector<BoolVar>>> student_day_has(
+        GROUPS,
+        std::vector<std::vector<BoolVar>>(PARTS_PER_GROUP, std::vector<BoolVar>(W))
+    );
+    std::vector<BoolVar> five_pair_vars;
+
+    for (int g = 0; g < GROUPS; g++) {
+        for (int ld = 0; ld < W; ld++) {
+            LinearExpr vgds;
+            for (int s = 0; s < SLOTS_PER_DAY; s++)
+                vgds += group_busy[g][ld * SLOTS_PER_DAY + s];
+            model.AddLessOrEqual(vgds, MAX_STUDENT_PAIRS_PER_DAY);
+        }
+    }
+
+    for (int g = 0; g < GROUPS; g++) {
+        for (int p = 0; p < PARTS_PER_GROUP; p++) {
+            for (int ld = 0; ld < W; ld++) {
+                LinearExpr ds;
+                for (int s = 0; s < SLOTS_PER_DAY; s++)
+                    ds += part_busy[g][p][ld * SLOTS_PER_DAY + s];
+
+                BoolVar has = MakePositiveIndicator(model, ds);
+                student_day_has[g][p][ld] = has;
+                AddMinIfPositive(model, ds, has, MIN_STUDENT_PAIRS_PER_STUDY_DAY);
+                model.AddLessOrEqual(ds, MAX_STUDENT_PAIRS_PER_DAY);
+
+                BoolVar is5 = model.NewBoolVar();
+                model.AddEquality(ds, MAX_STUDENT_PAIRS_PER_DAY).OnlyEnforceIf(is5);
+                model.AddLessOrEqual(ds, MAX_STUDENT_PAIRS_PER_DAY - 1).OnlyEnforceIf(is5.Not());
+                five_pair_vars.push_back(is5);
+            }
+        }
+    }
+
+    // ── Синхронизация подгрупп ────────────────────────────────────────────
+    for (int g = 0; g < GROUPS; g++)
+        for (int ld = 0; ld < W; ld++)
+            model.AddEquality(student_day_has[g][0][ld], student_day_has[g][1][ld]);
+
+    // ── Мин. учебных дней в неделю ────────────────────────────────────────
+    for (int g = 0; g < GROUPS; g++) {
+        std::vector<int> avail_lds;
+        for (int ld = 0; ld < W; ld++)
+            if (IsAvailable(week_days[ld], g, unavailable)) avail_lds.push_back(ld);
+        if (avail_lds.empty()) continue;
+
+        int req_d = std::min(MIN_STUDENT_STUDY_DAYS_PER_WEEK, static_cast<int>(avail_lds.size()));
+        LinearExpr wsd;
+        for (int ld : avail_lds) wsd += student_day_has[g][0][ld];
+
+        if (HARD_MIN_STUDY_DAYS_PER_WEEK) {
+            model.AddGreaterOrEqual(wsd, req_d);
+        } else if (USE_QUALITY_OBJECTIVE) {
+            IntVar miss = model.NewIntVar(Domain(0, req_d));
+            LinearExpr wm; wm += wsd; wm += miss;
+            model.AddGreaterOrEqual(wm, req_d);
+            objective += miss * GROUP_WEEK_MISSING_DAY_WEIGHT;
+        }
+    }
+
+    // ── Мин 2 пары преподавателю ──────────────────────────────────────────
+    if (HARD_MIN_2_TEACHER_PAIRS_PER_DAY) {
+        for (int teacher = 0; teacher < TEACHERS; teacher++) {
+            for (int ld = 0; ld < W; ld++) {
+                LinearExpr ds;
+                for (int s = 0; s < SLOTS_PER_DAY; s++)
+                    ds += teacher_busy[teacher][ld * SLOTS_PER_DAY + s];
+                AddMin2IfPositive(model, ds);
+            }
+        }
+    }
+
+    // ── Без окон (жёстко) ─────────────────────────────────────────────────
+    if (HARD_NO_STUDENT_WINDOWS) AddNoWindowsHard(model, student_entities, W);
+    if (HARD_NO_TEACHER_WINDOWS) AddNoWindowsHard(model, teacher_busy, W);
+
+    // ── Кампус ────────────────────────────────────────────────────────────
+    std::vector<std::vector<IntVar>> group_day_campus(GROUPS, std::vector<IntVar>(W));
+    std::vector<std::vector<IntVar>> teacher_day_campus(TEACHERS, std::vector<IntVar>(W));
+    for (int g = 0; g < GROUPS; g++)
+        for (int ld = 0; ld < W; ld++)
+            group_day_campus[g][ld] = model.NewIntVar(Domain(0, 1));
+    for (int t = 0; t < TEACHERS; t++)
+        for (int ld = 0; ld < W; ld++)
+            teacher_day_campus[t][ld] = model.NewIntVar(Domain(0, 1));
+
+    for (int l = 0; l < num_lessons; l++) {
+        if (quotas[l] == 0) continue;
+        int g = lessons[l].group;
+        int teacher = lessons[l].teacher;
+        for (int ld = 0; ld < W; ld++) {
+            for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                int lt = ld * SLOTS_PER_DAY + s;
+                if (teacher >= 0)
+                    model.AddEquality(group_day_campus[g][ld], teacher_day_campus[teacher][ld])
+                        .OnlyEnforceIf(x[l][lt]);
+                if (lessons[l].allowed_campuses.size() == 1) {
+                    int campus = static_cast<int>(*lessons[l].allowed_campuses.begin());
+                    model.AddEquality(group_day_campus[g][ld], campus).OnlyEnforceIf(x[l][lt]);
+                    if (teacher >= 0)
+                        model.AddEquality(teacher_day_campus[teacher][ld], campus).OnlyEnforceIf(x[l][lt]);
+                }
+            }
+        }
+    }
+
+    // ── Целевая функция качества ──────────────────────────────────────────
+    if (USE_QUALITY_OBJECTIVE) {
+        for (const auto& v : five_pair_vars)
+            objective += v * STUDENT_FIVE_PAIR_DAY_WEIGHT;
+
+        if (!HARD_NO_STUDENT_WINDOWS && OPTIMIZE_STUDENT_WINDOWS) {
+            for (const auto& gap : CreateWindowPenaltyVars(model, student_entities, W))
+                objective += gap * STUDENT_WINDOW_WEIGHT;
+        }
+        if (!HARD_NO_TEACHER_WINDOWS && OPTIMIZE_TEACHER_WINDOWS) {
+            for (const auto& gap : CreateWindowPenaltyVars(model, teacher_busy, W))
+                objective += gap * TEACHER_WINDOW_WEIGHT;
+        }
+        if (STUDENT_LATE_SLOT_WEIGHT > 0) {
+            for (const auto& busy : student_entities)
+                for (int ld = 0; ld < W; ld++)
+                    for (int s = 0; s < SLOTS_PER_DAY; s++)
+                        objective += busy[ld * SLOTS_PER_DAY + s] * (s * STUDENT_LATE_SLOT_WEIGHT);
+        }
+        if (TEACHER_LATE_SLOT_WEIGHT > 0) {
+            for (int teacher = 0; teacher < TEACHERS; teacher++)
+                for (int ld = 0; ld < W; ld++)
+                    for (int s = 0; s < SLOTS_PER_DAY; s++)
+                        objective += teacher_busy[teacher][ld * SLOTS_PER_DAY + s] * (s * TEACHER_LATE_SLOT_WEIGHT);
+        }
+        model.Minimize(objective);
+    }
+
+    // ── Решаем ────────────────────────────────────────────────────────────
+    SatParameters params;
+    params.set_num_search_workers(SOLVER_WORKERS);
+    // Лимит на одну неделю: не более 120 с и не более общего лимита
+    double week_limit = std::min(static_cast<double>(SOLVER_TIME_LIMIT_SECONDS), 120.0);
+    params.set_max_time_in_seconds(week_limit);
+    params.set_random_seed(g_solver_config.random_seed + week_num * 17);
+    params.set_max_memory_in_mb(SOLVER_MAX_MEMORY_MB);
+    params.set_linearization_level(g_solver_config.linearization_level);
+    params.set_symmetry_level(g_solver_config.symmetry_level);
+    if (STOP_AFTER_FIRST_SOLUTION) params.set_stop_after_first_solution(true);
+
+    operations_research::sat::Model sat_model;
+    sat_model.Add(NewSatParameters(params));
+
+    CpModelProto proto = model.Build();
+    CpSolverResponse resp = SolveCpModel(proto, &sat_model);
+
+    WeekSolveResult result;
+    result.status = CpSolverStatus_Name(resp.status());
+
+    if (resp.status() == CpSolverStatus::OPTIMAL ||
+        resp.status() == CpSolverStatus::FEASIBLE) {
+        result.success = true;
+        result.x_vals.assign(num_lessons, std::vector<int>(local_slots, 0));
+        for (int l = 0; l < num_lessons; l++) {
+            if (quotas[l] == 0) continue;
+            for (int lt = 0; lt < local_slots; lt++)
+                result.x_vals[l][lt] = static_cast<int>(SolutionIntegerValue(resp, x[l][lt]));
+        }
+    } else {
+        result.success = false;
+    }
+
+    return result;
+}
+
+}  // anonymous namespace
+
+GenerationResult GenerateScheduleWeekly(const std::string& output_dir) {
+    GenerationOptions empty_opts;
+    return GenerateScheduleWeekly(output_dir, empty_opts);
+}
+
+GenerationResult GenerateScheduleWeekly(
+    const std::string& output_dir,
+    const GenerationOptions& options
+) {
+    using operations_research::Domain;
+    using operations_research::sat::BoolVar;
+    using operations_research::sat::CpModelBuilder;
+    using operations_research::sat::CpModelProto;
+    using operations_research::sat::CpSolverResponse;
+    using operations_research::sat::CpSolverStatus;
+    using operations_research::sat::CpSolverStatus_Name;
+    using operations_research::sat::IntVar;
+    using operations_research::sat::LinearExpr;
+    using operations_research::sat::NewSatParameters;
+    using operations_research::sat::SatParameters;
+    using operations_research::sat::SolveCpModel;
+    using operations_research::sat::SolutionIntegerValue;
+
+    // ── Загрузка входных данных ───────────────────────────────────────────
+    ScheduleInputData input_data;
+    std::string input_error;
+    if (!LoadScheduleInputData(input_data, input_error)) {
+        return {false, "INPUT_ERROR",
+            "Не удалось загрузить data/timetable_data.json: " + input_error, output_dir};
+    }
+
+    const Date start_date = input_data.start_date;
+    const Date end_date   = input_data.end_date;
+    const auto& unavailable = input_data.unavailable;
+    const auto& unavailable_day_texts = input_data.unavailable_day_texts;
+
+    auto all_days = GenerateSchoolDays(start_date, end_date);
+    const int num_days   = static_cast<int>(all_days.size());
+    const int total_slots = num_days * SLOTS_PER_DAY;
+
+    std::vector<Lesson> lessons = input_data.lessons;
+    const int num_lessons = static_cast<int>(lessons.size());
+
+    std::vector<std::string> validation_errors;
+    if (!ValidateInputLessonsDetailed(lessons, validation_errors)) {
+        std::string msg = "Входные данные содержат ошибки (" +
+            std::to_string(validation_errors.size()) + "): ";
+        for (size_t i = 0; i < validation_errors.size() && i < 5; i++) {
+            if (i > 0) msg += " | ";
+            msg += validation_errors[i];
+        }
+        if (validation_errors.size() > 5) msg += " | …";
+        return {false, "INPUT_ERROR", msg, output_dir};
+    }
+
+    std::filesystem::create_directories(output_dir);
+    std::filesystem::create_directories(std::filesystem::path(output_dir) / "groups");
+
+    PrintInputDiagnostics(lessons, all_days, unavailable, start_date);
+
+    // ── Структура недель ──────────────────────────────────────────────────
+    std::vector<int> week_index(num_days);
+    for (int d = 0; d < num_days; d++)
+        week_index[d] = WeekIndexFromStart(start_date, all_days[d]);
+
+    std::set<int> wk_set;
+    for (int wi : week_index) wk_set.insert(wi);
+    const std::vector<int> weeks_list(wk_set.begin(), wk_set.end());
+    const int num_weeks = static_cast<int>(weeks_list.size());
+    std::map<int, int> week_pos;
+    for (int i = 0; i < num_weeks; i++) week_pos[weeks_list[i]] = i;
+
+    // week_day_indices[w] = список глобальных индексов дней в неделе w
+    std::vector<std::vector<int>> week_day_indices(num_weeks);
+    for (int d = 0; d < num_days; d++)
+        week_day_indices[week_pos[week_index[d]]].push_back(d);
+
+    // ── group_avail_weeks: недели с доступными днями ──────────────────────
+    std::vector<std::vector<int>> group_avail_weeks(GROUPS);
+    std::vector<std::map<int, std::vector<int>>> group_week_days(GROUPS);
+
+    for (int g = 0; g < GROUPS; g++) {
+        for (int d = 0; d < num_days; d++) {
+            if (IsAvailable(all_days[d], g, unavailable)) {
+                int w = week_pos[week_index[d]];
+                group_week_days[g][w].push_back(d);
+            }
+        }
+        for (auto& kv : group_week_days[g]) group_avail_weeks[g].push_back(kv.first);
+    }
+
+    // ── Алгоритм Брезенхема ───────────────────────────────────────────────
+    auto bresenham_quota = [](int total, int active_weeks) -> std::vector<int> {
+        if (active_weeks <= 0) return {};
+        std::vector<int> q(active_weeks, 0);
+        int acc = 0;
+        for (int i = 0; i < active_weeks; i++) {
+            acc += total;
+            int slots_here = acc / active_weeks;
+            acc -= slots_here * active_weeks;
+            q[i] = slots_here;
+        }
+        return q;
+    };
+
+    // ── ПП: вычисляем разрешённые дни (последние ceil(total/3)) ──────────
+    // pp_allowed_global[g] = список глобальных индексов дней, где ПП разрешена
+    std::vector<std::vector<int>> pp_allowed_global(GROUPS);
+    {
+        std::vector<std::vector<int>> group_avail_days(GROUPS);
+        for (int g = 0; g < GROUPS; g++) {
+            for (int d = 0; d < num_days; d++)
+                if (IsAvailable(all_days[d], g, unavailable))
+                    group_avail_days[g].push_back(d);
+        }
+        for (int l = 0; l < num_lessons; l++) {
+            if (!lessons[l].is_pp) continue;
+            int g = lessons[l].group;
+            const auto& avail = group_avail_days[g];
+            int pp_days = (lessons[l].total_slots + 2) / 3;
+            if (static_cast<int>(avail.size()) <= pp_days) {
+                pp_allowed_global[g] = avail;
+            } else {
+                int cutoff = static_cast<int>(avail.size()) - pp_days;
+                pp_allowed_global[g].assign(avail.begin() + cutoff, avail.end());
+            }
+        }
+    }
+
+    // ── lesson_week_quota[l][w] — квоты по Брезенхему ────────────────────
+    // Для ПП уроков: активные недели — только те, где есть pp_allowed дни группы
+    std::vector<std::vector<int>> lesson_week_quota(num_lessons, std::vector<int>(num_weeks, 0));
+
+    for (int l = 0; l < num_lessons; l++) {
+        int g = lessons[l].group;
+
+        if (lessons[l].is_pp) {
+            // Активные недели — только те, где есть разрешённый для ПП день
+            std::set<int> pp_day_set(pp_allowed_global[g].begin(), pp_allowed_global[g].end());
+            std::vector<int> pp_active_weeks;
+            for (int w : group_avail_weeks[g]) {
+                bool has_pp = false;
+                for (int gd : week_day_indices[w])
+                    if (pp_day_set.count(gd)) { has_pp = true; break; }
+                if (has_pp) pp_active_weeks.push_back(w);
+            }
+            if (pp_active_weeks.empty()) continue;
+            auto q = bresenham_quota(lessons[l].total_slots, static_cast<int>(pp_active_weeks.size()));
+            for (int i = 0; i < static_cast<int>(pp_active_weeks.size()); i++)
+                lesson_week_quota[l][pp_active_weeks[i]] = q[i];
+        } else {
+            const auto& avail_weeks = group_avail_weeks[g];
+            int active = static_cast<int>(avail_weeks.size());
+            if (active == 0) continue;
+            auto q = bresenham_quota(lessons[l].total_slots, active);
+            for (int i = 0; i < active; i++)
+                lesson_week_quota[l][avail_weeks[i]] = q[i];
+        }
+    }
+
+    // ── Корректировка квот под зафиксированные слоты ─────────────────────
+    // Если locked-слот попадает в неделю с quota==0, повышаем квоту в этой неделе
+    // и понижаем в неделе с максимальной квотой (чтобы sum == total_slots).
+    if (!options.locked.empty()) {
+        std::map<int, int> lid_to_l;
+        for (int l = 0; l < num_lessons; l++) lid_to_l[lessons[l].id] = l;
+        std::map<Date, int> date_to_day;
+        for (int d = 0; d < num_days; d++) date_to_day[all_days[d]] = d;
+
+        for (const LockedAssignment& a : options.locked) {
+            auto lit = lid_to_l.find(a.lesson_id);
+            if (lit == lid_to_l.end()) continue;
+            int l = lit->second;
+            auto dit = date_to_day.find(a.date);
+            if (dit == date_to_day.end()) continue;
+            int d = dit->second;
+            int w = week_pos[week_index[d]];
+
+            if (lesson_week_quota[l][w] == 0) {
+                // Найти неделю с максимальной квотой для этого урока
+                int max_w = -1, max_q = 0;
+                for (int ww = 0; ww < num_weeks; ww++) {
+                    if (lesson_week_quota[l][ww] > max_q) {
+                        max_q = lesson_week_quota[l][ww];
+                        max_w = ww;
+                    }
+                }
+                if (max_w >= 0 && max_q > 0) {
+                    lesson_week_quota[l][w]++;
+                    lesson_week_quota[l][max_w]--;
+                    std::cout << "  [weekly] lock: урок " << lessons[l].name
+                              << " неделя " << w << " получила квоту +1 (с недели " << max_w << ")\n";
+                }
+            }
+        }
+    }
+
+    std::cout << "\n══ Режим: генерация по неделям ══\n";
+    std::cout << "Недель: " << num_weeks << ", Дней: " << num_days << "\n\n";
+
+    // ── Решаем по неделям ─────────────────────────────────────────────────
+    // global_x_vals[l][global_slot] = 0/1
+    std::vector<std::vector<int>> global_x_vals(num_lessons, std::vector<int>(total_slots, 0));
+
+    auto solve_start = std::chrono::steady_clock::now();
+
+    for (int w = 0; w < num_weeks; w++) {
+        const auto& wdix = week_day_indices[w];
+        if (wdix.empty()) continue;
+
+        // Проверяем, есть ли вообще хоть один урок в эту неделю
+        bool any_lesson = false;
+        for (int l = 0; l < num_lessons; l++) {
+            if (lesson_week_quota[l][w] > 0) { any_lesson = true; break; }
+        }
+
+        std::vector<int> quotas(num_lessons);
+        for (int l = 0; l < num_lessons; l++) quotas[l] = lesson_week_quota[l][w];
+
+        auto t0 = std::chrono::steady_clock::now();
+        std::cout << "Неделя " << (w + 1) << "/" << num_weeks
+                  << " [" << DateToString(all_days[wdix.front()])
+                  << " … " << DateToString(all_days[wdix.back()])
+                  << "] " << wdix.size() << " дней";
+
+        if (!any_lesson) {
+            std::cout << " — пропуск (нет занятий)\n";
+            continue;
+        }
+        std::cout << "\n";
+
+        WeekSolveResult wr = SolveOneWeek(
+            w, wdix, all_days, lessons, unavailable,
+            quotas, pp_allowed_global, options.locked
+        );
+
+        double elapsed = std::chrono::duration<double>(
+            std::chrono::steady_clock::now() - t0).count();
+
+        if (!wr.success) {
+            std::cerr << "  ОШИБКА недели " << (w + 1) << ": " << wr.status
+                      << " (" << std::fixed << std::setprecision(1) << elapsed << " с)\n";
+            return {false, wr.status,
+                "Не удалось решить неделю " + std::to_string(w + 1) + ": " + wr.status,
+                output_dir};
+        }
+
+        std::cout << "  Решено за " << std::fixed << std::setprecision(1) << elapsed
+                  << " с [" << wr.status << "]\n";
+
+        // Копируем локальные x_vals в глобальные
+        for (int l = 0; l < num_lessons; l++) {
+            if (quotas[l] == 0) continue;
+            for (int li = 0; li < static_cast<int>(wdix.size()); li++) {
+                int gd = wdix[li];
+                for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                    int lt = li * SLOTS_PER_DAY + s;
+                    int gt = gd * SLOTS_PER_DAY + s;
+                    global_x_vals[l][gt] = wr.x_vals[l][lt];
+                }
+            }
+        }
+    }
+
+    double total_elapsed = std::chrono::duration<double>(
+        std::chrono::steady_clock::now() - solve_start).count();
+    std::cout << "\nВсего недель решено за " << std::fixed << std::setprecision(1)
+              << total_elapsed << " с\n";
+
+    // ── Реконструкция глобальной модели для записи файлов ────────────────
+    // Строим модель из global_x_vals, фиксируем все переменные и решаем
+    // тривиально — только чтобы получить CpSolverResponse + BoolVar-указатели
+    // для существующих write-функций.
+
+    // Вычисляем производные значения из global_x_vals
+    std::vector<std::vector<int>> gbusy_v(GROUPS, std::vector<int>(total_slots, 0));
+    std::vector<std::vector<std::vector<int>>> pbusy_v(
+        GROUPS, std::vector<std::vector<int>>(PARTS_PER_GROUP, std::vector<int>(total_slots, 0))
+    );
+    std::vector<std::vector<int>> tbusy_v(TEACHERS, std::vector<int>(total_slots, 0));
+
+    for (int l = 0; l < num_lessons; l++) {
+        int g = lessons[l].group;
+        int teacher = lessons[l].teacher;
+        int base_sg = g * PARTS_PER_GROUP;
+        for (int t = 0; t < total_slots; t++) {
+            if (!global_x_vals[l][t]) continue;
+            gbusy_v[g][t] = 1;
+            if (teacher >= 0) tbusy_v[teacher][t] = 1;
+
+            if (lessons[l].subgroup == -1) {
+                for (int p = 0; p < PARTS_PER_GROUP; p++) pbusy_v[g][p][t] = 1;
+            } else {
+                int part = lessons[l].subgroup - base_sg;
+                if (part >= 0 && part < PARTS_PER_GROUP) pbusy_v[g][part][t] = 1;
+                // часть с subgroup=-1 означает вся группа; подгруппа с индексом part
+                // также "тянет" весь group — но для pbusy это подгруппа, не вся группа
+                // Добавим whole lessons к обеим подгруппам через gbusy, а pbusy
+                // пусть хранит только подгрупповые данные. Выше это уже учтено.
+            }
+        }
+    }
+    // Для whole-group уроков (subgroup==-1) pbusy обеих частей = 1
+    // Уже обработано в цикле выше.
+
+    std::vector<std::vector<int>> g_campus_v(GROUPS, std::vector<int>(num_days, 0));
+    std::vector<std::vector<int>> t_campus_v(TEACHERS, std::vector<int>(num_days, 0));
+    for (int l = 0; l < num_lessons; l++) {
+        if (lessons[l].allowed_campuses.size() != 1) continue;
+        int campus = static_cast<int>(*lessons[l].allowed_campuses.begin());
+        int g = lessons[l].group;
+        int teacher = lessons[l].teacher;
+        for (int d = 0; d < num_days; d++) {
+            for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                if (global_x_vals[l][d * SLOTS_PER_DAY + s]) {
+                    g_campus_v[g][d] = campus;
+                    if (teacher >= 0) t_campus_v[teacher][d] = campus;
+                }
+            }
+        }
+    }
+
+    // Строим реконструкцию блоков (структурно те же, что в main-модели)
+    std::vector<BlockInfo> rec_blocks;
+    for (int l = 0; l < num_lessons; l++) {
+        if (!lessons[l].is_block) continue;
+        BlockInfo bi;
+        bi.lesson_id = l;
+        for (int d = 0; d < num_days; d++) {
+            if (!IsAvailable(all_days[d], lessons[l].group, unavailable)) continue;
+            for (int s = 0; s < SLOTS_PER_DAY - 1; s++) {
+                if (!IsAllowedUpStartSlot(all_days[d], s)) continue;
+                bi.possible_starts.push_back(d * SLOTS_PER_DAY + s);
+            }
+        }
+        rec_blocks.push_back(bi);
+    }
+
+    // Тривиальная фиксирующая модель
+    CpModelBuilder fix_model;
+
+    std::vector<std::vector<BoolVar>> fx(num_lessons, std::vector<BoolVar>(total_slots));
+    for (int l = 0; l < num_lessons; l++) {
+        for (int t = 0; t < total_slots; t++) {
+            fx[l][t] = fix_model.NewBoolVar();
+            fix_model.AddEquality(fx[l][t], global_x_vals[l][t]);
+        }
+    }
+
+    // start_vars для блоков (для WriteTeachersTxt)
+    for (auto& blk : rec_blocks) {
+        for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++)
+            blk.start_vars.push_back(fix_model.NewBoolVar());
+        // Фиксируем start_vars: start = 1 если оба слота заняты этим уроком
+        int l = blk.lesson_id;
+        for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
+            int st = blk.possible_starts[i];
+            int val = (global_x_vals[l][st] && global_x_vals[l][st + 1]) ? 1 : 0;
+            fix_model.AddEquality(blk.start_vars[i], val);
+        }
+    }
+
+    std::vector<std::vector<BoolVar>> fgb(GROUPS, std::vector<BoolVar>(total_slots));
+    std::vector<std::vector<std::vector<BoolVar>>> fpb(
+        GROUPS, std::vector<std::vector<BoolVar>>(PARTS_PER_GROUP, std::vector<BoolVar>(total_slots))
+    );
+    std::vector<std::vector<BoolVar>> ftb(TEACHERS, std::vector<BoolVar>(total_slots));
+
+    for (int g = 0; g < GROUPS; g++)
+        for (int t = 0; t < total_slots; t++) {
+            fgb[g][t] = fix_model.NewBoolVar();
+            fix_model.AddEquality(fgb[g][t], gbusy_v[g][t]);
+        }
+    for (int g = 0; g < GROUPS; g++)
+        for (int p = 0; p < PARTS_PER_GROUP; p++)
+            for (int t = 0; t < total_slots; t++) {
+                fpb[g][p][t] = fix_model.NewBoolVar();
+                fix_model.AddEquality(fpb[g][p][t], pbusy_v[g][p][t]);
+            }
+    for (int teacher = 0; teacher < TEACHERS; teacher++)
+        for (int t = 0; t < total_slots; t++) {
+            ftb[teacher][t] = fix_model.NewBoolVar();
+            fix_model.AddEquality(ftb[teacher][t], tbusy_v[teacher][t]);
+        }
+
+    std::vector<std::vector<IntVar>> fgdc(GROUPS, std::vector<IntVar>(num_days));
+    std::vector<std::vector<IntVar>> ftdc(TEACHERS, std::vector<IntVar>(num_days));
+    for (int g = 0; g < GROUPS; g++)
+        for (int d = 0; d < num_days; d++) {
+            fgdc[g][d] = fix_model.NewIntVar(Domain(0, 1));
+            fix_model.AddEquality(fgdc[g][d], g_campus_v[g][d]);
+        }
+    for (int teacher = 0; teacher < TEACHERS; teacher++)
+        for (int d = 0; d < num_days; d++) {
+            ftdc[teacher][d] = fix_model.NewIntVar(Domain(0, 1));
+            fix_model.AddEquality(ftdc[teacher][d], t_campus_v[teacher][d]);
+        }
+
+    // Решаем тривиально — stop_after_first_solution даст мгновенный ответ
+    SatParameters fix_params;
+    fix_params.set_num_search_workers(1);
+    fix_params.set_max_time_in_seconds(10.0);
+    fix_params.set_stop_after_first_solution(true);
+
+    operations_research::sat::Model fix_sat;
+    fix_sat.Add(NewSatParameters(fix_params));
+    CpModelProto fix_proto = fix_model.Build();
+    CpSolverResponse fix_resp = SolveCpModel(fix_proto, &fix_sat);
+
+    if (fix_resp.status() != CpSolverStatus::OPTIMAL &&
+        fix_resp.status() != CpSolverStatus::FEASIBLE) {
+        return {false, "RECONSTRUCT_ERROR",
+            "Не удалось восстановить модель для записи файлов", output_dir};
+    }
+
+    // ── Статистика ────────────────────────────────────────────────────────
+    std::vector<std::vector<BoolVar>> student_entities_fix;
+    for (int g = 0; g < GROUPS; g++)
+        for (int p = 0; p < PARTS_PER_GROUP; p++)
+            student_entities_fix.push_back(fpb[g][p]);
+
+    int student_windows = CountWindows(fix_resp, student_entities_fix, num_days);
+    int teacher_windows = CountWindows(fix_resp, ftb, num_days);
+    int max_student_pairs = MaxStudentPairsInDay(fix_resp, fpb, num_days);
+    int five_pair_days = CountFivePairStudentDays(fix_resp, fpb, num_days);
+    int up_day_violations = CountUpDayRuleViolations(fix_resp, lessons, fx, fpb, num_days);
+    int up_teacher_lock_violations = CountUpTeacherLockViolations(
+        fix_resp, lessons, fx, rec_blocks, all_days);
+
+    std::cout << "\nРасписание (по неделям) готово.\n";
+    std::cout << "Окон у студентов: " << student_windows << "\n";
+    std::cout << "Окон у преподавателей: " << teacher_windows << "\n";
+    std::cout << "Максимум пар у студента за день: " << max_student_pairs << "\n";
+    std::cout << "Дней по 5 пар у подгрупп: " << five_pair_days << "\n";
+    std::cout << "Нарушений правила УП-день: " << up_day_violations << "\n";
+    std::cout << "Нарушений занятости преподавателя во время УП: "
+              << up_teacher_lock_violations << "\n";
+
+    // ── Запись файлов ─────────────────────────────────────────────────────
+    const std::filesystem::path out_dir(output_dir);
+    const std::filesystem::path groups_dir = out_dir / "groups";
+
+    WriteAllGroupsTxt(
+        (out_dir / "raspisanie_all.txt").string(),
+        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
+
+    for (int g = 0; g < GROUPS; g++) {
+        WriteGroupScheduleTxt(
+            (groups_dir / ("raspisanie_group_" + std::to_string(g) + ".txt")).string(),
+            fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts, g);
+    }
+
+    WriteGroupsCsv(
+        (out_dir / "raspisanie_groups.csv").string(),
+        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
+
+    WriteTeachersTxt(
+        (out_dir / "raspisanie_teachers.txt").string(),
+        fix_resp, all_days, lessons, fx, rec_blocks, ftb, ftdc);
+
+    WriteAllGroupsJson(
+        (out_dir / "schedule_all.json").string(),
+        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
+
+    for (int g = 0; g < GROUPS; g++) {
+        WriteGroupJson(
+            (groups_dir / ("group_" + std::to_string(g) + ".json")).string(),
+            fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts, g);
+    }
+
+    std::cout << "\nФайлы созданы:\n";
+    std::cout << "  " << (out_dir / "raspisanie_all.txt").string() << "\n";
+    std::cout << "  " << (out_dir / "schedule_all.json").string() << "\n";
+    std::cout << "  " << (out_dir / "groups" / "group_*.json").string() << "\n";
+    std::cout << "  " << (out_dir / "raspisanie_groups.csv").string() << "\n";
+    std::cout << "  " << (out_dir / "raspisanie_teachers.txt").string() << "\n";
+
+    return {true, "WEEKLY_FEASIBLE", "Расписание по неделям найдено", output_dir};
 }
 
 int RunScheduler() {

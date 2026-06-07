@@ -1,6 +1,6 @@
 <template>
   <div class="app-root">
-    <Navbar />
+    <Navbar v-if="!route.meta.hideNav" />
     <main class="main-content">
       <RouterView />
     </main>
@@ -9,8 +9,11 @@
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue'
 import Toast from './components/Toast.vue'
+
+const route = useRoute()
 </script>
 
 <style scoped>

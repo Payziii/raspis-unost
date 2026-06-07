@@ -75,7 +75,10 @@
         <table class="sched-table">
           <thead>
             <tr>
-              <th rowspan="2" class="th-slot sticky-col">🕐<br/>Пара</th>
+              <th rowspan="2" class="th-slot sticky-col">
+                <span class="slot-header-icon">🕐</span>
+                <span class="slot-header-text">Пара</span>
+              </th>
               <th
                 v-for="dateStr in weekDates"
                 :key="dateStr"
@@ -550,12 +553,17 @@ function initScratch() {
   border: 1px solid var(--border-strong); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
   margin-bottom: 20px;
 }
-.sched-table { border-collapse: collapse; font-size: 13px; width: 100%; }
+.sched-table { border-collapse: collapse; font-size: 13px; width: 100%; table-layout: auto; }
 .sticky-col { position: sticky; left: 0; z-index: 2; }
 .th-slot {
   background: var(--bg-secondary); border-right: 2px solid var(--border-strong);
   border-bottom: 2px solid var(--border-strong); z-index: 4 !important;
-  text-align: center; width: 84px; padding: 10px 8px;
+  text-align: center; width: 84px; min-width: 76px; padding: 10px 8px;
+}
+.slot-header-icon { display: block; font-size: 18px; line-height: 1; margin-bottom: 4px; }
+.slot-header-text {
+  display: block; font-size: 10px; font-weight: 700;
+  color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em;
 }
 .th-day {
   background: linear-gradient(135deg, #4f46e5 0%, #6366f1 60%, #818cf8 100%);
@@ -563,11 +571,12 @@ function initScratch() {
   border-left: 2px solid rgba(255,255,255,0.18);
   border-bottom: 1px solid rgba(255,255,255,0.18); white-space: nowrap;
 }
-.day-name { display: block; font-size: 12px; font-weight: 800; }
-.day-date-sub { display: block; font-size: 10px; font-weight: 400; opacity: 0.72; }
+.th-day:first-child { border-left: none; }
+.day-name { display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.day-date-sub { display: block; font-size: 10px; font-weight: 400; opacity: 0.72; margin-top: 3px; letter-spacing: 0.04em; }
 .th-group {
   background: #1a2540; color: var(--text-secondary); text-align: center;
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
   padding: 6px 10px; white-space: nowrap;
   border-bottom: 2px solid var(--border-strong); min-width: 140px;
 }
@@ -577,26 +586,31 @@ function initScratch() {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   border-right: 2px solid var(--border-strong);
   border-top: 1px solid var(--border); min-height: 56px;
+  transition: background var(--transition);
 }
-.slot-num { font-size: 20px; font-weight: 800; color: var(--text-primary); }
-.slot-time { font-size: 9px; color: var(--text-muted); }
+.slot-num { font-size: 20px; font-weight: 800; color: var(--text-primary); line-height: 1; }
+.slot-time { font-size: 9px; color: var(--text-muted); white-space: nowrap; letter-spacing: 0.03em; text-align: center; }
 
 .slot-cell {
   padding: 8px 10px; vertical-align: top;
   border-top: 1px solid var(--border); transition: background var(--transition);
 }
 .slot-cell.editable { cursor: pointer; }
-.slot-cell.editable:hover { background: rgba(99, 102, 241, 0.12); }
+.slot-row:hover .slot-cell { background: rgba(255, 255, 255, 0.025); }
+.slot-row:hover .slot-label { background: #253047; }
+.slot-cell.editable:hover { background: rgba(99, 102, 241, 0.12) !important; }
 .slot-cell.day-separator { border-left: 2px solid var(--border-strong); }
 
 .cell-lab { background: rgba(16, 185, 129, 0.07); }
+.slot-row:hover .cell-lab { background: rgba(16, 185, 129, 0.13) !important; }
 .cell-practice { background: rgba(245, 158, 11, 0.07); }
+.slot-row:hover .cell-practice { background: rgba(245, 158, 11, 0.13) !important; }
 
 .cell-inner { display: flex; flex-direction: column; gap: 4px; }
 .cell-subject { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.35; }
 .cell-empty {
   color: var(--text-muted); font-size: 18px; display: flex;
-  align-items: center; justify-content: center; min-height: 32px; opacity: 0.25;
+  align-items: center; justify-content: center; min-height: 40px; opacity: 0.25;
 }
 
 .progress-card {

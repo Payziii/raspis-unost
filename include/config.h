@@ -27,6 +27,7 @@ void SetRuntimeNames(const std::vector<std::string>& groups, const std::vector<s
 // Эти макросы оставлены для обратной совместимости c существующим кодом,
 // чтобы переход на runtime-config не потребовал переписать scheduler.cpp/model_utils.cpp.
 #define SOLVER_TIME_LIMIT_SECONDS (timetable::g_solver_config.solver_time_limit_seconds)
+#define WEEK_TIME_LIMIT_SECONDS   (timetable::g_solver_config.week_time_limit_seconds)
 #define SOLVER_WORKERS (timetable::g_solver_config.solver_workers)
 #define SOLVER_MAX_MEMORY_MB (timetable::g_solver_config.solver_max_memory_mb)
 #define STOP_AFTER_FIRST_SOLUTION (timetable::g_solver_config.stop_after_first_solution)

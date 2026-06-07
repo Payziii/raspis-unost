@@ -1271,15 +1271,18 @@ static bool WriteScheduleFiles(
     return true;
 }
 
+// relaxed_retry=true: снимаем HARD_NO_*_WINDOWS + stop_after_first_solution,
+//   чтобы быстро получить хоть какое-то решение при UNKNOWN на первой попытке.
 static WeekSolveResult SolveOneWeek(
     int week_num,
-    const std::vector<int>& wdix,    // индексы в all_days для дней этой недели
+    const std::vector<int>& wdix,
     const std::vector<Date>& all_days,
     const std::vector<Lesson>& lessons,
     const std::map<int, std::vector<std::pair<Date, Date>>>& unavailable,
-    const std::vector<int>& quotas,  // quotas[l] = кол-во пар/стартов в эту неделю
-    const std::vector<std::vector<int>>& pp_allowed_global,  // [g] -> set of global day idx
-    const std::vector<LockedAssignment>& locked
+    const std::vector<int>& quotas,
+    const std::vector<std::vector<int>>& pp_allowed_global,
+    const std::vector<LockedAssignment>& locked,
+    bool relaxed_retry = false
 ) {
     using operations_research::Domain;
     using operations_research::sat::BoolVar;
@@ -1565,6 +1568,14 @@ static WeekSolveResult SolveOneWeek(
         }
     }
 
+    // ── Адаптивный мин. пар: не требуем больше, чем доступно в неделю ───────
+    // Если Брезенхем дал группе мало пар, жёсткое MIN_STUDENT_PAIRS_PER_STUDY_DAY
+    // сделает модель нерешаемой. Вычисляем эффективный минимум по факту.
+    std::vector<int> group_week_total(GROUPS, 0);
+    for (int l = 0; l < num_lessons; l++) {
+        if (quotas[l] > 0) group_week_total[lessons[l].group] += quotas[l];
+    }
+
     // ── Макс/мин пар в день ───────────────────────────────────────────────
     std::vector<std::vector<std::vector<BoolVar>>> student_day_has(
         GROUPS,
@@ -1582,6 +1593,10 @@ static WeekSolveResult SolveOneWeek(
     }
 
     for (int g = 0; g < GROUPS; g++) {
+        // Эффективный мин. пар в день: не выше того, что реально доступно группе в неделю
+        int eff_min = (group_week_total[g] == 0) ? 0
+                    : std::min(MIN_STUDENT_PAIRS_PER_STUDY_DAY, group_week_total[g]);
+
         for (int p = 0; p < PARTS_PER_GROUP; p++) {
             for (int ld = 0; ld < W; ld++) {
                 LinearExpr ds;
@@ -1590,7 +1605,7 @@ static WeekSolveResult SolveOneWeek(
 
                 BoolVar has = MakePositiveIndicator(model, ds);
                 student_day_has[g][p][ld] = has;
-                AddMinIfPositive(model, ds, has, MIN_STUDENT_PAIRS_PER_STUDY_DAY);
+                if (eff_min > 0) AddMinIfPositive(model, ds, has, eff_min);
                 model.AddLessOrEqual(ds, MAX_STUDENT_PAIRS_PER_DAY);
 
                 BoolVar is5 = model.NewBoolVar();
@@ -1640,8 +1655,9 @@ static WeekSolveResult SolveOneWeek(
     }
 
     // ── Без окон (жёстко) ─────────────────────────────────────────────────
-    if (HARD_NO_STUDENT_WINDOWS) AddNoWindowsHard(model, student_entities, W);
-    if (HARD_NO_TEACHER_WINDOWS) AddNoWindowsHard(model, teacher_busy, W);
+    // При relaxed_retry жёсткие окна снимаем — ищем хоть какое-то решение.
+    if (!relaxed_retry && HARD_NO_STUDENT_WINDOWS) AddNoWindowsHard(model, student_entities, W);
+    if (!relaxed_retry && HARD_NO_TEACHER_WINDOWS) AddNoWindowsHard(model, teacher_busy, W);
 
     // ── Кампус ────────────────────────────────────────────────────────────
     std::vector<std::vector<IntVar>> group_day_campus(GROUPS, std::vector<IntVar>(W));
@@ -1704,14 +1720,15 @@ static WeekSolveResult SolveOneWeek(
     // ── Решаем ────────────────────────────────────────────────────────────
     SatParameters params;
     params.set_num_search_workers(SOLVER_WORKERS);
-    // Лимит на одну неделю: не более 120 с и не более общего лимита
-    double week_limit = std::min(static_cast<double>(SOLVER_TIME_LIMIT_SECONDS), 120.0);
-    params.set_max_time_in_seconds(week_limit);
-    params.set_random_seed(g_solver_config.random_seed + week_num * 17);
+    // relaxed_retry: вдвое больше времени + stop_after_first чтобы точно что-то найти
+    double time_limit = relaxed_retry ? WEEK_TIME_LIMIT_SECONDS * 2.0 : WEEK_TIME_LIMIT_SECONDS;
+    params.set_max_time_in_seconds(time_limit);
+    params.set_random_seed(g_solver_config.random_seed + week_num * 17 + (relaxed_retry ? 1000 : 0));
     params.set_max_memory_in_mb(SOLVER_MAX_MEMORY_MB);
     params.set_linearization_level(g_solver_config.linearization_level);
     params.set_symmetry_level(g_solver_config.symmetry_level);
-    if (STOP_AFTER_FIRST_SOLUTION) params.set_stop_after_first_solution(true);
+    if (STOP_AFTER_FIRST_SOLUTION || relaxed_retry)
+        params.set_stop_after_first_solution(true);
 
     operations_research::sat::Model sat_model;
     sat_model.Add(NewSatParameters(params));
@@ -1934,7 +1951,12 @@ GenerationResult GenerateScheduleWeekly(
     }
 
     std::cout << "\n══ Режим: генерация по неделям ══\n";
-    std::cout << "Недель: " << num_weeks << ", Дней: " << num_days << "\n\n";
+    std::cout << "Недель: " << num_weeks << ", Дней: " << num_days << "\n";
+    std::cout << "Лимит на неделю: " << WEEK_TIME_LIMIT_SECONDS << " с"
+              << " | no_student_windows=" << (HARD_NO_STUDENT_WINDOWS ? "HARD" : "soft")
+              << " | min_pairs_day=" << MIN_STUDENT_PAIRS_PER_STUDY_DAY
+              << " | quality_obj=" << (USE_QUALITY_OBJECTIVE ? "on" : "off")
+              << "\n\n";
 
     // ── Решаем по неделям ─────────────────────────────────────────────────
     std::vector<std::vector<int>> global_x_vals(num_lessons, std::vector<int>(total_slots, 0));
@@ -1982,17 +2004,31 @@ GenerationResult GenerateScheduleWeekly(
         auto t0 = std::chrono::steady_clock::now();
         WeekSolveResult wr = SolveOneWeek(
             w, wdix, all_days, lessons, unavailable,
-            quotas, pp_allowed_global, options.locked
+            quotas, pp_allowed_global, options.locked, false
         );
         double elapsed = std::chrono::duration<double>(
             std::chrono::steady_clock::now() - t0).count();
+
+        // Если таймаут (UNKNOWN) — пробуем ещё раз с ослабленными ограничениями
+        if (!wr.success && wr.status.find("UNKNOWN") != std::string::npos) {
+            std::cout << "  UNKNOWN за " << std::fixed << std::setprecision(1) << elapsed
+                      << " с → повтор с ослабленными ограничениями (без жёстких окон)…\n";
+            auto t1 = std::chrono::steady_clock::now();
+            wr = SolveOneWeek(
+                w, wdix, all_days, lessons, unavailable,
+                quotas, pp_allowed_global, options.locked, true
+            );
+            elapsed += std::chrono::duration<double>(
+                std::chrono::steady_clock::now() - t1).count();
+            if (wr.success)
+                std::cout << "  Fallback решён за " << elapsed << " с [" << wr.status << "] ⚠ ограничения ослаблены\n";
+        }
 
         if (!wr.success) {
             std::cerr << "  ОШИБКА недели " << (w + 1) << ": " << wr.status
                       << " (" << std::fixed << std::setprecision(1) << elapsed << " с)\n";
             if (callbacks.on_week_done)
                 callbacks.on_week_done(w, num_weeks, date_from, date_to, "failed", elapsed);
-            // Сохраняем частичный результат
             WriteScheduleFiles(output_dir, global_x_vals, num_days,
                 lessons, all_days, unavailable, unavailable_day_texts, false);
             return {false, wr.status,

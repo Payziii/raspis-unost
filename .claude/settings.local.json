@@ -19,7 +19,8 @@
       "Bash(py -c \"import openpyxl; print\\('ok'\\)\")",
       "Bash(py -m pip install openpyxl -q)",
       "Bash(py)",
-      "Bash(py *)"
+      "Bash(py *)",
+      "Bash(\"/c/Program Files/Microsoft Visual Studio/18/Community/MSBuild/Current/Bin/MSBuild.exe\" timetable_solver.sln -p:Configuration=Release -p:Platform=x64 -t:timetable_solver -verbosity:normal)"
     ]
   }
 }

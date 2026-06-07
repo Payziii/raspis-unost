@@ -12,6 +12,7 @@ RuntimeSolverConfig DefaultSolverConfig() {
     // солвер должен находить FEASIBLE-решение за разумное время.
     RuntimeSolverConfig cfg;
     cfg.solver_time_limit_seconds = 1800.0;
+    cfg.week_time_limit_seconds = 60.0;
     cfg.solver_workers = 4;
     cfg.solver_max_memory_mb = 8072.0;
     cfg.stop_after_first_solution = false;
@@ -84,6 +85,7 @@ void LoadSolverConfigFromJson(const JsonValue& solver_config_json) {
     RuntimeSolverConfig cfg = DefaultSolverConfig();
     if (solver_config_json.IsObject()) {
         PullDouble(solver_config_json, "solver_time_limit_seconds", cfg.solver_time_limit_seconds);
+        PullDouble(solver_config_json, "week_time_limit_seconds", cfg.week_time_limit_seconds);
         PullInt(solver_config_json, "solver_workers", cfg.solver_workers);
         PullDouble(solver_config_json, "solver_max_memory_mb", cfg.solver_max_memory_mb);
         PullBool(solver_config_json, "stop_after_first_solution", cfg.stop_after_first_solution);
@@ -125,6 +127,7 @@ void LoadSolverConfigFromJson(const JsonValue& solver_config_json) {
     cfg.subject_spread_bucket_available_days = std::max(1, cfg.subject_spread_bucket_available_days);
     cfg.solver_workers = std::max(1, cfg.solver_workers);
     cfg.solver_time_limit_seconds = std::max(1.0, cfg.solver_time_limit_seconds);
+    cfg.week_time_limit_seconds = std::max(5.0, cfg.week_time_limit_seconds);
     cfg.solver_max_memory_mb = std::max(64.0, cfg.solver_max_memory_mb);
 
     ApplySolverConfig(cfg);
@@ -133,6 +136,7 @@ void LoadSolverConfigFromJson(const JsonValue& solver_config_json) {
 JsonValue SolverConfigToJson(const RuntimeSolverConfig& cfg) {
     JsonValue v = JsonValue::MakeObject();
     v.At("solver_time_limit_seconds") = JsonValue::MakeNumber(cfg.solver_time_limit_seconds);
+    v.At("week_time_limit_seconds") = JsonValue::MakeNumber(cfg.week_time_limit_seconds);
     v.At("solver_workers") = JsonValue::MakeNumber(cfg.solver_workers);
     v.At("solver_max_memory_mb") = JsonValue::MakeNumber(cfg.solver_max_memory_mb);
     v.At("stop_after_first_solution") = JsonValue::MakeBool(cfg.stop_after_first_solution);
@@ -177,6 +181,7 @@ void UpdateSolverConfigFromPatch(const JsonValue& patch) {
     RuntimeSolverConfig cfg = g_solver_config;
 
     PullDouble(patch, "solver_time_limit_seconds", cfg.solver_time_limit_seconds);
+    PullDouble(patch, "week_time_limit_seconds", cfg.week_time_limit_seconds);
     PullInt(patch, "solver_workers", cfg.solver_workers);
     PullDouble(patch, "solver_max_memory_mb", cfg.solver_max_memory_mb);
     PullBool(patch, "stop_after_first_solution", cfg.stop_after_first_solution);
@@ -217,6 +222,7 @@ void UpdateSolverConfigFromPatch(const JsonValue& patch) {
     cfg.subject_spread_bucket_available_days = std::max(1, cfg.subject_spread_bucket_available_days);
     cfg.solver_workers = std::max(1, cfg.solver_workers);
     cfg.solver_time_limit_seconds = std::max(1.0, cfg.solver_time_limit_seconds);
+    cfg.week_time_limit_seconds = std::max(5.0, cfg.week_time_limit_seconds);
     cfg.solver_max_memory_mb = std::max(64.0, cfg.solver_max_memory_mb);
 
     ApplySolverConfig(cfg);
@@ -225,8 +231,13 @@ void UpdateSolverConfigFromPatch(const JsonValue& patch) {
 const std::vector<SolverConfigField>& SolverConfigSchema() {
     static const std::vector<SolverConfigField> schema = {
         // === Solver runtime ===
-        {"solver_time_limit_seconds", "Лимит времени, сек",
-         "Максимальное время, которое solver тратит на поиск решения. На больших задачах 1800–5000 секунд.",
+        {"solver_time_limit_seconds", "Лимит времени (монолитный), сек",
+         "Максимальное время для монолитного режима. На больших задачах 1800–5000 секунд.",
+         "solver", "double"},
+        {"week_time_limit_seconds", "Лимит на одну неделю, сек",
+         "Максимальное время, которое solver тратит на каждую неделю в недельном режиме. "
+         "При UNKNOWN неделя перезапускается с ослабленными ограничениями. "
+         "Рекомендуется 30–120 с.",
          "solver", "double"},
         {"solver_workers", "Параллельных воркеров",
          "Сколько потоков использует solver. Больше — быстрее, но больше памяти. Не больше числа ядер CPU.",

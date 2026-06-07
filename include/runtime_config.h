@@ -9,6 +9,7 @@ namespace timetable {
 
 struct RuntimeSolverConfig {
     double solver_time_limit_seconds = 500.0;
+    double week_time_limit_seconds = 60.0;   // лимит на одну неделю (только weekly-режим)
     int solver_workers = 4;
     double solver_max_memory_mb = 8072.0;
     bool stop_after_first_solution = false;

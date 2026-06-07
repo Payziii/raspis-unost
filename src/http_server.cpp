@@ -14,14 +14,19 @@
 #include <ws2tcpip.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cctype>
+#include <chrono>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <mutex>
 #include <sstream>
 #include <string>
+#include <thread>
+#include <vector>
 
 #include "config.h"
 #include "data_store.h"
@@ -33,6 +38,50 @@ namespace timetable {
 namespace {
 
 std::mutex g_schedule_mutex;
+
+// ── Async generation state ────────────────────────────────────────────────────
+
+struct WeekEntry {
+    int num = 0;
+    std::string date_from;
+    std::string date_to;
+    std::string status;   // "pending" | "running" | "done" | "failed" | "skipped"
+    double elapsed = 0.0;
+};
+
+struct GenState {
+    std::mutex mu;
+    std::atomic<bool> running{false};
+    std::atomic<bool> cancel_requested{false};
+
+    // Защищено mu:
+    std::string state;          // "idle" | "running" | "done" | "failed" | "cancelled"
+    int total_weeks = 0;
+    int current_week = 0;       // 1-based, 0 = ещё не начинали
+    int solved_weeks = 0;
+    std::vector<WeekEntry> weeks;
+    std::string result_message;
+    double total_elapsed = 0.0;
+    bool result_success = false;
+
+    void reset(int total) {
+        std::lock_guard<std::mutex> lock(mu);
+        state = "running";
+        total_weeks = total;
+        current_week = 0;
+        solved_weeks = 0;
+        weeks.clear();
+        for (int i = 0; i < total; i++) {
+            weeks.push_back({i + 1, "", "", "pending", 0.0});
+        }
+        result_message = "";
+        total_elapsed = 0.0;
+        result_success = false;
+    }
+};
+
+static GenState g_gen;
+static auto g_gen_start = std::chrono::steady_clock::now();
 
 std::string ReadFileUtf8(const std::filesystem::path& path) {
     std::ifstream in(path, std::ios::binary);
@@ -455,7 +504,10 @@ std::string HandleRequest(const std::string& request, const std::string& output_
     if (!crud.empty()) return crud;
 
     if (method == "POST" && path == "/api/schedule/regenerate") {
-        std::lock_guard<std::mutex> lock(g_schedule_mutex);
+        // Уже идёт — отказываем
+        if (g_gen.running.load()) {
+            return ErrorJson(409, "Conflict", "Генерация уже запущена. Дождитесь завершения или отмените.");
+        }
 
         GenerationOptions opts;
         opts.lock_source = "none";
@@ -484,19 +536,14 @@ std::string HandleRequest(const std::string& request, const std::string& output_
                                     if (!day.IsObject()) continue;
                                     Date date{};
                                     if (!ParseDateIso(JsonString(day, "date_iso", ""), date)) {
-                                        // fallback на день DD.MM.YYYY
                                         std::string disp = JsonString(day, "date", "");
                                         if (disp.size() == 10 && disp[2] == '.' && disp[5] == '.') {
                                             try {
                                                 date.day = std::stoi(disp.substr(0, 2));
                                                 date.month = std::stoi(disp.substr(3, 2));
                                                 date.year = std::stoi(disp.substr(6, 4));
-                                            } catch (...) {
-                                                continue;
-                                            }
-                                        } else {
-                                            continue;
-                                        }
+                                            } catch (...) { continue; }
+                                        } else { continue; }
                                     }
                                     const JsonValue& slots = day.At("slots");
                                     if (!slots.IsArray()) continue;
@@ -523,7 +570,6 @@ std::string HandleRequest(const std::string& request, const std::string& output_
                         opts.lock_source = lock_existing;
                     }
                 } else if (lock_existing == "manual" || lock_existing == "auto") {
-                    // Не нашли файл — отвечаем понятной ошибкой
                     return ErrorJson(404, "Not Found",
                         lock_existing == "manual"
                             ? "Ручное расписание пусто. Открой Конструктор и сохрани хотя бы одно занятие."
@@ -532,18 +578,140 @@ std::string HandleRequest(const std::string& request, const std::string& output_
             }
         }
 
-        GenerationResult result = (gen_mode == "monolithic")
-            ? GenerateSchedule(output_dir, opts)
-            : GenerateScheduleWeekly(output_dir, opts);
-        std::ostringstream response_body;
-        response_body << "{\"success\":" << (result.success ? "true" : "false")
-                      << ",\"status\":\"" << JsonEscape(result.status) << "\""
-                      << ",\"message\":\"" << JsonEscape(result.message) << "\""
-                      << ",\"lock_source\":\"" << JsonEscape(opts.lock_source) << "\""
-                      << ",\"locked_count\":" << opts.locked.size()
-                      << ",\"mode\":\"" << JsonEscape(gen_mode) << "\""
-                      << ",\"output_dir\":\"" << JsonEscape(result.output_dir) << "\"}";
-        return JsonResponse(result.success ? 200 : 500, result.success ? "OK" : "Internal Server Error", response_body.str());
+        if (gen_mode == "monolithic") {
+            // Монолитный режим — синхронно (без прогресса)
+            std::lock_guard<std::mutex> lock(g_schedule_mutex);
+            GenerationResult result = GenerateSchedule(output_dir, opts);
+            std::ostringstream rb;
+            rb << "{\"success\":" << (result.success ? "true" : "false")
+               << ",\"status\":\"" << JsonEscape(result.status) << "\""
+               << ",\"message\":\"" << JsonEscape(result.message) << "\""
+               << ",\"mode\":\"monolithic\""
+               << ",\"async\":false}";
+            return JsonResponse(result.success ? 200 : 500,
+                result.success ? "OK" : "Internal Server Error", rb.str());
+        }
+
+        // Недельный режим — async
+        g_gen.cancel_requested.store(false);
+        g_gen.running.store(true);
+        g_gen_start = std::chrono::steady_clock::now();
+
+        // Инициализируем прогресс (предварительно 0 недель, уточнится при старте)
+        {
+            std::lock_guard<std::mutex> lk(g_gen.mu);
+            g_gen.state = "running";
+            g_gen.total_weeks = 0;
+            g_gen.current_week = 0;
+            g_gen.solved_weeks = 0;
+            g_gen.weeks.clear();
+            g_gen.result_message = "";
+            g_gen.total_elapsed = 0.0;
+        }
+
+        // Захватываем всё нужное для потока
+        std::string cap_output_dir = output_dir;
+        GenerationOptions cap_opts = opts;
+
+        std::thread([cap_output_dir, cap_opts]() mutable {
+            WeeklyGenCallbacks cbs;
+            cbs.cancel_flag = &g_gen.cancel_requested;
+
+            cbs.on_week_start = [](int w, int total, std::string df, std::string dt) {
+                std::lock_guard<std::mutex> lk(g_gen.mu);
+                // Если недель ещё не знаем — инициализируем
+                if (g_gen.total_weeks != total) {
+                    g_gen.total_weeks = total;
+                    g_gen.weeks.resize(total);
+                    for (int i = 0; i < total; i++) {
+                        g_gen.weeks[i].num = i + 1;
+                        g_gen.weeks[i].status = "pending";
+                    }
+                }
+                g_gen.current_week = w + 1;
+                if (w < (int)g_gen.weeks.size()) {
+                    g_gen.weeks[w].date_from = df;
+                    g_gen.weeks[w].date_to   = dt;
+                    g_gen.weeks[w].status = "running";
+                }
+            };
+
+            cbs.on_week_done = [](int w, int total, std::string df, std::string dt,
+                                  std::string status, double elapsed) {
+                std::lock_guard<std::mutex> lk(g_gen.mu);
+                if (g_gen.total_weeks != total) {
+                    g_gen.total_weeks = total;
+                    g_gen.weeks.resize(total);
+                    for (int i = 0; i < total; i++) {
+                        g_gen.weeks[i].num = i + 1;
+                        g_gen.weeks[i].status = "pending";
+                    }
+                }
+                if (w < (int)g_gen.weeks.size()) {
+                    g_gen.weeks[w].date_from = df;
+                    g_gen.weeks[w].date_to   = dt;
+                    g_gen.weeks[w].status = status;
+                    g_gen.weeks[w].elapsed = elapsed;
+                }
+                if (status == "done" || status == "skipped") g_gen.solved_weeks++;
+                g_gen.total_elapsed = std::chrono::duration<double>(
+                    std::chrono::steady_clock::now() - g_gen_start).count();
+            };
+
+            GenerationResult result = GenerateScheduleWeekly(cap_output_dir, cap_opts, cbs);
+
+            {
+                std::lock_guard<std::mutex> lk(g_gen.mu);
+                g_gen.total_elapsed = std::chrono::duration<double>(
+                    std::chrono::steady_clock::now() - g_gen_start).count();
+                g_gen.result_message = result.message;
+                g_gen.result_success = result.success;
+                if (result.status == "CANCELLED") {
+                    g_gen.state = "cancelled";
+                } else {
+                    g_gen.state = result.success ? "done" : "failed";
+                }
+            }
+            g_gen.running.store(false);
+        }).detach();
+
+        std::ostringstream rb;
+        rb << "{\"started\":true,\"async\":true,\"mode\":\"weekly\""
+           << ",\"lock_source\":\"" << JsonEscape(opts.lock_source) << "\""
+           << ",\"locked_count\":" << opts.locked.size() << "}";
+        return JsonResponse(202, "Accepted", rb.str());
+    }
+
+    if (method == "GET" && path == "/api/schedule/progress") {
+        std::lock_guard<std::mutex> lk(g_gen.mu);
+        std::ostringstream out;
+        out << "{\"state\":\"" << JsonEscape(g_gen.state) << "\""
+            << ",\"total_weeks\":" << g_gen.total_weeks
+            << ",\"current_week\":" << g_gen.current_week
+            << ",\"solved_weeks\":" << g_gen.solved_weeks
+            << ",\"total_elapsed\":" << std::fixed << std::setprecision(1) << g_gen.total_elapsed
+            << ",\"message\":\"" << JsonEscape(g_gen.result_message) << "\""
+            << ",\"success\":" << (g_gen.result_success ? "true" : "false")
+            << ",\"weeks\":[";
+        for (int i = 0; i < (int)g_gen.weeks.size(); i++) {
+            const auto& w = g_gen.weeks[i];
+            if (i > 0) out << ",";
+            out << "{\"num\":" << w.num
+                << ",\"date_from\":\"" << JsonEscape(w.date_from) << "\""
+                << ",\"date_to\":\"" << JsonEscape(w.date_to) << "\""
+                << ",\"status\":\"" << JsonEscape(w.status) << "\""
+                << ",\"elapsed\":" << std::fixed << std::setprecision(1) << w.elapsed << "}";
+        }
+        out << "]}";
+        return JsonResponse(200, "OK", out.str());
+    }
+
+    if (method == "POST" && path == "/api/schedule/cancel") {
+        if (!g_gen.running.load()) {
+            return JsonResponse(200, "OK", "{\"cancelled\":false,\"message\":\"Генерация не запущена\"}");
+        }
+        g_gen.cancel_requested.store(true);
+        return JsonResponse(200, "OK", "{\"cancelled\":true,\"message\":\"Запрос на отмену отправлен\"}");
     }
 
     if (method == "GET" && path == "/api/schedule") {

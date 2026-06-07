@@ -19,6 +19,8 @@ export const api = {
     get: () => request('GET', '/schedule'),
     getGroup: (id) => request('GET', `/schedule/group/${encodeURIComponent(id)}`),
     regenerate: (opts = {}) => request('POST', '/schedule/regenerate', opts),
+    progress: () => request('GET', '/schedule/progress'),
+    cancel: () => request('POST', '/schedule/cancel'),
   },
   constructor: {
     load: () => request('GET', '/schedule/manual'),

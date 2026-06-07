@@ -1,8 +1,10 @@
 #include "scheduler.h"
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <filesystem>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -1058,6 +1060,217 @@ struct WeekSolveResult {
     std::vector<std::vector<int>> x_vals;
 };
 
+// Реконструирует и записывает все файлы расписания из flat-массива global_x_vals.
+// Вызывается как после каждой недели (частичное), так и в конце (итоговое).
+// print_stats=true — печатает статистику (окна, нарушения и т.д.).
+static bool WriteScheduleFiles(
+    const std::string& output_dir,
+    const std::vector<std::vector<int>>& global_x_vals,
+    int num_days,
+    const std::vector<Lesson>& lessons,
+    const std::vector<Date>& all_days,
+    const std::map<int, std::vector<std::pair<Date, Date>>>& unavailable,
+    const std::map<int, std::map<Date, std::string>>& unavailable_day_texts,
+    bool print_stats
+) {
+    using operations_research::Domain;
+    using operations_research::sat::BoolVar;
+    using operations_research::sat::CpModelBuilder;
+    using operations_research::sat::CpModelProto;
+    using operations_research::sat::CpSolverResponse;
+    using operations_research::sat::CpSolverStatus;
+    using operations_research::sat::IntVar;
+    using operations_research::sat::LinearExpr;
+    using operations_research::sat::NewSatParameters;
+    using operations_research::sat::SatParameters;
+    using operations_research::sat::SolveCpModel;
+
+    const int num_lessons = static_cast<int>(lessons.size());
+    const int total_slots = num_days * SLOTS_PER_DAY;
+
+    // Производные busy-значения
+    std::vector<std::vector<int>> gbusy_v(GROUPS, std::vector<int>(total_slots, 0));
+    std::vector<std::vector<std::vector<int>>> pbusy_v(
+        GROUPS, std::vector<std::vector<int>>(PARTS_PER_GROUP, std::vector<int>(total_slots, 0))
+    );
+    std::vector<std::vector<int>> tbusy_v(TEACHERS, std::vector<int>(total_slots, 0));
+
+    for (int l = 0; l < num_lessons; l++) {
+        int g = lessons[l].group;
+        int teacher = lessons[l].teacher;
+        int base_sg = g * PARTS_PER_GROUP;
+        for (int t = 0; t < total_slots; t++) {
+            if (!global_x_vals[l][t]) continue;
+            gbusy_v[g][t] = 1;
+            if (teacher >= 0) tbusy_v[teacher][t] = 1;
+            if (lessons[l].subgroup == -1) {
+                for (int p = 0; p < PARTS_PER_GROUP; p++) pbusy_v[g][p][t] = 1;
+            } else {
+                int part = lessons[l].subgroup - base_sg;
+                if (part >= 0 && part < PARTS_PER_GROUP) pbusy_v[g][part][t] = 1;
+            }
+        }
+    }
+
+    // Кампусы
+    std::vector<std::vector<int>> g_campus_v(GROUPS, std::vector<int>(num_days, 0));
+    std::vector<std::vector<int>> t_campus_v(TEACHERS, std::vector<int>(num_days, 0));
+    for (int l = 0; l < num_lessons; l++) {
+        if (lessons[l].allowed_campuses.size() != 1) continue;
+        int campus = static_cast<int>(*lessons[l].allowed_campuses.begin());
+        int g = lessons[l].group;
+        int teacher = lessons[l].teacher;
+        for (int d = 0; d < num_days; d++) {
+            for (int s = 0; s < SLOTS_PER_DAY; s++) {
+                if (global_x_vals[l][d * SLOTS_PER_DAY + s]) {
+                    g_campus_v[g][d] = campus;
+                    if (teacher >= 0) t_campus_v[teacher][d] = campus;
+                }
+            }
+        }
+    }
+
+    // Блоки для WriteTeachersTxt
+    std::vector<BlockInfo> rec_blocks;
+    for (int l = 0; l < num_lessons; l++) {
+        if (!lessons[l].is_block) continue;
+        BlockInfo bi;
+        bi.lesson_id = l;
+        for (int d = 0; d < num_days; d++) {
+            if (!IsAvailable(all_days[d], lessons[l].group, unavailable)) continue;
+            for (int s = 0; s < SLOTS_PER_DAY - 1; s++) {
+                if (!IsAllowedUpStartSlot(all_days[d], s)) continue;
+                bi.possible_starts.push_back(d * SLOTS_PER_DAY + s);
+            }
+        }
+        rec_blocks.push_back(bi);
+    }
+
+    // Тривиальная фиксирующая модель
+    CpModelBuilder fix_model;
+
+    std::vector<std::vector<BoolVar>> fx(num_lessons, std::vector<BoolVar>(total_slots));
+    for (int l = 0; l < num_lessons; l++)
+        for (int t = 0; t < total_slots; t++) {
+            fx[l][t] = fix_model.NewBoolVar();
+            fix_model.AddEquality(fx[l][t], global_x_vals[l][t]);
+        }
+
+    for (auto& blk : rec_blocks) {
+        int l = blk.lesson_id;
+        for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++)
+            blk.start_vars.push_back(fix_model.NewBoolVar());
+        for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
+            int st = blk.possible_starts[i];
+            int val = (global_x_vals[l][st] && global_x_vals[l][st + 1]) ? 1 : 0;
+            fix_model.AddEquality(blk.start_vars[i], val);
+        }
+    }
+
+    std::vector<std::vector<BoolVar>> fgb(GROUPS, std::vector<BoolVar>(total_slots));
+    std::vector<std::vector<std::vector<BoolVar>>> fpb(
+        GROUPS, std::vector<std::vector<BoolVar>>(PARTS_PER_GROUP, std::vector<BoolVar>(total_slots))
+    );
+    std::vector<std::vector<BoolVar>> ftb(TEACHERS, std::vector<BoolVar>(total_slots));
+
+    for (int g = 0; g < GROUPS; g++)
+        for (int t = 0; t < total_slots; t++) {
+            fgb[g][t] = fix_model.NewBoolVar();
+            fix_model.AddEquality(fgb[g][t], gbusy_v[g][t]);
+        }
+    for (int g = 0; g < GROUPS; g++)
+        for (int p = 0; p < PARTS_PER_GROUP; p++)
+            for (int t = 0; t < total_slots; t++) {
+                fpb[g][p][t] = fix_model.NewBoolVar();
+                fix_model.AddEquality(fpb[g][p][t], pbusy_v[g][p][t]);
+            }
+    for (int teacher = 0; teacher < TEACHERS; teacher++)
+        for (int t = 0; t < total_slots; t++) {
+            ftb[teacher][t] = fix_model.NewBoolVar();
+            fix_model.AddEquality(ftb[teacher][t], tbusy_v[teacher][t]);
+        }
+
+    std::vector<std::vector<IntVar>> fgdc(GROUPS, std::vector<IntVar>(num_days));
+    std::vector<std::vector<IntVar>> ftdc(TEACHERS, std::vector<IntVar>(num_days));
+    for (int g = 0; g < GROUPS; g++)
+        for (int d = 0; d < num_days; d++) {
+            fgdc[g][d] = fix_model.NewIntVar(Domain(0, 1));
+            fix_model.AddEquality(fgdc[g][d], g_campus_v[g][d]);
+        }
+    for (int teacher = 0; teacher < TEACHERS; teacher++)
+        for (int d = 0; d < num_days; d++) {
+            ftdc[teacher][d] = fix_model.NewIntVar(Domain(0, 1));
+            fix_model.AddEquality(ftdc[teacher][d], t_campus_v[teacher][d]);
+        }
+
+    SatParameters fix_params;
+    fix_params.set_num_search_workers(1);
+    fix_params.set_max_time_in_seconds(10.0);
+    fix_params.set_stop_after_first_solution(true);
+
+    operations_research::sat::Model fix_sat;
+    fix_sat.Add(NewSatParameters(fix_params));
+    CpModelProto fix_proto = fix_model.Build();
+    CpSolverResponse fix_resp = SolveCpModel(fix_proto, &fix_sat);
+
+    if (fix_resp.status() != CpSolverStatus::OPTIMAL &&
+        fix_resp.status() != CpSolverStatus::FEASIBLE) {
+        std::cerr << "WriteScheduleFiles: reconstruction failed\n";
+        return false;
+    }
+
+    if (print_stats) {
+        std::vector<std::vector<BoolVar>> student_ents;
+        for (int g = 0; g < GROUPS; g++)
+            for (int p = 0; p < PARTS_PER_GROUP; p++)
+                student_ents.push_back(fpb[g][p]);
+
+        std::cout << "\nСтатистика расписания:\n";
+        std::cout << "  Окон у студентов: " << CountWindows(fix_resp, student_ents, num_days) << "\n";
+        std::cout << "  Окон у преподавателей: " << CountWindows(fix_resp, ftb, num_days) << "\n";
+        std::cout << "  Макс. пар у студента в день: " << MaxStudentPairsInDay(fix_resp, fpb, num_days) << "\n";
+        std::cout << "  Дней по 5 пар у подгрупп: " << CountFivePairStudentDays(fix_resp, fpb, num_days) << "\n";
+        std::cout << "  Нарушений правила УП-день: " << CountUpDayRuleViolations(fix_resp, lessons, fx, fpb, num_days) << "\n";
+        std::cout << "  Нарушений занятости препод. во время УП: "
+                  << CountUpTeacherLockViolations(fix_resp, lessons, fx, rec_blocks, all_days) << "\n";
+    }
+
+    const std::filesystem::path out_dir(output_dir);
+    const std::filesystem::path groups_dir = out_dir / "groups";
+    std::filesystem::create_directories(out_dir);
+    std::filesystem::create_directories(groups_dir);
+
+    WriteAllGroupsTxt(
+        (out_dir / "raspisanie_all.txt").string(),
+        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
+
+    for (int g = 0; g < GROUPS; g++) {
+        WriteGroupScheduleTxt(
+            (groups_dir / ("raspisanie_group_" + std::to_string(g) + ".txt")).string(),
+            fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts, g);
+    }
+
+    WriteGroupsCsv(
+        (out_dir / "raspisanie_groups.csv").string(),
+        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
+
+    WriteTeachersTxt(
+        (out_dir / "raspisanie_teachers.txt").string(),
+        fix_resp, all_days, lessons, fx, rec_blocks, ftb, ftdc);
+
+    WriteAllGroupsJson(
+        (out_dir / "schedule_all.json").string(),
+        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
+
+    for (int g = 0; g < GROUPS; g++) {
+        WriteGroupJson(
+            (groups_dir / ("group_" + std::to_string(g) + ".json")).string(),
+            fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts, g);
+    }
+
+    return true;
+}
+
 static WeekSolveResult SolveOneWeek(
     int week_num,
     const std::vector<int>& wdix,    // индексы в all_days для дней этой недели
@@ -1536,19 +1749,15 @@ GenerationResult GenerateScheduleWeekly(
     const std::string& output_dir,
     const GenerationOptions& options
 ) {
-    using operations_research::Domain;
-    using operations_research::sat::BoolVar;
-    using operations_research::sat::CpModelBuilder;
-    using operations_research::sat::CpModelProto;
-    using operations_research::sat::CpSolverResponse;
-    using operations_research::sat::CpSolverStatus;
-    using operations_research::sat::CpSolverStatus_Name;
-    using operations_research::sat::IntVar;
-    using operations_research::sat::LinearExpr;
-    using operations_research::sat::NewSatParameters;
-    using operations_research::sat::SatParameters;
-    using operations_research::sat::SolveCpModel;
-    using operations_research::sat::SolutionIntegerValue;
+    WeeklyGenCallbacks empty_cbs;
+    return GenerateScheduleWeekly(output_dir, options, empty_cbs);
+}
+
+GenerationResult GenerateScheduleWeekly(
+    const std::string& output_dir,
+    const GenerationOptions& options,
+    const WeeklyGenCallbacks& callbacks
+) {
 
     // ── Загрузка входных данных ───────────────────────────────────────────
     ScheduleInputData input_data;
@@ -1728,47 +1937,64 @@ GenerationResult GenerateScheduleWeekly(
     std::cout << "Недель: " << num_weeks << ", Дней: " << num_days << "\n\n";
 
     // ── Решаем по неделям ─────────────────────────────────────────────────
-    // global_x_vals[l][global_slot] = 0/1
     std::vector<std::vector<int>> global_x_vals(num_lessons, std::vector<int>(total_slots, 0));
-
     auto solve_start = std::chrono::steady_clock::now();
 
     for (int w = 0; w < num_weeks; w++) {
+        // ── Проверка отмены ────────────────────────────────────────────────
+        if (callbacks.cancel_flag && callbacks.cancel_flag->load()) {
+            std::cout << "\nГенерация отменена пользователем на неделе " << (w + 1) << ".\n";
+            // Сохраняем частичный результат перед выходом
+            WriteScheduleFiles(output_dir, global_x_vals, num_days,
+                lessons, all_days, unavailable, unavailable_day_texts, false);
+            return {false, "CANCELLED", "Генерация отменена", output_dir};
+        }
+
         const auto& wdix = week_day_indices[w];
         if (wdix.empty()) continue;
 
-        // Проверяем, есть ли вообще хоть один урок в эту неделю
         bool any_lesson = false;
         for (int l = 0; l < num_lessons; l++) {
             if (lesson_week_quota[l][w] > 0) { any_lesson = true; break; }
         }
 
+        std::string date_from = DateToString(all_days[wdix.front()]);
+        std::string date_to   = DateToString(all_days[wdix.back()]);
+
+        if (!any_lesson) {
+            std::cout << "Неделя " << (w + 1) << "/" << num_weeks
+                      << " [" << date_from << " … " << date_to << "] — пропуск (нет занятий)\n";
+            if (callbacks.on_week_done)
+                callbacks.on_week_done(w, num_weeks, date_from, date_to, "skipped", 0.0);
+            continue;
+        }
+
+        if (callbacks.on_week_start)
+            callbacks.on_week_start(w, num_weeks, date_from, date_to);
+
+        std::cout << "Неделя " << (w + 1) << "/" << num_weeks
+                  << " [" << date_from << " … " << date_to
+                  << "] " << wdix.size() << " дней\n";
+
         std::vector<int> quotas(num_lessons);
         for (int l = 0; l < num_lessons; l++) quotas[l] = lesson_week_quota[l][w];
 
         auto t0 = std::chrono::steady_clock::now();
-        std::cout << "Неделя " << (w + 1) << "/" << num_weeks
-                  << " [" << DateToString(all_days[wdix.front()])
-                  << " … " << DateToString(all_days[wdix.back()])
-                  << "] " << wdix.size() << " дней";
-
-        if (!any_lesson) {
-            std::cout << " — пропуск (нет занятий)\n";
-            continue;
-        }
-        std::cout << "\n";
-
         WeekSolveResult wr = SolveOneWeek(
             w, wdix, all_days, lessons, unavailable,
             quotas, pp_allowed_global, options.locked
         );
-
         double elapsed = std::chrono::duration<double>(
             std::chrono::steady_clock::now() - t0).count();
 
         if (!wr.success) {
             std::cerr << "  ОШИБКА недели " << (w + 1) << ": " << wr.status
                       << " (" << std::fixed << std::setprecision(1) << elapsed << " с)\n";
+            if (callbacks.on_week_done)
+                callbacks.on_week_done(w, num_weeks, date_from, date_to, "failed", elapsed);
+            // Сохраняем частичный результат
+            WriteScheduleFiles(output_dir, global_x_vals, num_days,
+                lessons, all_days, unavailable, unavailable_day_texts, false);
             return {false, wr.status,
                 "Не удалось решить неделю " + std::to_string(w + 1) + ": " + wr.status,
                 output_dir};
@@ -1783,12 +2009,17 @@ GenerationResult GenerateScheduleWeekly(
             for (int li = 0; li < static_cast<int>(wdix.size()); li++) {
                 int gd = wdix[li];
                 for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                    int lt = li * SLOTS_PER_DAY + s;
-                    int gt = gd * SLOTS_PER_DAY + s;
-                    global_x_vals[l][gt] = wr.x_vals[l][lt];
+                    global_x_vals[l][gd * SLOTS_PER_DAY + s] = wr.x_vals[l][li * SLOTS_PER_DAY + s];
                 }
             }
         }
+
+        // ── Автосохранение после каждой недели ────────────────────────────
+        WriteScheduleFiles(output_dir, global_x_vals, num_days,
+            lessons, all_days, unavailable, unavailable_day_texts, false);
+
+        if (callbacks.on_week_done)
+            callbacks.on_week_done(w, num_weeks, date_from, date_to, "done", elapsed);
     }
 
     double total_elapsed = std::chrono::duration<double>(
@@ -1796,213 +2027,11 @@ GenerationResult GenerateScheduleWeekly(
     std::cout << "\nВсего недель решено за " << std::fixed << std::setprecision(1)
               << total_elapsed << " с\n";
 
-    // ── Реконструкция глобальной модели для записи файлов ────────────────
-    // Строим модель из global_x_vals, фиксируем все переменные и решаем
-    // тривиально — только чтобы получить CpSolverResponse + BoolVar-указатели
-    // для существующих write-функций.
+    // Финальная запись со статистикой
+    WriteScheduleFiles(output_dir, global_x_vals, num_days,
+        lessons, all_days, unavailable, unavailable_day_texts, true);
 
-    // Вычисляем производные значения из global_x_vals
-    std::vector<std::vector<int>> gbusy_v(GROUPS, std::vector<int>(total_slots, 0));
-    std::vector<std::vector<std::vector<int>>> pbusy_v(
-        GROUPS, std::vector<std::vector<int>>(PARTS_PER_GROUP, std::vector<int>(total_slots, 0))
-    );
-    std::vector<std::vector<int>> tbusy_v(TEACHERS, std::vector<int>(total_slots, 0));
-
-    for (int l = 0; l < num_lessons; l++) {
-        int g = lessons[l].group;
-        int teacher = lessons[l].teacher;
-        int base_sg = g * PARTS_PER_GROUP;
-        for (int t = 0; t < total_slots; t++) {
-            if (!global_x_vals[l][t]) continue;
-            gbusy_v[g][t] = 1;
-            if (teacher >= 0) tbusy_v[teacher][t] = 1;
-
-            if (lessons[l].subgroup == -1) {
-                for (int p = 0; p < PARTS_PER_GROUP; p++) pbusy_v[g][p][t] = 1;
-            } else {
-                int part = lessons[l].subgroup - base_sg;
-                if (part >= 0 && part < PARTS_PER_GROUP) pbusy_v[g][part][t] = 1;
-                // часть с subgroup=-1 означает вся группа; подгруппа с индексом part
-                // также "тянет" весь group — но для pbusy это подгруппа, не вся группа
-                // Добавим whole lessons к обеим подгруппам через gbusy, а pbusy
-                // пусть хранит только подгрупповые данные. Выше это уже учтено.
-            }
-        }
-    }
-    // Для whole-group уроков (subgroup==-1) pbusy обеих частей = 1
-    // Уже обработано в цикле выше.
-
-    std::vector<std::vector<int>> g_campus_v(GROUPS, std::vector<int>(num_days, 0));
-    std::vector<std::vector<int>> t_campus_v(TEACHERS, std::vector<int>(num_days, 0));
-    for (int l = 0; l < num_lessons; l++) {
-        if (lessons[l].allowed_campuses.size() != 1) continue;
-        int campus = static_cast<int>(*lessons[l].allowed_campuses.begin());
-        int g = lessons[l].group;
-        int teacher = lessons[l].teacher;
-        for (int d = 0; d < num_days; d++) {
-            for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                if (global_x_vals[l][d * SLOTS_PER_DAY + s]) {
-                    g_campus_v[g][d] = campus;
-                    if (teacher >= 0) t_campus_v[teacher][d] = campus;
-                }
-            }
-        }
-    }
-
-    // Строим реконструкцию блоков (структурно те же, что в main-модели)
-    std::vector<BlockInfo> rec_blocks;
-    for (int l = 0; l < num_lessons; l++) {
-        if (!lessons[l].is_block) continue;
-        BlockInfo bi;
-        bi.lesson_id = l;
-        for (int d = 0; d < num_days; d++) {
-            if (!IsAvailable(all_days[d], lessons[l].group, unavailable)) continue;
-            for (int s = 0; s < SLOTS_PER_DAY - 1; s++) {
-                if (!IsAllowedUpStartSlot(all_days[d], s)) continue;
-                bi.possible_starts.push_back(d * SLOTS_PER_DAY + s);
-            }
-        }
-        rec_blocks.push_back(bi);
-    }
-
-    // Тривиальная фиксирующая модель
-    CpModelBuilder fix_model;
-
-    std::vector<std::vector<BoolVar>> fx(num_lessons, std::vector<BoolVar>(total_slots));
-    for (int l = 0; l < num_lessons; l++) {
-        for (int t = 0; t < total_slots; t++) {
-            fx[l][t] = fix_model.NewBoolVar();
-            fix_model.AddEquality(fx[l][t], global_x_vals[l][t]);
-        }
-    }
-
-    // start_vars для блоков (для WriteTeachersTxt)
-    for (auto& blk : rec_blocks) {
-        for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++)
-            blk.start_vars.push_back(fix_model.NewBoolVar());
-        // Фиксируем start_vars: start = 1 если оба слота заняты этим уроком
-        int l = blk.lesson_id;
-        for (int i = 0; i < static_cast<int>(blk.possible_starts.size()); i++) {
-            int st = blk.possible_starts[i];
-            int val = (global_x_vals[l][st] && global_x_vals[l][st + 1]) ? 1 : 0;
-            fix_model.AddEquality(blk.start_vars[i], val);
-        }
-    }
-
-    std::vector<std::vector<BoolVar>> fgb(GROUPS, std::vector<BoolVar>(total_slots));
-    std::vector<std::vector<std::vector<BoolVar>>> fpb(
-        GROUPS, std::vector<std::vector<BoolVar>>(PARTS_PER_GROUP, std::vector<BoolVar>(total_slots))
-    );
-    std::vector<std::vector<BoolVar>> ftb(TEACHERS, std::vector<BoolVar>(total_slots));
-
-    for (int g = 0; g < GROUPS; g++)
-        for (int t = 0; t < total_slots; t++) {
-            fgb[g][t] = fix_model.NewBoolVar();
-            fix_model.AddEquality(fgb[g][t], gbusy_v[g][t]);
-        }
-    for (int g = 0; g < GROUPS; g++)
-        for (int p = 0; p < PARTS_PER_GROUP; p++)
-            for (int t = 0; t < total_slots; t++) {
-                fpb[g][p][t] = fix_model.NewBoolVar();
-                fix_model.AddEquality(fpb[g][p][t], pbusy_v[g][p][t]);
-            }
-    for (int teacher = 0; teacher < TEACHERS; teacher++)
-        for (int t = 0; t < total_slots; t++) {
-            ftb[teacher][t] = fix_model.NewBoolVar();
-            fix_model.AddEquality(ftb[teacher][t], tbusy_v[teacher][t]);
-        }
-
-    std::vector<std::vector<IntVar>> fgdc(GROUPS, std::vector<IntVar>(num_days));
-    std::vector<std::vector<IntVar>> ftdc(TEACHERS, std::vector<IntVar>(num_days));
-    for (int g = 0; g < GROUPS; g++)
-        for (int d = 0; d < num_days; d++) {
-            fgdc[g][d] = fix_model.NewIntVar(Domain(0, 1));
-            fix_model.AddEquality(fgdc[g][d], g_campus_v[g][d]);
-        }
-    for (int teacher = 0; teacher < TEACHERS; teacher++)
-        for (int d = 0; d < num_days; d++) {
-            ftdc[teacher][d] = fix_model.NewIntVar(Domain(0, 1));
-            fix_model.AddEquality(ftdc[teacher][d], t_campus_v[teacher][d]);
-        }
-
-    // Решаем тривиально — stop_after_first_solution даст мгновенный ответ
-    SatParameters fix_params;
-    fix_params.set_num_search_workers(1);
-    fix_params.set_max_time_in_seconds(10.0);
-    fix_params.set_stop_after_first_solution(true);
-
-    operations_research::sat::Model fix_sat;
-    fix_sat.Add(NewSatParameters(fix_params));
-    CpModelProto fix_proto = fix_model.Build();
-    CpSolverResponse fix_resp = SolveCpModel(fix_proto, &fix_sat);
-
-    if (fix_resp.status() != CpSolverStatus::OPTIMAL &&
-        fix_resp.status() != CpSolverStatus::FEASIBLE) {
-        return {false, "RECONSTRUCT_ERROR",
-            "Не удалось восстановить модель для записи файлов", output_dir};
-    }
-
-    // ── Статистика ────────────────────────────────────────────────────────
-    std::vector<std::vector<BoolVar>> student_entities_fix;
-    for (int g = 0; g < GROUPS; g++)
-        for (int p = 0; p < PARTS_PER_GROUP; p++)
-            student_entities_fix.push_back(fpb[g][p]);
-
-    int student_windows = CountWindows(fix_resp, student_entities_fix, num_days);
-    int teacher_windows = CountWindows(fix_resp, ftb, num_days);
-    int max_student_pairs = MaxStudentPairsInDay(fix_resp, fpb, num_days);
-    int five_pair_days = CountFivePairStudentDays(fix_resp, fpb, num_days);
-    int up_day_violations = CountUpDayRuleViolations(fix_resp, lessons, fx, fpb, num_days);
-    int up_teacher_lock_violations = CountUpTeacherLockViolations(
-        fix_resp, lessons, fx, rec_blocks, all_days);
-
-    std::cout << "\nРасписание (по неделям) готово.\n";
-    std::cout << "Окон у студентов: " << student_windows << "\n";
-    std::cout << "Окон у преподавателей: " << teacher_windows << "\n";
-    std::cout << "Максимум пар у студента за день: " << max_student_pairs << "\n";
-    std::cout << "Дней по 5 пар у подгрупп: " << five_pair_days << "\n";
-    std::cout << "Нарушений правила УП-день: " << up_day_violations << "\n";
-    std::cout << "Нарушений занятости преподавателя во время УП: "
-              << up_teacher_lock_violations << "\n";
-
-    // ── Запись файлов ─────────────────────────────────────────────────────
-    const std::filesystem::path out_dir(output_dir);
-    const std::filesystem::path groups_dir = out_dir / "groups";
-
-    WriteAllGroupsTxt(
-        (out_dir / "raspisanie_all.txt").string(),
-        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
-
-    for (int g = 0; g < GROUPS; g++) {
-        WriteGroupScheduleTxt(
-            (groups_dir / ("raspisanie_group_" + std::to_string(g) + ".txt")).string(),
-            fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts, g);
-    }
-
-    WriteGroupsCsv(
-        (out_dir / "raspisanie_groups.csv").string(),
-        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
-
-    WriteTeachersTxt(
-        (out_dir / "raspisanie_teachers.txt").string(),
-        fix_resp, all_days, lessons, fx, rec_blocks, ftb, ftdc);
-
-    WriteAllGroupsJson(
-        (out_dir / "schedule_all.json").string(),
-        fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts);
-
-    for (int g = 0; g < GROUPS; g++) {
-        WriteGroupJson(
-            (groups_dir / ("group_" + std::to_string(g) + ".json")).string(),
-            fix_resp, all_days, lessons, fx, fgb, fgdc, unavailable_day_texts, g);
-    }
-
-    std::cout << "\nФайлы созданы:\n";
-    std::cout << "  " << (out_dir / "raspisanie_all.txt").string() << "\n";
-    std::cout << "  " << (out_dir / "schedule_all.json").string() << "\n";
-    std::cout << "  " << (out_dir / "groups" / "group_*.json").string() << "\n";
-    std::cout << "  " << (out_dir / "raspisanie_groups.csv").string() << "\n";
-    std::cout << "  " << (out_dir / "raspisanie_teachers.txt").string() << "\n";
+    std::cout << "\nФайлы созданы в: " << output_dir << "\n";
 
     return {true, "WEEKLY_FEASIBLE", "Расписание по неделям найдено", output_dir};
 }

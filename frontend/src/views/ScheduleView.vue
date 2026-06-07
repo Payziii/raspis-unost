@@ -9,11 +9,67 @@
           <option value="manual">Зафиксировать Конструктор</option>
           <option value="auto">Зафиксировать прошлую автогенерацию</option>
         </select>
-        <button class="btn btn-primary" :disabled="store.generating" @click="onRegenerate">
-          <span v-if="store.generating" class="spinner spinner-sm" />
-          <span>{{ store.generating ? 'Генерируется…' : 'Сгенерировать' }}</span>
+        <button v-if="!store.generating" class="btn btn-primary" @click="onRegenerate">
+          Сгенерировать
+        </button>
+        <button v-else class="btn btn-danger" @click="onCancel" :disabled="cancelling">
+          {{ cancelling ? 'Отменяется…' : 'Отменить' }}
         </button>
       </div>
+    </div>
+
+    <!-- Generation progress panel -->
+    <div v-if="store.generating && store.progress" class="gen-progress-panel">
+      <div class="gen-progress-header">
+        <span class="gen-progress-title">
+          <span class="spinner spinner-sm" style="color:var(--accent)" />
+          Генерация по неделям&ensp;
+          <strong>{{ store.progress.solved_weeks }}/{{ store.progress.total_weeks }}</strong>
+        </span>
+        <span class="gen-progress-time">{{ store.progress.total_elapsed?.toFixed(1) }} с</span>
+        <button class="btn btn-danger btn-sm" @click="onCancel" :disabled="cancelling">
+          {{ cancelling ? 'Отменяется…' : 'Отменить' }}
+        </button>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="gen-progress-bar-wrap">
+        <div
+          class="gen-progress-bar-fill"
+          :style="{
+            width: store.progress.total_weeks > 0
+              ? (store.progress.solved_weeks / store.progress.total_weeks * 100) + '%'
+              : '0%'
+          }"
+        />
+      </div>
+
+      <!-- Week list -->
+      <div class="gen-weeks-list">
+        <div
+          v-for="w in store.progress.weeks"
+          :key="w.num"
+          class="gen-week-row"
+          :class="`gen-week-${w.status}`"
+        >
+          <span class="gen-week-icon">
+            <template v-if="w.status === 'done'">✓</template>
+            <template v-else-if="w.status === 'running'"><span class="spinner spinner-xs" /></template>
+            <template v-else-if="w.status === 'failed'">✕</template>
+            <template v-else-if="w.status === 'skipped'">—</template>
+            <template v-else>·</template>
+          </span>
+          <span class="gen-week-label">Нед. {{ w.num }}</span>
+          <span class="gen-week-dates">{{ w.date_from }}<template v-if="w.date_to"> – {{ w.date_to }}</template></span>
+          <span class="gen-week-elapsed" v-if="w.elapsed > 0">{{ w.elapsed.toFixed(1) }} с</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generating spinner (no progress yet) -->
+    <div v-else-if="store.generating && !store.progress" class="gen-progress-panel gen-progress-init">
+      <span class="spinner spinner-sm" style="color:var(--accent)" />
+      <span style="margin-left:10px">Запуск генерации…</span>
     </div>
 
     <!-- Course year tabs -->
@@ -359,11 +415,18 @@ function parseDetails(text) {
   return text.slice(idx + 3).split(', ').filter(Boolean)
 }
 
-// ── Regenerate ───────────────────────────────────────────────────────────
+// ── Regenerate & Cancel ───────────────────────────────────────────────────
+
+const cancelling = ref(false)
 
 async function onRegenerate() {
   const opts = lockMode.value && lockMode.value !== 'none' ? { lock_existing: lockMode.value } : {}
+  cancelling.value = false
   const r = await store.regenerate(opts)
+  if (r.async) {
+    // Async weekly — ждём через polling; toast покажем по завершению
+    return
+  }
   if (r.ok) {
     toast.success(r.message || 'Расписание успешно сгенерировано!')
     jumpToCurrentWeek()
@@ -371,6 +434,29 @@ async function onRegenerate() {
     toast.error(r.message || 'Ошибка генерации расписания')
   }
 }
+
+async function onCancel() {
+  cancelling.value = true
+  await store.cancelGeneration()
+}
+
+// Показываем toast когда async-генерация завершается
+watch(() => store.progress?.state, (newState, oldState) => {
+  if (!oldState || oldState === newState) return
+  if (newState === 'done') {
+    toast.success('Расписание по неделям сгенерировано!')
+    jumpToCurrentWeek()
+    cancelling.value = false
+  } else if (newState === 'failed') {
+    const msg = store.progress?.message || 'Ошибка генерации'
+    toast.error(msg)
+    cancelling.value = false
+  } else if (newState === 'cancelled') {
+    toast.info('Генерация отменена. Частичное расписание сохранено.')
+    cancelling.value = false
+    store.fetchSchedule()
+  }
+})
 </script>
 
 <style scoped>
@@ -633,5 +719,93 @@ async function onRegenerate() {
   .week-label { order: -1; width: 100%; align-items: center; }
   .th-slot { min-width: 68px; }
   .th-group { min-width: 110px; }
+}
+
+/* ── Generation progress panel ──────────────────────────────────────────── */
+.gen-progress-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 18px;
+}
+.gen-progress-init {
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.gen-progress-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.gen-progress-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gen-progress-time {
+  font-size: 13px;
+  color: var(--text-muted);
+  min-width: 48px;
+  text-align: right;
+}
+.gen-progress-bar-wrap {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.gen-progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+.gen-weeks-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.gen-week-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  min-width: 190px;
+}
+.gen-week-icon { font-size: 13px; width: 14px; text-align: center; }
+.gen-week-label { font-weight: 600; color: var(--text-secondary); min-width: 46px; }
+.gen-week-dates { color: var(--text-muted); flex: 1; }
+.gen-week-elapsed { color: var(--text-muted); font-size: 11px; }
+
+.gen-week-done   { border-color: var(--success, #2da44e); background: color-mix(in srgb, var(--success, #2da44e) 8%, var(--bg-primary)); }
+.gen-week-done .gen-week-icon { color: var(--success, #2da44e); }
+.gen-week-running { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--bg-primary)); }
+.gen-week-failed  { border-color: var(--error, #cf222e); background: color-mix(in srgb, var(--error, #cf222e) 8%, var(--bg-primary)); }
+.gen-week-failed .gen-week-icon { color: var(--error, #cf222e); }
+.gen-week-skipped { opacity: 0.5; }
+.gen-week-pending { opacity: 0.45; }
+
+.spinner-xs {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
 </style>

@@ -53,6 +53,93 @@ struct UpStartRef {
     TimeInterval interval;
 };
 
+// ── ПП (производственная практика): детерминированная расстановка до CP-SAT ──
+// Один ПП-слот = одна пара. Урок ПП занимает последние ceil(total_slots/3)
+// доступных дней группы по 3 пары/день (последний день может быть неполным).
+// Несколько ПП одной группы выстраиваются в очередь по id: урок с меньшим id
+// идёт раньше (занимает более ранние дни хвоста).
+struct PpPlacement {
+    int lesson_index;  // индекс в lessons
+    int global_day;    // индекс дня в all_days
+    int slot;          // слот внутри дня (0..SLOTS_PER_DAY-1)
+};
+
+struct PpPlan {
+    std::vector<PpPlacement> placements;
+    // group → однодневные диапазоны [d,d] дней, занятых ПП (блокируют УП и
+    // исключают неделю из делителя Брезенхема, если занята целиком)
+    std::map<int, std::vector<std::pair<Date, Date>>> pp_block;
+};
+
+static PpPlan ComputePpPlan(
+    const std::vector<Lesson>& lessons,
+    const std::vector<Date>& all_days,
+    const std::map<int, std::vector<std::pair<Date, Date>>>& unavailable
+) {
+    const int num_lessons = static_cast<int>(lessons.size());
+    const int num_days = static_cast<int>(all_days.size());
+
+    PpPlan plan;
+
+    for (int g = 0; g < GROUPS; g++) {
+        // ПП-уроки группы, отсортированные по id (очередь)
+        std::vector<int> pp_lessons;
+        for (int l = 0; l < num_lessons; l++)
+            if (lessons[l].is_pp && lessons[l].group == g) pp_lessons.push_back(l);
+        if (pp_lessons.empty()) continue;
+        std::sort(pp_lessons.begin(), pp_lessons.end(),
+                  [&](int a, int b) { return lessons[a].id < lessons[b].id; });
+
+        // Доступные дни группы по возрастанию (по исходной карте недоступности)
+        std::vector<int> avail;
+        for (int d = 0; d < num_days; d++)
+            if (IsAvailable(all_days[d], g, unavailable)) avail.push_back(d);
+        if (avail.empty()) continue;
+
+        // Сколько дней нужно всем ПП группы (3 пары/день)
+        int need_days = 0;
+        for (int l : pp_lessons) need_days += CeilDiv(lessons[l].total_slots, 3);
+
+        int avail_n = static_cast<int>(avail.size());
+        int start_idx = std::max(0, avail_n - need_days);
+        if (avail_n < need_days) {
+            std::cout << "  [ПП] предупреждение: группе " << GROUP_NAME[g]
+                      << " нужно " << need_days << " дней под ПП, доступно "
+                      << avail_n << " — расстановка усечена\n";
+        }
+
+        // Раздаём дни хвоста урокам по очереди, по 3 пары/день
+        int cursor = start_idx;  // позиция в avail
+        for (int l : pp_lessons) {
+            int remaining = lessons[l].total_slots;
+            while (remaining > 0 && cursor < avail_n) {
+                int d = avail[cursor++];
+                int pairs_today = std::min(3, remaining);
+                for (int s = 0; s < pairs_today; s++) {
+                    plan.placements.push_back(PpPlacement{l, d, s});
+                }
+                plan.pp_block[g].push_back({all_days[d], all_days[d]});
+                remaining -= pairs_today;
+            }
+        }
+    }
+
+    return plan;
+}
+
+// Объединяет исходную карту недоступности с однодневными ПП-диапазонами.
+static std::map<int, std::vector<std::pair<Date, Date>>> MergeUnavailable(
+    const std::map<int, std::vector<std::pair<Date, Date>>>& base,
+    const std::map<int, std::vector<std::pair<Date, Date>>>& extra
+) {
+    std::map<int, std::vector<std::pair<Date, Date>>> merged = base;
+    for (const auto& kv : extra) {
+        auto& dst = merged[kv.first];
+        dst.insert(dst.end(), kv.second.begin(), kv.second.end());
+    }
+    return merged;
+}
+
 GenerationResult GenerateSchedule(const std::string& output_dir) {
     GenerationOptions empty_opts;
     return GenerateSchedule(output_dir, empty_opts);
@@ -116,6 +203,13 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
     std::filesystem::create_directories(std::filesystem::path(output_dir) / "groups");
 
     PrintInputDiagnostics(lessons, all_days, unavailable, start_date);
+
+    // ── ПП: детерминированная расстановка до CP-SAT ───────────────────────
+    // ПП-уроки не участвуют в поиске: их слоты жёстко фиксируются ниже, а дни
+    // добавляются в unavailable, чтобы УП их не занимала и они выпадали из
+    // делителя Брезенхема (целиком-ПП недели → /15 вместо /18).
+    const PpPlan pp_plan = ComputePpPlan(lessons, all_days, unavailable);
+    unavailable = MergeUnavailable(unavailable, pp_plan.pp_block);
 
     CpModelBuilder model;
     LinearExpr objective;
@@ -218,10 +312,23 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
 
     for (int l = 0; l < num_lessons; l++) {
         if (lessons[l].is_block) continue;
+        if (lessons[l].is_pp) continue;  // ПП фиксируется детерминированно, не суммой
 
         LinearExpr sum;
         for (int t = 0; t < total_slots; t++) sum += x[l][t];
         model.AddEquality(sum, lessons[l].total_slots);
+    }
+
+    // ── ПП: жёстко фиксируем заранее рассчитанные слоты, остальное у ПП = 0 ──
+    {
+        std::vector<std::set<int>> pp_fixed(num_lessons);
+        for (const PpPlacement& p : pp_plan.placements)
+            pp_fixed[p.lesson_index].insert(p.global_day * SLOTS_PER_DAY + p.slot);
+        for (int l = 0; l < num_lessons; l++) {
+            if (!lessons[l].is_pp) continue;
+            for (int t = 0; t < total_slots; t++)
+                model.AddEquality(x[l][t], pp_fixed[l].count(t) ? 1 : 0);
+        }
     }
 
     int total_block_start_vars = 0;
@@ -313,41 +420,10 @@ GenerationResult GenerateSchedule(const std::string& output_dir, const Generatio
                 int t = d * SLOTS_PER_DAY + s;
 
                 for (int l = 0; l < num_lessons; l++) {
+                    if (lessons[l].is_pp) continue;  // ПП уже зафиксирована выше
                     if (lessons[l].group == g) {
                         model.AddEquality(x[l][t], 0);
                     }
-                }
-            }
-        }
-    }
-
-    // ── ПП: разрешаем только последние ceil(total_slots/3) доступных дней группы ──
-    {
-        std::vector<std::vector<int>> group_avail_days(GROUPS);
-        for (int g = 0; g < GROUPS; g++) {
-            for (int d = 0; d < num_days; d++) {
-                if (IsAvailable(all_days[d], g, unavailable)) {
-                    group_avail_days[g].push_back(d);
-                }
-            }
-        }
-
-        for (int l = 0; l < num_lessons; l++) {
-            if (!lessons[l].is_pp) continue;
-
-            int g = lessons[l].group;
-            int pp_days = (lessons[l].total_slots + 2) / 3;  // ceil(total_slots/3)
-            const auto& avail = group_avail_days[g];
-
-            if ((int)avail.size() <= pp_days) continue;
-
-            int cutoff_idx = (int)avail.size() - pp_days;
-            std::set<int> allowed_days(avail.begin() + cutoff_idx, avail.end());
-
-            for (int d = 0; d < num_days; d++) {
-                if (allowed_days.count(d)) continue;
-                for (int s = 0; s < SLOTS_PER_DAY; s++) {
-                    model.AddEquality(x[l][d * SLOTS_PER_DAY + s], 0);
                 }
             }
         }
@@ -1280,7 +1356,6 @@ static WeekSolveResult SolveOneWeek(
     const std::vector<Lesson>& lessons,
     const std::map<int, std::vector<std::pair<Date, Date>>>& unavailable,
     const std::vector<int>& quotas,
-    const std::vector<std::vector<int>>& pp_allowed_global,
     const std::vector<LockedAssignment>& locked,
     bool relaxed_retry = false
 ) {
@@ -1306,12 +1381,6 @@ static WeekSolveResult SolveOneWeek(
     std::vector<Date> week_days;
     week_days.reserve(W);
     for (int gd : wdix) week_days.push_back(all_days[gd]);
-
-    // pp_allowed_global[g] хранится как вектор; переводим в set для быстрого поиска
-    std::vector<std::set<int>> pp_allowed(GROUPS);
-    for (int g = 0; g < GROUPS; g++) {
-        for (int gd : pp_allowed_global[g]) pp_allowed[g].insert(gd);
-    }
 
     CpModelBuilder model;
     LinearExpr objective;
@@ -1423,15 +1492,8 @@ static WeekSolveResult SolveOneWeek(
     }
 
     // ── ПП: только в разрешённые дни ──────────────────────────────────────
-    for (int l = 0; l < num_lessons; l++) {
-        if (!lessons[l].is_pp || quotas[l] == 0) continue;
-        int g = lessons[l].group;
-        for (int ld = 0; ld < W; ld++) {
-            if (pp_allowed[g].count(wdix[ld])) continue;
-            for (int s = 0; s < SLOTS_PER_DAY; s++)
-                model.AddEquality(x[l][ld * SLOTS_PER_DAY + s], 0);
-        }
-    }
+    // ПП расставляется детерминированно вне модели — здесь делать нечего.
+    // (is_pp уроки имеют quota==0, переменных не получают.)
 
     // ── group_busy, part_busy ─────────────────────────────────────────────
     std::vector<std::vector<BoolVar>> group_busy(GROUPS, std::vector<BoolVar>(local_slots));
@@ -1813,6 +1875,13 @@ GenerationResult GenerateScheduleWeekly(
 
     PrintInputDiagnostics(lessons, all_days, unavailable, start_date);
 
+    // ── ПП: детерминированная расстановка до CP-SAT ───────────────────────
+    // ПП-уроки не участвуют в модели (quota=0); их дни блокируются для УП через
+    // unavailable_model, что также исключает целиком-ПП недели из делителя.
+    const PpPlan pp_plan = ComputePpPlan(lessons, all_days, unavailable);
+    const std::map<int, std::vector<std::pair<Date, Date>>> unavailable_model =
+        MergeUnavailable(unavailable, pp_plan.pp_block);
+
     // ── Структура недель ──────────────────────────────────────────────────
     std::vector<int> week_index(num_days);
     for (int d = 0; d < num_days; d++)
@@ -1836,7 +1905,7 @@ GenerationResult GenerateScheduleWeekly(
 
     for (int g = 0; g < GROUPS; g++) {
         for (int d = 0; d < num_days; d++) {
-            if (IsAvailable(all_days[d], g, unavailable)) {
+            if (IsAvailable(all_days[d], g, unavailable_model)) {
                 int w = week_pos[week_index[d]];
                 group_week_days[g][w].push_back(d);
             }
@@ -1858,59 +1927,21 @@ GenerationResult GenerateScheduleWeekly(
         return q;
     };
 
-    // ── ПП: вычисляем разрешённые дни (последние ceil(total/3)) ──────────
-    // pp_allowed_global[g] = список глобальных индексов дней, где ПП разрешена
-    std::vector<std::vector<int>> pp_allowed_global(GROUPS);
-    {
-        std::vector<std::vector<int>> group_avail_days(GROUPS);
-        for (int g = 0; g < GROUPS; g++) {
-            for (int d = 0; d < num_days; d++)
-                if (IsAvailable(all_days[d], g, unavailable))
-                    group_avail_days[g].push_back(d);
-        }
-        for (int l = 0; l < num_lessons; l++) {
-            if (!lessons[l].is_pp) continue;
-            int g = lessons[l].group;
-            const auto& avail = group_avail_days[g];
-            int pp_days = (lessons[l].total_slots + 2) / 3;
-            if (static_cast<int>(avail.size()) <= pp_days) {
-                pp_allowed_global[g] = avail;
-            } else {
-                int cutoff = static_cast<int>(avail.size()) - pp_days;
-                pp_allowed_global[g].assign(avail.begin() + cutoff, avail.end());
-            }
-        }
-    }
-
     // ── lesson_week_quota[l][w] — квоты по Брезенхему ────────────────────
-    // Для ПП уроков: активные недели — только те, где есть pp_allowed дни группы
+    // ПП-уроки расставляются детерминированно (см. ComputePpPlan) и в модель не
+    // попадают: их недельная квота всегда 0.
     std::vector<std::vector<int>> lesson_week_quota(num_lessons, std::vector<int>(num_weeks, 0));
 
     for (int l = 0; l < num_lessons; l++) {
-        int g = lessons[l].group;
+        if (lessons[l].is_pp) continue;  // ПП вне модели
 
-        if (lessons[l].is_pp) {
-            // Активные недели — только те, где есть разрешённый для ПП день
-            std::set<int> pp_day_set(pp_allowed_global[g].begin(), pp_allowed_global[g].end());
-            std::vector<int> pp_active_weeks;
-            for (int w : group_avail_weeks[g]) {
-                bool has_pp = false;
-                for (int gd : week_day_indices[w])
-                    if (pp_day_set.count(gd)) { has_pp = true; break; }
-                if (has_pp) pp_active_weeks.push_back(w);
-            }
-            if (pp_active_weeks.empty()) continue;
-            auto q = bresenham_quota(lessons[l].total_slots, static_cast<int>(pp_active_weeks.size()));
-            for (int i = 0; i < static_cast<int>(pp_active_weeks.size()); i++)
-                lesson_week_quota[l][pp_active_weeks[i]] = q[i];
-        } else {
-            const auto& avail_weeks = group_avail_weeks[g];
-            int active = static_cast<int>(avail_weeks.size());
-            if (active == 0) continue;
-            auto q = bresenham_quota(lessons[l].total_slots, active);
-            for (int i = 0; i < active; i++)
-                lesson_week_quota[l][avail_weeks[i]] = q[i];
-        }
+        int g = lessons[l].group;
+        const auto& avail_weeks = group_avail_weeks[g];
+        int active = static_cast<int>(avail_weeks.size());
+        if (active == 0) continue;
+        auto q = bresenham_quota(lessons[l].total_slots, active);
+        for (int i = 0; i < active; i++)
+            lesson_week_quota[l][avail_weeks[i]] = q[i];
     }
 
     // ── Корректировка квот под зафиксированные слоты ─────────────────────
@@ -1960,6 +1991,12 @@ GenerationResult GenerateScheduleWeekly(
 
     // ── Решаем по неделям ─────────────────────────────────────────────────
     std::vector<std::vector<int>> global_x_vals(num_lessons, std::vector<int>(total_slots, 0));
+
+    // ПП вписываем сразу — чтобы практика была и в каждом промежуточном автосохранении.
+    for (const PpPlacement& p : pp_plan.placements) {
+        global_x_vals[p.lesson_index][p.global_day * SLOTS_PER_DAY + p.slot] = 1;
+    }
+
     auto solve_start = std::chrono::steady_clock::now();
 
     for (int w = 0; w < num_weeks; w++) {
@@ -2003,8 +2040,8 @@ GenerationResult GenerateScheduleWeekly(
 
         auto t0 = std::chrono::steady_clock::now();
         WeekSolveResult wr = SolveOneWeek(
-            w, wdix, all_days, lessons, unavailable,
-            quotas, pp_allowed_global, options.locked, false
+            w, wdix, all_days, lessons, unavailable_model,
+            quotas, options.locked, false
         );
         double elapsed = std::chrono::duration<double>(
             std::chrono::steady_clock::now() - t0).count();
@@ -2015,8 +2052,8 @@ GenerationResult GenerateScheduleWeekly(
                       << " с → повтор с ослабленными ограничениями (без жёстких окон)…\n";
             auto t1 = std::chrono::steady_clock::now();
             wr = SolveOneWeek(
-                w, wdix, all_days, lessons, unavailable,
-                quotas, pp_allowed_global, options.locked, true
+                w, wdix, all_days, lessons, unavailable_model,
+                quotas, options.locked, true
             );
             elapsed += std::chrono::duration<double>(
                 std::chrono::steady_clock::now() - t1).count();
